@@ -2,24 +2,20 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import Svg, { Path, Circle, Rect } from 'react-native-svg';
+import Svg, { Path, Circle } from 'react-native-svg';
 import { T, FONTS } from '../../theme';
 import TopBar from '../../components/TopBar';
+import Field from '../../components/Field';
 import Primary from '../../components/Primary';
 
 function EyeIcon({ visible }) {
   return (
     <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
-      <Path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke={T.mute} strokeWidth={1.8} strokeLinecap="round" />
+      <Path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z"
+        stroke={T.mute} strokeWidth={1.8} strokeLinecap="round" />
       <Circle cx="12" cy="12" r="3" stroke={T.mute} strokeWidth={1.8} />
       {!visible && <Path d="M2 2L22 22" stroke={T.mute} strokeWidth={1.8} strokeLinecap="round" />}
     </Svg>
-  );
-}
-
-function StrengthBar({ active, color }) {
-  return (
-    <View style={[styles.bar, { backgroundColor: active ? color : T.hair2 }]} />
   );
 }
 
@@ -35,114 +31,86 @@ function CheckMark({ done }) {
   );
 }
 
-function PasswordRequirements({ password }) {
-  const reqs = [
-    { label: 'At least 8 characters', done: password.length >= 8 },
-    { label: 'One uppercase letter', done: /[A-Z]/.test(password) },
-    { label: 'One number or symbol', done: /[\d\W]/.test(password) },
-    { label: 'Not a common password', done: password.length >= 6 && !/password|123456/i.test(password) },
-  ];
-  return (
-    <View style={styles.reqGrid}>
-      {reqs.map((r, i) => (
-        <View key={i} style={styles.reqItem}>
-          <CheckMark done={r.done} />
-          <Text style={[styles.reqText, r.done && styles.reqDone]}>{r.label}</Text>
-        </View>
-      ))}
-    </View>
-  );
+function getStrength(pw) {
+  let s = 0;
+  if (pw.length >= 8) s++;
+  if (/[A-Z]/.test(pw)) s++;
+  if (/\d/.test(pw)) s++;
+  if (/\W/.test(pw)) s++;
+  return s;
 }
 
-function getStrength(password) {
-  if (password.length === 0) return 0;
-  let score = 0;
-  if (password.length >= 8) score++;
-  if (/[A-Z]/.test(password)) score++;
-  if (/[\d]/.test(password)) score++;
-  if (/[\W]/.test(password)) score++;
-  return score;
-}
+const STRENGTH_COLORS = ['#E53E3E', '#E57732', '#D4AC0D', '#3D8A5C'];
+const STRENGTH_LABELS = ['', 'WEAK', 'FAIR', 'GOOD', 'STRONG'];
 
 export default function EmailSignupScreen() {
   const navigation = useNavigation();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [name, setName] = useState('Anika Talluri');
+  const [email, setEmail] = useState('anika.talluri@gmail.com');
   const [password, setPassword] = useState('Str0ng!pwd');
   const [showPass, setShowPass] = useState(false);
-  const [marketing, setMarketing] = useState(false);
+  const [marketing, setMarketing] = useState(true);
 
   const strength = getStrength(password);
-  const strengthColors = ['#E53E3E', '#E57732', '#D4AC0D', '#3D8A5C'];
-  const strengthLabels = ['', 'WEAK', 'FAIR', 'GOOD', 'STRONG'];
+  const reqs = [
+    { label: '8+ characters', done: password.length >= 8 },
+    { label: 'One number', done: /\d/.test(password) },
+    { label: 'Upper & lowercase', done: /[A-Z]/.test(password) && /[a-z]/.test(password) },
+    { label: 'Symbol (!@#$)', done: /\W/.test(password) },
+  ];
 
   return (
     <SafeAreaView style={styles.safe}>
       <TopBar />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>Create your{'\n'}account</Text>
+        <Text style={styles.title}>Create your account</Text>
+        <Text style={styles.sub}>Use the email your family checks too — important match updates land here.</Text>
 
-        <View style={styles.fieldWrap}>
-          <Text style={styles.fieldLabel}>FULL NAME</Text>
-          <TextInput
-            style={styles.input}
-            value={name}
-            onChangeText={setName}
-            placeholder="Anika Reddy"
-            placeholderTextColor={T.mute}
-          />
-        </View>
+        <Field label="Full name" value={name} onChangeText={setName} placeholder="Anika Talluri" />
+        <Field label="Email" value={email} onChangeText={setEmail} placeholder="anika@example.com" keyboardType="email-address" />
 
-        <View style={styles.fieldWrap}>
-          <Text style={styles.fieldLabel}>EMAIL</Text>
-          <TextInput
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            placeholder="anika@example.com"
-            placeholderTextColor={T.mute}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-        </View>
-
-        <View style={styles.fieldWrap}>
-          <Text style={styles.fieldLabel}>PASSWORD</Text>
+        {/* Password — custom cement box to keep eye toggle + strength meter */}
+        <View style={styles.passBox}>
+          <View style={styles.passHeader}>
+            <Text style={styles.passLabel}>PASSWORD</Text>
+            {strength === 4 && <Text style={styles.strongLabel}>STRONG</Text>}
+          </View>
           <View style={styles.passRow}>
             <TextInput
-              style={[styles.input, { flex: 1 }]}
+              style={styles.passInput}
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPass}
               autoCapitalize="none"
+              underlineColorAndroid="transparent"
             />
             <TouchableOpacity onPress={() => setShowPass(v => !v)} style={styles.eyeBtn}>
               <EyeIcon visible={showPass} />
             </TouchableOpacity>
           </View>
-
-          {/* Strength meter */}
           <View style={styles.strengthRow}>
             {[1, 2, 3, 4].map(i => (
-              <StrengthBar
-                key={i}
-                active={i <= strength}
-                color={strengthColors[Math.min(strength - 1, 3)]}
-              />
+              <View key={i} style={[styles.bar, { backgroundColor: i <= strength ? STRENGTH_COLORS[Math.min(strength - 1, 3)] : T.hair2 }]} />
             ))}
-            <Text style={[styles.strengthLabel, { color: strengthColors[Math.min(strength - 1, 3)] || T.mute }]}>
-              {strengthLabels[strength]}
-            </Text>
+            {strength > 0 && (
+              <Text style={[styles.strengthLabel, { color: STRENGTH_COLORS[Math.min(strength - 1, 3)] }]}>
+                {STRENGTH_LABELS[strength]}
+              </Text>
+            )}
           </View>
         </View>
 
-        <PasswordRequirements password={password} />
+        {/* Requirements grid */}
+        <View style={styles.reqGrid}>
+          {reqs.map((r, i) => (
+            <View key={i} style={styles.reqItem}>
+              <CheckMark done={r.done} />
+              <Text style={[styles.reqText, r.done && styles.reqDone]}>{r.label}</Text>
+            </View>
+          ))}
+        </View>
 
-        <TouchableOpacity
-          style={styles.checkRow}
-          onPress={() => setMarketing(v => !v)}
-          activeOpacity={0.7}
-        >
+        <TouchableOpacity style={styles.checkRow} onPress={() => setMarketing(v => !v)} activeOpacity={0.7}>
           <View style={[styles.checkbox, marketing && styles.checkboxOn]}>
             {marketing && (
               <Svg width={10} height={10} viewBox="0 0 10 10">
@@ -150,22 +118,13 @@ export default function EmailSignupScreen() {
               </Svg>
             )}
           </View>
-          <Text style={styles.checkLabel}>
-            Send me match suggestions and success stories (no spam)
-          </Text>
+          <Text style={styles.checkLabel}>Email me weekly handpicked matches and success stories.</Text>
         </TouchableOpacity>
 
-        <Primary
-          label="Create account"
-          onPress={() => navigation.navigate('OTP')}
-          style={{ marginTop: 24 }}
-        />
+        <Primary label="Create account" onPress={() => navigation.navigate('OTP')} style={{ marginTop: 20 }} />
 
         <TouchableOpacity onPress={() => navigation.navigate('OTP')} style={styles.signInLink}>
-          <Text style={styles.signInText}>
-            Have an account?{' '}
-            <Text style={styles.signInBold}>Sign in</Text>
-          </Text>
+          <Text style={styles.signInText}>Have an account? <Text style={styles.signInBold}>Sign in</Text></Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -175,116 +134,37 @@ export default function EmailSignupScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: T.bg },
   content: { paddingHorizontal: 24, paddingBottom: 40 },
-  title: {
-    fontFamily: FONTS.display,
-    fontSize: 38,
-    color: T.ink,
-    lineHeight: 46,
-    marginBottom: 32,
-    marginTop: 8,
+  title: { fontFamily: FONTS.display, fontSize: 36, color: T.ink, marginBottom: 6, marginTop: 4 },
+  sub: { fontSize: 14, color: T.mute, marginBottom: 24, lineHeight: 20 },
+  passBox: {
+    backgroundColor: T.field, borderWidth: 1, borderColor: T.hair,
+    borderRadius: 16, paddingHorizontal: 16, paddingTop: 10, paddingBottom: 12, marginBottom: 12,
   },
-  fieldWrap: { marginBottom: 16 },
-  fieldLabel: {
-    fontFamily: FONTS.mono,
-    fontSize: 10,
-    letterSpacing: 1.2,
-    color: T.mute,
-    textTransform: 'uppercase',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: T.field,
-    borderWidth: 1,
-    borderColor: T.hair,
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 15,
-    color: T.ink,
-  },
-  passRow: { flexDirection: 'row', alignItems: 'center', gap: 0 },
-  eyeBtn: {
-    position: 'absolute',
-    right: 14,
-    top: 14,
-    padding: 4,
-  },
-  strengthRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginTop: 8,
-  },
-  bar: {
-    flex: 1,
-    height: 3,
-    borderRadius: 2,
-  },
-  strengthLabel: {
-    fontFamily: FONTS.mono,
-    fontSize: 10,
-    letterSpacing: 1,
-    marginLeft: 4,
-  },
-  reqGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    marginBottom: 20,
-  },
-  reqItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    width: '47%',
-  },
+  passHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
+  passLabel: { fontFamily: FONTS.mono, fontSize: 10, letterSpacing: 1, color: T.mute },
+  strongLabel: { fontFamily: FONTS.mono, fontSize: 10, letterSpacing: 1, color: T.verify, fontWeight: '700' },
+  passRow: { flexDirection: 'row', alignItems: 'center' },
+  passInput: { flex: 1, fontSize: 16, color: T.ink, padding: 0, margin: 0 },
+  eyeBtn: { padding: 4 },
+  strengthRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 10 },
+  bar: { flex: 1, height: 3, borderRadius: 2 },
+  strengthLabel: { fontFamily: FONTS.mono, fontSize: 10, letterSpacing: 1, marginLeft: 4 },
+  reqGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
+  reqItem: { flexDirection: 'row', alignItems: 'center', gap: 6, width: '47%' },
   checkCircle: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    borderWidth: 1.5,
-    borderColor: T.hair2,
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: 16, height: 16, borderRadius: 8, borderWidth: 1.5,
+    borderColor: T.hair2, justifyContent: 'center', alignItems: 'center',
   },
-  checkDone: {
-    backgroundColor: T.verify,
-    borderColor: T.verify,
-  },
-  reqText: {
-    fontSize: 12,
-    color: T.mute,
-    flex: 1,
-  },
-  reqDone: {
-    color: T.verify,
-  },
-  checkRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 12,
-    marginBottom: 8,
-  },
+  checkDone: { backgroundColor: T.verify, borderColor: T.verify },
+  reqText: { fontSize: 12, color: T.mute, flex: 1 },
+  reqDone: { color: T.verify },
+  checkRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 8 },
   checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 5,
-    borderWidth: 1.5,
-    borderColor: T.hair2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 1,
+    width: 20, height: 20, borderRadius: 5, borderWidth: 1.5,
+    borderColor: T.hair2, justifyContent: 'center', alignItems: 'center', marginTop: 1,
   },
-  checkboxOn: {
-    backgroundColor: T.accent,
-    borderColor: T.accent,
-  },
-  checkLabel: {
-    flex: 1,
-    fontSize: 13,
-    color: T.mute,
-    lineHeight: 20,
-  },
+  checkboxOn: { backgroundColor: T.accent, borderColor: T.accent },
+  checkLabel: { flex: 1, fontSize: 13, color: T.mute, lineHeight: 20 },
   signInLink: { alignItems: 'center', marginTop: 20 },
   signInText: { fontSize: 14, color: T.mute },
   signInBold: { color: T.accent, fontWeight: '600' },

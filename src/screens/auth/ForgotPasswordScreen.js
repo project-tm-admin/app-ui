@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import Svg, { Path, Rect, Circle } from 'react-native-svg';
 import { T, FONTS } from '../../theme';
 import TopBar from '../../components/TopBar';
+import Field from '../../components/Field';
 import Primary from '../../components/Primary';
 
 function LockIcon() {
@@ -44,18 +45,7 @@ export default function ForgotPasswordScreen() {
           Enter your email and we'll send you a reset link. It's valid for 10 minutes.
         </Text>
 
-        <View style={styles.fieldWrap}>
-          <Text style={styles.fieldLabel}>EMAIL ADDRESS</Text>
-          <TextInput
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            placeholder="anika@example.com"
-            placeholderTextColor={T.mute}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-        </View>
+        <Field label="Email" value={email} onChangeText={setEmail} placeholder="anika@example.com" keyboardType="email-address" />
 
         <View style={styles.noteBox}>
           <ClockIcon />

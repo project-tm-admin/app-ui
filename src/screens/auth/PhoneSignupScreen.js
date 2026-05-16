@@ -46,8 +46,8 @@ export default function PhoneSignupScreen() {
         <Text style={styles.title}>What's your{'\n'}number?</Text>
         <Text style={styles.subtitle}>We'll send you a verification code</Text>
 
-        <View style={styles.fieldWrap}>
-          <Text style={styles.fieldLabel}>PHONE NUMBER</Text>
+        <View style={styles.phoneBox}>
+          <Text style={styles.phoneLabel}>PHONE NUMBER</Text>
           <View style={styles.phoneRow}>
             <View style={styles.flagBox}>
               <USFlag />
@@ -103,29 +103,33 @@ const styles = StyleSheet.create({
     color: T.mute,
     marginBottom: 32,
   },
-  fieldWrap: { marginBottom: 16 },
-  fieldLabel: {
-    fontFamily: FONTS.mono,
-    fontSize: 10,
-    letterSpacing: 1.2,
-    color: T.mute,
-    textTransform: 'uppercase',
-    marginBottom: 8,
-  },
-  phoneRow: {
-    flexDirection: 'row',
+  phoneBox: {
     backgroundColor: T.field,
     borderWidth: 1,
     borderColor: T.hair,
     borderRadius: 16,
-    overflow: 'hidden',
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 4,
+    marginBottom: 16,
+  },
+  phoneLabel: {
+    fontFamily: FONTS.mono,
+    fontSize: 10,
+    letterSpacing: 1,
+    color: T.mute,
+    marginBottom: 4,
+  },
+  phoneRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   flagBox: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
+    paddingRight: 12,
+    paddingVertical: 8,
     borderRightWidth: 1,
     borderRightColor: T.hair2,
   },
@@ -136,8 +140,8 @@ const styles = StyleSheet.create({
   },
   phoneInput: {
     flex: 1,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
+    paddingLeft: 12,
+    paddingVertical: 8,
     fontSize: 15,
     color: T.ink,
   },

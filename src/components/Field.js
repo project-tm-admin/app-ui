@@ -2,52 +2,68 @@ import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { T, FONTS } from '../theme';
 
-export default function Field({ label, value, placeholder, onChangeText, secureTextEntry, keyboardType, style, multiline, numberOfLines }) {
+// Label lives INSIDE the cement box — matches the HTML prototype Field design
+export default function Field({
+  label, value, placeholder, onChangeText,
+  secureTextEntry, keyboardType, style, suffix, mono,
+}) {
   return (
-    <View style={[styles.container, style]}>
-      {label ? <Text style={styles.label}>{label}</Text> : null}
-      <TextInput
-        style={[styles.input, multiline && styles.multiline]}
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor={T.mute}
-        secureTextEntry={secureTextEntry}
-        keyboardType={keyboardType}
-        multiline={multiline}
-        numberOfLines={numberOfLines}
-        autoCapitalize="none"
-      />
+    <View style={[styles.box, style]}>
+      {label ? <Text style={styles.label}>{label.toUpperCase()}</Text> : null}
+      <View style={styles.row}>
+        <TextInput
+          style={[styles.input, mono && styles.mono]}
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          placeholderTextColor={T.mute}
+          secureTextEntry={secureTextEntry}
+          keyboardType={keyboardType}
+          autoCapitalize="none"
+          underlineColorAndroid="transparent"
+        />
+        {suffix ? <Text style={styles.suffix}>{suffix}</Text> : null}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-  },
-  label: {
-    fontFamily: FONTS.mono,
-    fontSize: 10,
-    letterSpacing: 1.2,
-    color: T.mute,
-    textTransform: 'uppercase',
-    marginBottom: 8,
-  },
-  input: {
+  box: {
     backgroundColor: T.field,
     borderWidth: 1,
     borderColor: T.hair,
     borderRadius: 16,
     paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 15,
+    paddingTop: 10,
+    paddingBottom: 12,
+    marginBottom: 12,
+  },
+  label: {
+    fontFamily: FONTS.mono,
+    fontSize: 10,
+    letterSpacing: 1,
+    color: T.mute,
+    marginBottom: 4,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
     color: T.ink,
+    padding: 0,
+    margin: 0,
     fontFamily: FONTS.ui,
   },
-  multiline: {
-    minHeight: 96,
-    textAlignVertical: 'top',
-    paddingTop: 14,
+  mono: {
+    fontFamily: FONTS.mono,
+  },
+  suffix: {
+    fontSize: 13,
+    color: T.mute,
+    marginLeft: 8,
   },
 });

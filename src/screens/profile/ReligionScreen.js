@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import Svg, { Path, Circle, Rect } from 'react-native-svg';
@@ -7,6 +7,7 @@ import { T, FONTS } from '../../theme';
 import TopBar from '../../components/TopBar';
 import Stepper from '../../components/Stepper';
 import Chip from '../../components/Chip';
+import Field from '../../components/Field';
 import Primary from '../../components/Primary';
 
 const RELIGIONS = ['Hindu', 'Muslim', 'Christian', 'Sikh', 'Jain', 'Buddhist', 'No religion', 'Other'];
@@ -62,25 +63,11 @@ export default function ReligionScreen() {
         <SliderBar value={importance} onValueChange={setImportance} />
 
         <View style={styles.row}>
-          <View style={styles.halfField}>
-            <Text style={styles.fieldLabel}>GOTHRAM (OPTIONAL)</Text>
-            <TextInput
-              style={styles.input}
-              value={gothram}
-              onChangeText={setGothram}
-              placeholder="e.g. Kashyapa"
-              placeholderTextColor={T.mute}
-            />
+          <View style={{ flex: 1 }}>
+            <Field label="Gothram · optional" value={gothram} onChangeText={setGothram} placeholder="e.g. Kashyapa" />
           </View>
-          <View style={styles.halfField}>
-            <Text style={styles.fieldLabel}>BIRTH STAR (OPTIONAL)</Text>
-            <TextInput
-              style={styles.input}
-              value={star}
-              onChangeText={setStar}
-              placeholder="e.g. Rohini"
-              placeholderTextColor={T.mute}
-            />
+          <View style={{ flex: 1 }}>
+            <Field label="Star" value={star} onChangeText={setStar} placeholder="e.g. Rohini" mono />
           </View>
         </View>
 

@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import Svg, { Path } from 'react-native-svg';
 import { T, FONTS } from '../../theme';
 import TopBar from '../../components/TopBar';
 import Stepper from '../../components/Stepper';
+import Field from '../../components/Field';
 import Primary from '../../components/Primary';
 
-function InfoBox({ text }) {
+function InfoNote({ text }) {
   return (
-    <View style={styles.infoBox}>
-      <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-        <Path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" stroke={T.mute} strokeWidth={1.5} />
+    <View style={styles.note}>
+      <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
+        <Path d="M12 22C17.5 22 22 17.5 22 12S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"
+          stroke={T.mute} strokeWidth={1.5} />
         <Path d="M12 11v5M12 8h.01" stroke={T.mute} strokeWidth={1.5} strokeLinecap="round" />
       </Svg>
-      <Text style={styles.infoText}>{text}</Text>
+      <Text style={styles.noteText}>{text}</Text>
     </View>
   );
 }
@@ -23,91 +25,37 @@ function InfoBox({ text }) {
 export default function NameDOBScreen() {
   const navigation = useNavigation();
   const [firstName, setFirstName] = useState('Anika');
-  const [lastName, setLastName] = useState('Reddy');
-  const [month, setMonth] = useState('04');
-  const [day, setDay] = useState('15');
+  const [lastName, setLastName] = useState('Talluri');
+  const [month, setMonth] = useState('March');
+  const [day, setDay] = useState('14');
   const [year, setYear] = useState('1996');
 
   return (
     <SafeAreaView style={styles.safe}>
-      <TopBar onSkip={() => navigation.navigate('Gender')} />
+      <TopBar />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Stepper current={2} total={16} />
-        <Text style={styles.title}>Your name &{'\n'}birthday</Text>
+        <Text style={styles.title}>Your name &amp; birthday</Text>
+        <Text style={styles.sub}>This is how matches will see you. You can't change your birthday later.</Text>
 
-        <View style={styles.row}>
-          <View style={styles.halfField}>
-            <Text style={styles.fieldLabel}>FIRST NAME</Text>
-            <TextInput
-              style={styles.input}
-              value={firstName}
-              onChangeText={setFirstName}
-              placeholder="Anika"
-              placeholderTextColor={T.mute}
-            />
-          </View>
-          <View style={styles.halfField}>
-            <Text style={styles.fieldLabel}>LAST NAME</Text>
-            <TextInput
-              style={styles.input}
-              value={lastName}
-              onChangeText={setLastName}
-              placeholder="Reddy"
-              placeholderTextColor={T.mute}
-            />
-          </View>
-        </View>
+        <Field label="First name" value={firstName} onChangeText={setFirstName} placeholder="Anika" />
+        <Field label="Last name" value={lastName} onChangeText={setLastName} placeholder="Talluri" />
 
-        <Text style={styles.fieldLabel}>DATE OF BIRTH</Text>
         <View style={styles.dateRow}>
-          <View style={styles.monthField}>
-            <TextInput
-              style={styles.input}
-              value={month}
-              onChangeText={setMonth}
-              placeholder="MM"
-              placeholderTextColor={T.mute}
-              keyboardType="number-pad"
-              maxLength={2}
-              textAlign="center"
-            />
-            <Text style={styles.dateHint}>Month</Text>
+          <View style={styles.monthCol}>
+            <Field label="Month" value={month} onChangeText={setMonth} placeholder="Month" />
           </View>
-          <View style={styles.dayField}>
-            <TextInput
-              style={styles.input}
-              value={day}
-              onChangeText={setDay}
-              placeholder="DD"
-              placeholderTextColor={T.mute}
-              keyboardType="number-pad"
-              maxLength={2}
-              textAlign="center"
-            />
-            <Text style={styles.dateHint}>Day</Text>
+          <View style={styles.dayCol}>
+            <Field label="Day" value={day} onChangeText={setDay} placeholder="DD" keyboardType="number-pad" mono />
           </View>
-          <View style={styles.yearField}>
-            <TextInput
-              style={styles.input}
-              value={year}
-              onChangeText={setYear}
-              placeholder="YYYY"
-              placeholderTextColor={T.mute}
-              keyboardType="number-pad"
-              maxLength={4}
-              textAlign="center"
-            />
-            <Text style={styles.dateHint}>Year</Text>
+          <View style={styles.yearCol}>
+            <Field label="Year" value={year} onChangeText={setYear} placeholder="YYYY" keyboardType="number-pad" mono />
           </View>
         </View>
 
-        <InfoBox text="You must be 18 or older to join Talambralu. Your age will be shown as 28 on your profile." />
+        <InfoNote text="Age (29) is shown to matches, not your birthday." />
 
-        <Primary
-          label="Continue"
-          onPress={() => navigation.navigate('Gender')}
-          style={{ marginTop: 32 }}
-        />
+        <Primary label="Continue" onPress={() => navigation.navigate('Gender')} style={{ marginTop: 24 }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -116,64 +64,15 @@ export default function NameDOBScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: T.bg },
   content: { paddingHorizontal: 24, paddingBottom: 40 },
-  title: {
-    fontFamily: FONTS.display,
-    fontSize: 36,
-    color: T.ink,
-    lineHeight: 44,
-    marginBottom: 32,
+  title: { fontFamily: FONTS.display, fontSize: 36, color: T.ink, marginBottom: 6 },
+  sub: { fontSize: 14, color: T.mute, marginBottom: 24, lineHeight: 20 },
+  dateRow: { flexDirection: 'row', gap: 10 },
+  monthCol: { flex: 2 },
+  dayCol: { flex: 1 },
+  yearCol: { flex: 1.5 },
+  note: {
+    flexDirection: 'row', alignItems: 'flex-start', gap: 8,
+    backgroundColor: T.field, borderRadius: 12, padding: 14,
   },
-  row: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 20,
-  },
-  halfField: { flex: 1 },
-  fieldLabel: {
-    fontFamily: FONTS.mono,
-    fontSize: 10,
-    letterSpacing: 1.2,
-    color: T.mute,
-    textTransform: 'uppercase',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: T.field,
-    borderWidth: 1,
-    borderColor: T.hair,
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 15,
-    color: T.ink,
-  },
-  dateRow: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 16,
-  },
-  monthField: { flex: 1.5 },
-  dayField: { flex: 1 },
-  yearField: { flex: 2 },
-  dateHint: {
-    fontSize: 11,
-    color: T.mute,
-    textAlign: 'center',
-    marginTop: 5,
-  },
-  infoBox: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 8,
-    backgroundColor: T.field,
-    borderRadius: 12,
-    padding: 14,
-    marginTop: 8,
-  },
-  infoText: {
-    flex: 1,
-    fontSize: 13,
-    color: T.mute,
-    lineHeight: 20,
-  },
+  noteText: { flex: 1, fontSize: 13, color: T.mute, lineHeight: 19 },
 });

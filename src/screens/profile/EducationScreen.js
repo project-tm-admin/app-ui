@@ -1,26 +1,29 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { T, FONTS } from '../../theme';
 import TopBar from '../../components/TopBar';
 import Stepper from '../../components/Stepper';
+import Field from '../../components/Field';
 import Primary from '../../components/Primary';
 
-const INCOME_RANGES = ['$50K–$100K', '$100K–$150K', '$150K–$200K', '$200K+'];
-
-function DualSlider({ value, label }) {
+function IncomeSlider() {
   return (
-    <View style={styles.sliderWrap}>
-      <View style={styles.sliderTrack}>
-        <View style={styles.sliderFillDual} />
-        <View style={[styles.sliderThumb, { left: '20%' }]} />
-        <View style={[styles.sliderThumb, { left: '60%' }]} />
+    <View style={styles.sliderCard}>
+      <View style={styles.sliderHeaderRow}>
+        <Text style={styles.sliderLabel}>ANNUAL INCOME · USD</Text>
+        <Text style={styles.sliderValue}>$180K – $220K</Text>
       </View>
-      <View style={styles.incomeLabels}>
-        <Text style={styles.incomeMin}>$100K</Text>
-        <Text style={styles.incomeCenter}>{label}</Text>
-        <Text style={styles.incomeMax}>$185K</Text>
+      <View style={styles.sliderTrack}>
+        <View style={styles.sliderFill} />
+        <View style={[styles.thumb, { left: '40%' }]} />
+        <View style={[styles.thumb, { left: '75%' }]} />
+      </View>
+      <View style={styles.sliderTicks}>
+        <Text style={styles.tick}>$50K</Text>
+        <Text style={styles.tick}>$150K</Text>
+        <Text style={styles.tick}>$300K+</Text>
       </View>
     </View>
   );
@@ -28,78 +31,23 @@ function DualSlider({ value, label }) {
 
 export default function EducationScreen() {
   const navigation = useNavigation();
-  const [degree, setDegree] = useState("Master's in Computer Science");
-  const [university, setUniversity] = useState('University of Texas at Austin');
-  const [jobTitle, setJobTitle] = useState('Senior Software Engineer');
-  const [company, setCompany] = useState('Google');
 
   return (
     <SafeAreaView style={styles.safe}>
-      <TopBar onSkip={() => navigation.navigate('Visa')} />
+      <TopBar />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Stepper current={7} total={16} />
-        <Text style={styles.title}>Education{'\n'}& work</Text>
+        <Text style={styles.title}>Education &amp; work</Text>
+        <Text style={styles.sub}>What you do matters here. Income range is private — we use it for matching only.</Text>
 
-        <View style={styles.fieldWrap}>
-          <Text style={styles.fieldLabel}>HIGHEST DEGREE</Text>
-          <TextInput
-            style={styles.input}
-            value={degree}
-            onChangeText={setDegree}
-            placeholder="e.g. B.Tech, MS, MBA, PhD..."
-            placeholderTextColor={T.mute}
-          />
-        </View>
+        <Field label="Highest degree" value="MS · Computer Science" />
+        <Field label="University" value="UT Austin" />
+        <Field label="Job title" value="Senior Product Manager" />
+        <Field label="Company" value="Stripe" />
 
-        <View style={styles.fieldWrap}>
-          <Text style={styles.fieldLabel}>UNIVERSITY / COLLEGE</Text>
-          <TextInput
-            style={styles.input}
-            value={university}
-            onChangeText={setUniversity}
-            placeholder="e.g. UT Austin, Georgia Tech..."
-            placeholderTextColor={T.mute}
-          />
-        </View>
+        <IncomeSlider />
 
-        <View style={styles.fieldWrap}>
-          <Text style={styles.fieldLabel}>JOB TITLE</Text>
-          <TextInput
-            style={styles.input}
-            value={jobTitle}
-            onChangeText={setJobTitle}
-            placeholder="e.g. Software Engineer, Doctor..."
-            placeholderTextColor={T.mute}
-          />
-        </View>
-
-        <View style={styles.fieldWrap}>
-          <Text style={styles.fieldLabel}>COMPANY</Text>
-          <TextInput
-            style={styles.input}
-            value={company}
-            onChangeText={setCompany}
-            placeholder="e.g. Google, TCS, Mayo Clinic..."
-            placeholderTextColor={T.mute}
-          />
-        </View>
-
-        <Text style={styles.fieldLabel}>ANNUAL INCOME RANGE</Text>
-        <DualSlider label="$100K – $185K" />
-
-        <View style={styles.incomeChips}>
-          {INCOME_RANGES.map((r, i) => (
-            <View key={i} style={[styles.incomeChip, i === 1 && styles.incomeChipSelected]}>
-              <Text style={[styles.incomeChipText, i === 1 && styles.incomeChipTextSelected]}>{r}</Text>
-            </View>
-          ))}
-        </View>
-
-        <Primary
-          label="Continue"
-          onPress={() => navigation.navigate('Visa')}
-          style={{ marginTop: 24 }}
-        />
+        <Primary label="Continue" onPress={() => navigation.navigate('Visa')} style={{ marginTop: 24 }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -108,96 +56,31 @@ export default function EducationScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: T.bg },
   content: { paddingHorizontal: 24, paddingBottom: 40 },
-  title: {
-    fontFamily: FONTS.display,
-    fontSize: 36,
-    color: T.ink,
-    lineHeight: 44,
-    marginBottom: 28,
+  title: { fontFamily: FONTS.display, fontSize: 36, color: T.ink, marginBottom: 6 },
+  sub: { fontSize: 14, color: T.mute, marginBottom: 24, lineHeight: 20 },
+  sliderCard: {
+    backgroundColor: T.field, borderWidth: 1, borderColor: T.hair,
+    borderRadius: 16, padding: 16, marginBottom: 12,
   },
-  fieldWrap: { marginBottom: 16 },
-  fieldLabel: {
-    fontFamily: FONTS.mono,
-    fontSize: 10,
-    letterSpacing: 1.2,
-    color: T.mute,
-    textTransform: 'uppercase',
-    marginBottom: 8,
+  sliderHeaderRow: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16,
   },
-  input: {
-    backgroundColor: T.field,
-    borderWidth: 1,
-    borderColor: T.hair,
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 15,
-    color: T.ink,
+  sliderLabel: {
+    fontFamily: FONTS.mono, fontSize: 10, letterSpacing: 1, color: T.mute,
   },
-  sliderWrap: { marginBottom: 12 },
+  sliderValue: { fontSize: 13, fontWeight: '600', color: T.ink },
   sliderTrack: {
-    height: 4,
-    backgroundColor: T.hair2,
-    borderRadius: 2,
-    position: 'relative',
-    marginBottom: 12,
+    height: 4, backgroundColor: T.hair2, borderRadius: 2, position: 'relative', marginBottom: 10,
   },
-  sliderFillDual: {
-    position: 'absolute',
-    left: '20%',
-    right: '40%',
-    top: 0,
-    bottom: 0,
-    backgroundColor: T.accent,
-    borderRadius: 2,
+  sliderFill: {
+    position: 'absolute', left: '40%', right: '25%',
+    top: 0, bottom: 0, backgroundColor: T.accent, borderRadius: 2,
   },
-  sliderThumb: {
-    position: 'absolute',
-    top: -8,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: T.accent,
-    borderWidth: 3,
-    borderColor: '#fff',
-    marginLeft: -10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 3,
+  thumb: {
+    position: 'absolute', top: -8, width: 20, height: 20, borderRadius: 10,
+    backgroundColor: T.accent, borderWidth: 3, borderColor: '#fff',
+    marginLeft: -10, elevation: 3,
   },
-  incomeLabels: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  incomeMin: { fontSize: 12, color: T.mute, fontFamily: FONTS.mono },
-  incomeCenter: { fontSize: 13, fontWeight: '600', color: T.ink },
-  incomeMax: { fontSize: 12, color: T.mute, fontFamily: FONTS.mono },
-  incomeChips: {
-    flexDirection: 'row',
-    gap: 8,
-    flexWrap: 'wrap',
-    marginTop: 4,
-  },
-  incomeChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 100,
-    borderWidth: 1.5,
-    borderColor: T.hair2,
-  },
-  incomeChipSelected: {
-    backgroundColor: T.accent,
-    borderColor: T.accent,
-  },
-  incomeChipText: {
-    fontSize: 13,
-    color: T.ink2,
-  },
-  incomeChipTextSelected: {
-    color: '#fff',
-    fontWeight: '600',
-  },
+  sliderTicks: { flexDirection: 'row', justifyContent: 'space-between' },
+  tick: { fontSize: 11, color: T.mute, fontFamily: FONTS.mono },
 });

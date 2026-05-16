@@ -1,95 +1,52 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import Svg, { Path, Circle, Star } from 'react-native-svg';
 import { T, FONTS } from '../../theme';
 import TopBar from '../../components/TopBar';
 import Stepper from '../../components/Stepper';
+import Field from '../../components/Field';
 import Primary from '../../components/Primary';
 
 const RASI_GRID = [
-  { label: 'BIRTH STAR', value: 'Rohini' },
-  { label: 'RASI', value: 'Vrishabha' },
-  { label: 'PADA', value: 'Pada 2' },
-  { label: 'LAGNA', value: 'Mesha' },
+  { label: 'Nakshatra', value: 'Rohini', telugu: 'రోహిణి' },
+  { label: 'Rasi', value: 'Vrishabha', telugu: 'వృషభ' },
+  { label: 'Pada', value: '2', telugu: '' },
+  { label: 'Lagna', value: 'Mesha', telugu: '' },
 ];
-
-function StarIcon() {
-  return (
-    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z"
-        stroke={T.accent}
-        strokeWidth={1.5}
-        fill={T.accentSoft}
-      />
-    </Svg>
-  );
-}
 
 export default function HoroscopeScreen() {
   const navigation = useNavigation();
-  const [birthTime, setBirthTime] = useState('06:45 AM');
-  const [birthPlace, setBirthPlace] = useState('Vijayawada, Andhra Pradesh');
+  const [birthTime, setBirthTime] = useState('04:32 AM');
+  const [birthPlace, setBirthPlace] = useState('Vijayawada, AP');
 
   return (
     <SafeAreaView style={styles.safe}>
       <TopBar onSkip={() => navigation.navigate('Diet')} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Stepper current={10} total={16} />
-        <Text style={styles.title}>Birth{'\n'}details</Text>
-        <Text style={styles.subtitle}>Used to calculate your horoscope for families who need it</Text>
+        <Text style={styles.title}>Birth details for horoscope</Text>
+        <Text style={styles.sub}>Optional. We'll generate a Jathakam you can share with family.</Text>
 
-        <View style={styles.fieldWrap}>
-          <Text style={styles.fieldLabel}>BIRTH TIME (OPTIONAL)</Text>
-          <TextInput
-            style={styles.input}
-            value={birthTime}
-            onChangeText={setBirthTime}
-            placeholder="e.g. 06:45 AM"
-            placeholderTextColor={T.mute}
-          />
-        </View>
+        <Field label="Birth time" value={birthTime} onChangeText={setBirthTime} placeholder="04:32 AM" suffix="IST" mono />
+        <Field label="Birth place" value={birthPlace} onChangeText={setBirthPlace} placeholder="Vijayawada, AP" />
 
-        <View style={styles.fieldWrap}>
-          <Text style={styles.fieldLabel}>BIRTH PLACE (OPTIONAL)</Text>
-          <TextInput
-            style={styles.input}
-            value={birthPlace}
-            onChangeText={setBirthPlace}
-            placeholder="City, State, Country"
-            placeholderTextColor={T.mute}
-          />
-        </View>
-
-        {/* Calculated horoscope grid */}
         <View style={styles.gridCard}>
-          <View style={styles.gridHeader}>
-            <StarIcon />
-            <Text style={styles.gridTitle}>Calculated from your details</Text>
-          </View>
+          <Text style={styles.gridHeader}>CALCULATED</Text>
           <View style={styles.grid}>
             {RASI_GRID.map((item, i) => (
               <View key={i} style={styles.gridItem}>
-                <Text style={styles.gridLabel}>{item.label}</Text>
+                <Text style={styles.gridLabel}>{item.label.toUpperCase()}</Text>
                 <Text style={styles.gridValue}>{item.value}</Text>
+                {item.telugu ? <Text style={styles.gridTelugu}>{item.telugu}</Text> : null}
               </View>
             ))}
           </View>
         </View>
 
-        <View style={styles.noteBox}>
-          <Text style={styles.noteText}>
-            Your horoscope details are only shared with families who specifically request them.
-          </Text>
-        </View>
+        <Text style={styles.note}>• You can share or hide your horoscope per match.</Text>
 
-        <Primary
-          label="Continue"
-          onPress={() => navigation.navigate('Diet')}
-          style={{ marginTop: 24 }}
-        />
+        <Primary label="Continue" onPress={() => navigation.navigate('Diet')} style={{ marginTop: 24 }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -98,89 +55,28 @@ export default function HoroscopeScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: T.bg },
   content: { paddingHorizontal: 24, paddingBottom: 40 },
-  title: {
-    fontFamily: FONTS.display,
-    fontSize: 36,
-    color: T.ink,
-    lineHeight: 44,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: T.mute,
-    marginBottom: 28,
-    lineHeight: 22,
-  },
-  fieldWrap: { marginBottom: 16 },
-  fieldLabel: {
-    fontFamily: FONTS.mono,
-    fontSize: 10,
-    letterSpacing: 1.2,
-    color: T.mute,
-    textTransform: 'uppercase',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: T.field,
-    borderWidth: 1,
-    borderColor: T.hair,
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 15,
-    color: T.ink,
-  },
+  title: { fontFamily: FONTS.display, fontSize: 34, color: T.ink, marginBottom: 6 },
+  sub: { fontSize: 14, color: T.mute, marginBottom: 24, lineHeight: 20 },
   gridCard: {
-    borderWidth: 1,
-    borderColor: T.hair2,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
+    borderWidth: 1, borderColor: T.hair, borderRadius: 16,
+    padding: 16, marginBottom: 16,
   },
   gridHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 16,
+    fontFamily: FONTS.mono, fontSize: 10, letterSpacing: 1.2,
+    color: T.mute, marginBottom: 14,
   },
-  gridTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: T.mute,
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   gridItem: {
-    width: '46%',
-    backgroundColor: T.field,
-    borderRadius: 12,
-    padding: 12,
+    width: '47%', backgroundColor: T.field,
+    borderRadius: 12, padding: 12,
   },
   gridLabel: {
-    fontFamily: FONTS.mono,
-    fontSize: 9,
-    letterSpacing: 1,
-    color: T.mute,
-    textTransform: 'uppercase',
-    marginBottom: 4,
+    fontFamily: FONTS.mono, fontSize: 9, letterSpacing: 1,
+    color: T.mute, marginBottom: 4,
   },
   gridValue: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: T.ink2,
-    fontFamily: FONTS.display,
+    fontFamily: FONTS.display, fontSize: 20, color: T.ink,
   },
-  noteBox: {
-    backgroundColor: T.field,
-    borderRadius: 12,
-    padding: 14,
-  },
-  noteText: {
-    fontSize: 13,
-    color: T.mute,
-    lineHeight: 20,
-  },
+  gridTelugu: { fontSize: 13, color: T.mute, marginTop: 2 },
+  note: { fontSize: 13, color: T.mute, lineHeight: 20 },
 });

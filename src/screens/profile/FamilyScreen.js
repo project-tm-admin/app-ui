@@ -1,89 +1,54 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import Svg, { Path, Circle } from 'react-native-svg';
 import { T, FONTS } from '../../theme';
 import TopBar from '../../components/TopBar';
 import Stepper from '../../components/Stepper';
+import Field from '../../components/Field';
 import Primary from '../../components/Primary';
-
-function PlusIcon() {
-  return (
-    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
-      <Path d="M12 5v14M5 12h14" stroke={T.accent} strokeWidth={2} strokeLinecap="round" />
-    </Svg>
-  );
-}
 
 function ParentIcon() {
   return (
     <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
       <Circle cx="9" cy="7" r="3" stroke={T.accent} strokeWidth={1.8} />
       <Circle cx="16" cy="7" r="3" stroke={T.accent} strokeWidth={1.8} />
-      <Path d="M3 20c0-3.3 2.7-6 6-6h1M11 20c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke={T.accent} strokeWidth={1.8} strokeLinecap="round" />
+      <Path d="M3 20c0-3.3 2.7-6 6-6h1M11 20c0-3.3 2.7-6 6-6s6 2.7 6 6"
+        stroke={T.accent} strokeWidth={1.8} strokeLinecap="round" />
     </Svg>
   );
 }
 
 export default function FamilyScreen() {
   const navigation = useNavigation();
-  const [fatherProf, setFatherProf] = useState('Retired Engineer');
-  const [motherProf, setMotherProf] = useState('Teacher');
-  const [siblings, setSiblings] = useState('1 brother (married, in India)');
-  const [familyLoc, setFamilyLoc] = useState('Vijayawada, Andhra Pradesh');
+  const [fatherProf, setFatherProf] = useState('Retired · Civil engineer');
+  const [motherProf, setMotherProf] = useState('Homemaker');
+  const [brothers, setBrothers] = useState('1');
+  const [sisters, setSisters] = useState('0');
+  const [familyLoc, setFamilyLoc] = useState('Vijayawada, India');
 
   return (
     <SafeAreaView style={styles.safe}>
       <TopBar onSkip={() => navigation.navigate('Horoscope')} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Stepper current={9} total={16} />
-        <Text style={styles.title}>Your{'\n'}family</Text>
+        <Text style={styles.title}>Your family</Text>
+        <Text style={styles.sub}>Family matters in matchmaking. Add what you're comfortable sharing.</Text>
+
+        <Field label="Father's profession" value={fatherProf} onChangeText={setFatherProf} placeholder="e.g. Engineer, Business…" />
+        <Field label="Mother's profession" value={motherProf} onChangeText={setMotherProf} placeholder="e.g. Teacher, Homemaker…" />
 
         <View style={styles.row}>
-          <View style={styles.halfField}>
-            <Text style={styles.fieldLabel}>FATHER'S PROFESSION</Text>
-            <TextInput
-              style={styles.input}
-              value={fatherProf}
-              onChangeText={setFatherProf}
-              placeholder="e.g. Engineer, Business..."
-              placeholderTextColor={T.mute}
-            />
+          <View style={{ flex: 1 }}>
+            <Field label="Brothers" value={brothers} onChangeText={setBrothers} keyboardType="number-pad" mono />
           </View>
-          <View style={styles.halfField}>
-            <Text style={styles.fieldLabel}>MOTHER'S PROFESSION</Text>
-            <TextInput
-              style={styles.input}
-              value={motherProf}
-              onChangeText={setMotherProf}
-              placeholder="e.g. Teacher, Homemaker..."
-              placeholderTextColor={T.mute}
-            />
+          <View style={{ flex: 1 }}>
+            <Field label="Sisters" value={sisters} onChangeText={setSisters} keyboardType="number-pad" mono />
           </View>
         </View>
 
-        <View style={styles.fieldWrap}>
-          <Text style={styles.fieldLabel}>SIBLINGS</Text>
-          <TextInput
-            style={styles.input}
-            value={siblings}
-            onChangeText={setSiblings}
-            placeholder="e.g. 1 sister in the US..."
-            placeholderTextColor={T.mute}
-          />
-        </View>
-
-        <View style={styles.fieldWrap}>
-          <Text style={styles.fieldLabel}>FAMILY BASED IN</Text>
-          <TextInput
-            style={styles.input}
-            value={familyLoc}
-            onChangeText={setFamilyLoc}
-            placeholder="e.g. Hyderabad, NJ..."
-            placeholderTextColor={T.mute}
-          />
-        </View>
+        <Field label="Family currently lives in" value={familyLoc} onChangeText={setFamilyLoc} placeholder="City, Country" />
 
         <TouchableOpacity style={styles.copilotCard} activeOpacity={0.7}>
           <View style={styles.copilotIcon}>
@@ -91,20 +56,14 @@ export default function FamilyScreen() {
           </View>
           <View style={styles.copilotText}>
             <Text style={styles.copilotTitle}>Add a parent co-pilot</Text>
-            <Text style={styles.copilotSub}>
-              Let a trusted family member help search and vet profiles on your behalf
-            </Text>
+            <Text style={styles.copilotSub}>Let them help review matches</Text>
           </View>
-          <View style={styles.plusCircle}>
-            <PlusIcon />
+          <View style={styles.laterChip}>
+            <Text style={styles.laterText}>Later</Text>
           </View>
         </TouchableOpacity>
 
-        <Primary
-          label="Continue"
-          onPress={() => navigation.navigate('Horoscope')}
-          style={{ marginTop: 24 }}
-        />
+        <Primary label="Continue" onPress={() => navigation.navigate('Horoscope')} style={{ marginTop: 24 }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -113,76 +72,24 @@ export default function FamilyScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: T.bg },
   content: { paddingHorizontal: 24, paddingBottom: 40 },
-  title: {
-    fontFamily: FONTS.display,
-    fontSize: 36,
-    color: T.ink,
-    lineHeight: 44,
-    marginBottom: 28,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 16,
-  },
-  halfField: { flex: 1 },
-  fieldWrap: { marginBottom: 16 },
-  fieldLabel: {
-    fontFamily: FONTS.mono,
-    fontSize: 10,
-    letterSpacing: 1.2,
-    color: T.mute,
-    textTransform: 'uppercase',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: T.field,
-    borderWidth: 1,
-    borderColor: T.hair,
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 15,
-    color: T.ink,
-  },
+  title: { fontFamily: FONTS.display, fontSize: 36, color: T.ink, marginBottom: 6 },
+  sub: { fontSize: 14, color: T.mute, marginBottom: 24, lineHeight: 20 },
+  row: { flexDirection: 'row', gap: 12 },
   copilotCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1.5,
-    borderColor: T.accent,
-    borderStyle: 'dashed',
-    borderRadius: 16,
-    padding: 16,
-    gap: 12,
-    marginTop: 8,
+    flexDirection: 'row', alignItems: 'center',
+    borderWidth: 1, borderColor: T.hair, borderRadius: 16,
+    padding: 16, gap: 12, marginTop: 8,
   },
   copilotIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: 44, height: 44, borderRadius: 12,
+    backgroundColor: T.field, justifyContent: 'center', alignItems: 'center',
   },
   copilotText: { flex: 1 },
-  copilotTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: T.accent,
+  copilotTitle: { fontSize: 14, fontWeight: '600', color: T.ink2 },
+  copilotSub: { fontSize: 12, color: T.mute, marginTop: 2 },
+  laterChip: {
+    paddingHorizontal: 12, paddingVertical: 6,
+    borderRadius: 100, borderWidth: 1, borderColor: T.hair2,
   },
-  copilotSub: {
-    fontSize: 12,
-    color: T.mute,
-    marginTop: 3,
-    lineHeight: 18,
-  },
-  plusCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    borderWidth: 1.5,
-    borderColor: T.accent,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  laterText: { fontSize: 12, color: T.mute },
 });
