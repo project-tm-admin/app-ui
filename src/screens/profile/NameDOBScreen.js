@@ -34,7 +34,7 @@ export default function NameDOBScreen() {
     <SafeAreaView style={styles.safe}>
       <TopBar />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={2} total={16} />
+        <Stepper current={1} total={14} />
         <Text style={styles.title}>Your name &amp; birthday</Text>
         <Text style={styles.sub}>This is how matches will see you. You can't change your birthday later.</Text>
 

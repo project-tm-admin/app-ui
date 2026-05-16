@@ -55,7 +55,7 @@ export default function AboutScreen() {
     <SafeAreaView style={styles.safe}>
       <TopBar onSkip={() => navigation.navigate('Preferences')} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={13} total={16} />
+        <Stepper current={12} total={14} />
         <Text style={styles.title}>Tell your{'\n'}story</Text>
         <Text style={styles.subtitle}>A prompt you answer in your own words</Text>
 

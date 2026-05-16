@@ -26,21 +26,20 @@ export default function IndiaOriginScreen() {
     <SafeAreaView style={styles.safe}>
       <TopBar onSkip={() => navigation.navigate('Religion')} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={5} total={16} />
+        <Stepper current={4} total={14} />
         <Text style={styles.title}>Roots in India</Text>
         <Text style={styles.sub}>Used to find culturally-aligned matches. You control what's shown.</Text>
 
-        <Text style={styles.sectionLabel}>Home state</Text>
+        <Text style={styles.sectionLabel}>HOME STATE</Text>
         <View style={styles.chipsWrap}>
           {STATES.map(s => (
             <Chip key={s} label={s} selected={homeState === s} onPress={() => setHomeState(s)} />
           ))}
         </View>
 
-        <Text style={styles.sectionLabel}>District</Text>
         <Field label="District" value={district} onChangeText={setDistrict} placeholder="e.g. Krishna, Guntur…" />
 
-        <Text style={styles.sectionLabel}>Mother tongue</Text>
+        <Text style={styles.sectionLabel}>MOTHER TONGUE</Text>
         <View style={styles.chipsWrap}>
           {TONGUES.map(t => (
             <Chip key={t} label={t} selected={tongues.includes(t)} onPress={() => toggleTongue(t)} />
@@ -48,7 +47,6 @@ export default function IndiaOriginScreen() {
         </View>
         <Text style={styles.hint}>• Pick all that apply — primary first.</Text>
 
-        <Text style={styles.sectionLabel}>Community</Text>
         <Field label="Sub-caste · optional" value={community} onChangeText={setCommunity} suffix="Private" />
 
         <Primary label="Continue" onPress={() => navigation.navigate('Religion')} style={{ marginTop: 8 }} />

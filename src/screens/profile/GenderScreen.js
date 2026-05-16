@@ -45,10 +45,11 @@ export default function GenderScreen() {
     <SafeAreaView style={styles.safe}>
       <TopBar onSkip={() => navigation.navigate('USLocation')} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={3} total={16} />
+        <Stepper current={2} total={14} />
         <Text style={styles.title}>Tell us{'\n'}about you</Text>
+        <Text style={styles.subtitle}>You can update your preferences any time.</Text>
 
-        <Text style={styles.sectionLabel}>I am</Text>
+        <Text style={styles.sectionLabel}>I AM</Text>
         <CardRow
           icon={<WomanIcon />}
           title="Woman"
@@ -68,7 +69,7 @@ export default function GenderScreen() {
           onPress={() => setIAm('Non-binary')}
         />
 
-        <Text style={[styles.sectionLabel, { marginTop: 20 }]}>Looking for</Text>
+        <Text style={[styles.sectionLabel, { marginTop: 20 }]}>LOOKING FOR</Text>
         <CardRow
           title="Men"
           selected={lookingFor === 'Men'}
@@ -103,14 +104,20 @@ const styles = StyleSheet.create({
     fontSize: 36,
     color: T.ink,
     lineHeight: 44,
-    marginBottom: 28,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: T.mute,
+    marginBottom: 24,
+    lineHeight: 20,
   },
   sectionLabel: {
-    fontSize: 13,
-    fontWeight: '600',
+    fontFamily: FONTS.mono,
+    fontSize: 10,
+    letterSpacing: 1.2,
     color: T.mute,
     textTransform: 'uppercase',
-    letterSpacing: 0.8,
     marginBottom: 10,
   },
 });

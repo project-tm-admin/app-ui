@@ -24,7 +24,7 @@ export default function HoroscopeScreen() {
     <SafeAreaView style={styles.safe}>
       <TopBar onSkip={() => navigation.navigate('Diet')} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={10} total={16} />
+        <Stepper current={9} total={14} />
         <Text style={styles.title}>Birth details for horoscope</Text>
         <Text style={styles.sub}>Optional. We'll generate a Jathakam you can share with family.</Text>
 

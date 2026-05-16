@@ -42,7 +42,7 @@ export default function DietScreen() {
     <SafeAreaView style={styles.safe}>
       <TopBar onSkip={() => navigation.navigate('Photos')} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={11} total={16} />
+        <Stepper current={10} total={14} />
         <Text style={styles.title}>Lifestyle</Text>
         <Text style={styles.subtitle}>Help your match understand your daily habits</Text>
 

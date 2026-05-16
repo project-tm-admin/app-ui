@@ -32,7 +32,7 @@ export default function FamilyScreen() {
     <SafeAreaView style={styles.safe}>
       <TopBar onSkip={() => navigation.navigate('Horoscope')} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={9} total={16} />
+        <Stepper current={8} total={14} />
         <Text style={styles.title}>Your family</Text>
         <Text style={styles.sub}>Family matters in matchmaking. Add what you're comfortable sharing.</Text>
 

@@ -44,7 +44,7 @@ export default function ReligionScreen() {
     <SafeAreaView style={styles.safe}>
       <TopBar onSkip={() => navigation.navigate('Education')} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={6} total={16} />
+        <Stepper current={5} total={14} />
         <Text style={styles.title}>Faith &{'\n'}family lineage</Text>
 
         <Text style={styles.sectionLabel}>RELIGION</Text>

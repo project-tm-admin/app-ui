@@ -37,7 +37,7 @@ export default function VisaScreen() {
     <SafeAreaView style={styles.safe}>
       <TopBar onSkip={() => navigation.navigate('Family')} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={8} total={16} />
+        <Stepper current={7} total={14} />
         <Text style={styles.title}>Your status{'\n'}in the U.S.</Text>
 
         {VISA_TYPES.map(v => (

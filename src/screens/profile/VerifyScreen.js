@@ -74,7 +74,7 @@ export default function VerifyScreen() {
     <SafeAreaView style={styles.safe}>
       <TopBar showBack={false} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={16} total={16} />
+        <Stepper current={14} total={14} />
 
         <BigAvatar />
 

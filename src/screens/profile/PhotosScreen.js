@@ -88,7 +88,7 @@ export default function PhotosScreen() {
     <SafeAreaView style={styles.safe}>
       <TopBar onSkip={() => navigation.navigate('About')} skipLabel="Skip" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={12} total={16} />
+        <Stepper current={11} total={14} />
         <Text style={styles.title}>Add your{'\n'}photos</Text>
 
         {/* Progress indicator */}

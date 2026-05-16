@@ -36,7 +36,7 @@ export default function EducationScreen() {
     <SafeAreaView style={styles.safe}>
       <TopBar />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={7} total={16} />
+        <Stepper current={6} total={14} />
         <Text style={styles.title}>Education &amp; work</Text>
         <Text style={styles.sub}>What you do matters here. Income range is private — we use it for matching only.</Text>
 

@@ -39,7 +39,7 @@ export default function USLocationScreen() {
     <SafeAreaView style={styles.safe}>
       <TopBar onSkip={() => navigation.navigate('IndiaOrigin')} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={4} total={16} />
+        <Stepper current={3} total={14} />
         <Text style={styles.title}>Where in{'\n'}the U.S.?</Text>
 
         <View style={styles.searchBar}>

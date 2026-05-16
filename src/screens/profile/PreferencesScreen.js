@@ -62,7 +62,7 @@ export default function PreferencesScreen() {
     <SafeAreaView style={styles.safe}>
       <TopBar onSkip={() => navigation.navigate('Verify')} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={14} total={16} />
+        <Stepper current={13} total={14} />
         <Text style={styles.title}>Who are you{'\n'}looking for?</Text>
         <Text style={styles.subtitle}>These are soft preferences — we'll show great matches even outside them</Text>
 
