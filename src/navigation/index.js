@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path, Circle } from 'react-native-svg';
 import { T, FONTS } from '../theme';
 
@@ -99,8 +100,10 @@ function CustomTabBar({ state, descriptors, navigation }) {
     { key: 'Profile', icon: ProfileIcon, label: 'PROFILE' },
   ];
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={tabStyles.tabBar}>
+    <View style={[tabStyles.tabBar, { paddingBottom: insets.bottom + 4 }]}>
       {state.routes.map((route, index) => {
         const focused = state.index === index;
         const config = TAB_CONFIG.find(c => c.key === route.name) || TAB_CONFIG[0];
@@ -141,6 +144,7 @@ function MainTabs() {
 
 export default function Navigation() {
   return (
+    <SafeAreaProvider>
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
@@ -192,6 +196,7 @@ export default function Navigation() {
         <Stack.Screen name="ProfileVisitors" component={ProfileVisitorsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
 
@@ -202,7 +207,6 @@ const tabStyles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: T.hair,
     paddingTop: 8,
-    paddingBottom: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.06,
