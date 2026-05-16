@@ -30,7 +30,7 @@ export default function Field({
 
 const styles = StyleSheet.create({
   box: {
-    backgroundColor: T.field,
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: T.hair,
     borderRadius: 16,

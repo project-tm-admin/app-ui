@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   title: { fontFamily: FONTS.display, fontSize: 36, color: T.ink, marginBottom: 6, marginTop: 4 },
   sub: { fontSize: 14, color: T.mute, marginBottom: 24, lineHeight: 20 },
   passBox: {
-    backgroundColor: T.field, borderWidth: 1, borderColor: T.hair,
+    backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: T.hair,
     borderRadius: 16, paddingHorizontal: 16, paddingTop: 10, paddingBottom: 12, marginBottom: 12,
   },
   passHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
