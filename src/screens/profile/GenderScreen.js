@@ -27,14 +27,6 @@ function ManIcon() {
   );
 }
 
-function NonBinaryIcon() {
-  return (
-    <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
-      <Circle cx="12" cy="10" r="4" stroke={T.accent} strokeWidth={1.8} />
-      <Path d="M12 14v6M9 17h6M8 6L5 3M16 6l3-3" stroke={T.accent} strokeWidth={1.8} strokeLinecap="round" />
-    </Svg>
-  );
-}
 
 export default function GenderScreen() {
   const navigation = useNavigation();
@@ -53,12 +45,9 @@ export default function GenderScreen() {
           <Text style={styles.sectionLabel}>I AM</Text>
           <CardRow compact icon={<WomanIcon />} title="Woman" selected={iAm === 'Woman'} onPress={() => setIAm('Woman')} />
           <CardRow compact icon={<ManIcon />} title="Man" selected={iAm === 'Man'} onPress={() => setIAm('Man')} />
-          <CardRow compact icon={<NonBinaryIcon />} title="Non-binary" selected={iAm === 'Non-binary'} onPress={() => setIAm('Non-binary')} />
-
           <Text style={[styles.sectionLabel, { marginTop: 12 }]}>LOOKING FOR</Text>
           <CardRow compact title="Men" selected={lookingFor === 'Men'} onPress={() => setLookingFor('Men')} />
           <CardRow compact title="Women" selected={lookingFor === 'Women'} onPress={() => setLookingFor('Women')} />
-          <CardRow compact title="Everyone" selected={lookingFor === 'Everyone'} onPress={() => setLookingFor('Everyone')} />
         </View>
         <Primary label="Continue" onPress={() => navigation.navigate('USLocation')} />
       </View>
