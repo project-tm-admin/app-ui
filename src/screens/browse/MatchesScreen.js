@@ -1,72 +1,71 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import Svg, { Path, Circle, Polygon } from 'react-native-svg';
+import Svg, { Path, Circle, Line, Rect, Defs, Pattern } from 'react-native-svg';
+import { LinearGradient } from 'expo-linear-gradient';
 import { T, FONTS } from '../../theme';
-import PhotoPlaceholder from '../../components/PhotoPlaceholder';
 
 const { width } = Dimensions.get('window');
 const CARD_W = width - 32;
 
 function BellIcon() {
   return (
-    <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+    <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
       <Path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" stroke={T.ink} strokeWidth={1.8} strokeLinecap="round" />
       <Path d="M13.73 21a2 2 0 01-3.46 0" stroke={T.ink} strokeWidth={1.8} strokeLinecap="round" />
-      <Circle cx="18" cy="7" r="4" fill={T.accent} />
     </Svg>
   );
 }
 
-function XIcon() {
+function TrendUpIcon() {
   return (
-    <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
-      <Path d="M18 6L6 18M6 6l12 12" stroke="#E53E3E" strokeWidth={2.5} strokeLinecap="round" />
+    <Svg width={13} height={13} viewBox="0 0 24 24" fill="none">
+      <Path d="M23 6l-9.5 9.5-5-5L1 18" stroke="#22863a" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M17 6h6v6" stroke="#22863a" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   );
 }
 
-function StarIcon() {
+function CheckIcon() {
   return (
-    <Svg width={22} height={22} viewBox="0 0 24 24">
-      <Path
-        d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z"
-        fill="#D4A017"
-        stroke="#D4A017"
-        strokeWidth={1}
-      />
+    <Svg width={12} height={12} viewBox="0 0 12 12" fill="none">
+      <Circle cx="6" cy="6" r="6" fill={T.verify} />
+      <Path d="M3.5 6l1.8 1.8L8.5 4" stroke="white" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   );
 }
 
-function HeartIcon() {
+function GridIcon() {
   return (
-    <Svg width={22} height={22} viewBox="0 0 24 24">
-      <Path
-        d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
-        fill={T.accent}
-        stroke={T.accent}
-        strokeWidth={1}
-      />
+    <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+      <Rect x="3" y="3" width="7" height="7" rx="1" stroke="white" strokeWidth={1.8} />
+      <Rect x="14" y="3" width="7" height="7" rx="1" stroke="white" strokeWidth={1.8} />
+      <Rect x="3" y="14" width="7" height="7" rx="1" stroke="white" strokeWidth={1.8} />
+      <Rect x="14" y="14" width="7" height="7" rx="1" stroke="white" strokeWidth={1.8} />
     </Svg>
   );
 }
 
-function VerifyDotSm() {
+function ChevronDown() {
   return (
-    <View style={styles.verifyDot}>
-      <Svg width={10} height={10} viewBox="0 0 10 10">
-        <Circle cx="5" cy="5" r="5" fill={T.verify} />
-        <Path d="M3 5l1.5 1.5L7 3.5" stroke="white" strokeWidth={1.3} strokeLinecap="round" strokeLinejoin="round" />
-      </Svg>
-    </View>
+    <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+      <Path d="M6 9l6 6 6-6" stroke={T.mute} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+function ChevronUp() {
+  return (
+    <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+      <Path d="M18 15l-6-6-6 6" stroke={T.mute} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
   );
 }
 
 const WHY_REASONS = [
-  { icon: '🎓', text: 'Both have US master\'s degrees' },
-  { icon: '📍', text: 'Bay Area — 12 miles apart' },
+  { icon: '🎓', text: "Both have US master's degrees" },
+  { icon: '📍', text: 'Dallas — same metro area' },
   { icon: '🙏', text: 'Hindu · Kamma community match' },
   { icon: '⭐', text: 'Compatible birth stars (Rohini–Mrigashira)' },
 ];
@@ -74,7 +73,7 @@ const WHY_REASONS = [
 const STATS = [
   { label: 'HEIGHT', value: "5'6\"" },
   { label: 'RELIGION', value: 'Hindu · Kamma' },
-  { label: 'INCOME', value: '$185K/yr' },
+  { label: 'INCOME', value: '$185K / yr' },
   { label: 'COMPLEXION', value: 'Wheatish' },
 ];
 
@@ -84,279 +83,386 @@ export default function MatchesScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.dateLabel}>Friday, May 16</Text>
-            <Text style={styles.namaste}>Namaste, Anika</Text>
+      {/* ── Header ── */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <Text style={styles.dateLabel}>TUESDAY · MAY 5</Text>
+          <Text style={styles.namaste}>Namaste, Anika</Text>
+          <Text style={styles.tagline}>12 new matches handpicked for you today</Text>
+        </View>
+        <TouchableOpacity style={styles.bellBtn} activeOpacity={0.7}>
+          <BellIcon />
+          <View style={styles.bellDot} />
+        </TouchableOpacity>
+      </View>
+
+      {/* ── Intro row ── */}
+      <View style={styles.introRow}>
+        <Text style={styles.introLabel}>Today's introductions</Text>
+        <Text style={styles.introCount}>1 OF 5</Text>
+      </View>
+
+      {/* ── Match card ── */}
+      <TouchableOpacity
+        style={styles.matchCard}
+        onPress={() => navigation.navigate('MatchDetail')}
+        activeOpacity={0.97}
+      >
+        {/* Photo area */}
+        <View style={styles.photoArea}>
+          <LinearGradient
+            colors={['#C4956A', '#A87050', '#8A5A3C']}
+            start={{ x: 0.3, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+          {/* Diagonal stripe overlay on right portion */}
+          <View style={styles.stripeOverlay} pointerEvents="none">
+            {Array.from({ length: 20 }).map((_, i) => (
+              <View
+                key={i}
+                style={[styles.stripe, { top: i * 22 - 40, transform: [{ rotate: '-45deg' }] }]}
+              />
+            ))}
           </View>
-          <TouchableOpacity style={styles.bellBtn}>
-            <BellIcon />
+
+          {/* Match % badge — top left */}
+          <View style={styles.matchBadge}>
+            <TrendUpIcon />
+            <Text style={styles.matchBadgeText}>87% Match</Text>
+          </View>
+
+          {/* Verified badge — top right */}
+          <View style={styles.verifiedBadge}>
+            <CheckIcon />
+            <Text style={styles.verifiedBadgeText}>ID + FACE VERIFIED</Text>
+          </View>
+
+          {/* Photos count — bottom left */}
+          <View style={styles.photosCount}>
+            <GridIcon />
+            <Text style={styles.photosCountText}>5 photos</Text>
+          </View>
+        </View>
+
+        {/* Card info */}
+        <View style={styles.cardInfo}>
+          <Text style={styles.matchName}>Anjali R., 28</Text>
+          <Text style={styles.matchLocation}>Dallas, TX · Krishna District</Text>
+
+          <View style={styles.statsGrid}>
+            {STATS.map((s, i) => (
+              <View key={i} style={styles.statItem}>
+                <Text style={styles.statLabel}>{s.label}</Text>
+                <Text style={styles.statValue}>{s.value}</Text>
+              </View>
+            ))}
+          </View>
+
+          <TouchableOpacity
+            style={styles.moreAboutRow}
+            onPress={() => setShowWhy(v => !v)}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.moreAboutText}>MORE ABOUT ANJALI</Text>
+            {showWhy ? <ChevronUp /> : <ChevronDown />}
           </TouchableOpacity>
-        </View>
 
-        {/* Intro label */}
-        <View style={styles.introRow}>
-          <Text style={styles.introLabel}>Today's introductions</Text>
-          <Text style={styles.introCount}>1 of 5</Text>
-        </View>
-
-        {/* Match card */}
-        <TouchableOpacity
-          style={styles.matchCard}
-          onPress={() => navigation.navigate('MatchDetail')}
-          activeOpacity={0.95}
-        >
-          <PhotoPlaceholder width={CARD_W} height={380} label="Anjali R." style={{ borderRadius: 0 }} />
-
-          {/* Top badges */}
-          <View style={styles.topBadge}>
-            <View style={styles.premiumBadge}>
-              <Text style={styles.premiumText}>★ PREMIUM</Text>
-            </View>
-          </View>
-
-          {/* Profile info overlay */}
-          <View style={styles.cardInfo}>
-            <View style={styles.nameRow}>
-              <Text style={styles.matchName}>Anjali R., 28</Text>
-              <VerifyDotSm />
-            </View>
-
-            {/* 2x2 stats grid */}
-            <View style={styles.statsGrid}>
-              {STATS.map((s, i) => (
-                <View key={i} style={styles.statItem}>
-                  <Text style={styles.statLabel}>{s.label}</Text>
-                  <Text style={styles.statValue}>{s.value}</Text>
+          {showWhy && (
+            <View style={styles.whyPanel}>
+              {WHY_REASONS.map((r, i) => (
+                <View key={i} style={styles.whyRow}>
+                  <Text style={styles.whyIcon}>{r.icon}</Text>
+                  <Text style={styles.whyText}>{r.text}</Text>
                 </View>
               ))}
             </View>
+          )}
+        </View>
+      </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.moreAboutRow}
-              onPress={() => setShowWhy(v => !v)}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.moreAboutText}>More about Anjali ↓</Text>
-            </TouchableOpacity>
+      {/* ── Page dots ── */}
+      <View style={styles.dotsRow}>
+        {[0, 1, 2, 3, 4].map(i => (
+          <View key={i} style={[styles.dot, i === 0 && styles.dotActive]} />
+        ))}
+      </View>
 
-            {showWhy && (
-              <View style={styles.whyPanel}>
-                <Text style={styles.whyTitle}>Why we matched you</Text>
-                {WHY_REASONS.map((r, i) => (
-                  <View key={i} style={styles.whyRow}>
-                    <Text style={styles.whyIcon}>{r.icon}</Text>
-                    <Text style={styles.whyText}>{r.text}</Text>
-                  </View>
-                ))}
-              </View>
-            )}
+      {/* ── Action buttons — always visible ── */}
+      <View style={styles.actionRow}>
+        <TouchableOpacity style={styles.actionBtn} activeOpacity={0.8}>
+          <View style={[styles.actionCircle, styles.passCircle]}>
+            <Svg width={26} height={26} viewBox="0 0 24 24" fill="none">
+              <Path d="M18 6L6 18M6 6l12 12" stroke="#E53E3E" strokeWidth={2.5} strokeLinecap="round" />
+            </Svg>
           </View>
+          <Text style={[styles.actionLabel, { color: '#E53E3E' }]}>Pass</Text>
         </TouchableOpacity>
 
-        {/* Page dots */}
-        <View style={styles.dotsRow}>
-          {[0, 1, 2, 3, 4].map(i => (
-            <View key={i} style={[styles.dot, i === 0 && styles.dotActive]} />
-          ))}
-        </View>
+        <TouchableOpacity style={styles.actionBtn} activeOpacity={0.8}>
+          <View style={[styles.actionCircle, styles.saveCircle]}>
+            <Svg width={26} height={26} viewBox="0 0 24 24">
+              <Path
+                d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z"
+                fill="#D4A017" stroke="#D4A017" strokeWidth={0.5}
+              />
+            </Svg>
+          </View>
+          <Text style={[styles.actionLabel, { color: '#B8860B' }]}>Save</Text>
+        </TouchableOpacity>
 
-        {/* More tomorrow card */}
-        <View style={styles.tomorrowCard}>
-          <Text style={styles.tomorrowText}>7 more arriving tomorrow</Text>
-          <Text style={styles.tomorrowSub}>We carefully curate your matches each day</Text>
-        </View>
-
-        {/* Action row */}
-        <View style={styles.actionRow}>
-          <TouchableOpacity style={styles.actionBtn}>
-            <View style={[styles.actionCircle, styles.passCircle]}>
-              <XIcon />
-            </View>
-            <Text style={[styles.actionLabel, { color: '#E53E3E' }]}>Pass</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionBtn}>
-            <View style={[styles.actionCircle, styles.saveCircle]}>
-              <StarIcon />
-            </View>
-            <Text style={[styles.actionLabel, { color: '#D4A017' }]}>Save</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionBtn}>
-            <View style={[styles.actionCircle, styles.heartCircle]}>
-              <HeartIcon />
-            </View>
-            <Text style={[styles.actionLabel, { color: T.accent }]}>Interested</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={{ height: 100 }} />
-      </ScrollView>
+        <TouchableOpacity style={styles.actionBtn} activeOpacity={0.8}>
+          <View style={[styles.actionCircle, styles.heartCircle]}>
+            <Svg width={26} height={26} viewBox="0 0 24 24">
+              <Path
+                d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
+                fill={T.accentSoft} stroke={T.accent} strokeWidth={1.5}
+              />
+            </Svg>
+          </View>
+          <Text style={[styles.actionLabel, { color: T.accent }]}>Interested</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: T.bg },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
+    paddingTop: 10,
+    paddingBottom: 8,
   },
+  headerLeft: { flex: 1, marginRight: 12 },
   dateLabel: {
     fontFamily: FONTS.mono,
     fontSize: 11,
     color: T.mute,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
+    letterSpacing: 1,
+    marginBottom: 2,
   },
   namaste: {
     fontFamily: FONTS.display,
-    fontSize: 26,
+    fontSize: 28,
     color: T.ink,
-    marginTop: 2,
+    marginBottom: 2,
+  },
+  tagline: {
+    fontSize: 13,
+    color: T.mute,
+    lineHeight: 18,
   },
   bellBtn: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: T.field,
+    borderWidth: 1,
+    borderColor: T.hair,
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative',
   },
+  bellDot: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#E53E3E',
+    borderWidth: 1.5,
+    borderColor: '#fff',
+  },
+
   introRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    marginBottom: 12,
+    marginBottom: 10,
   },
   introLabel: {
-    fontSize: 13,
-    color: T.mute,
-    fontWeight: '500',
+    fontFamily: FONTS.display,
+    fontSize: 18,
+    color: T.ink,
   },
   introCount: {
     fontFamily: FONTS.mono,
-    fontSize: 12,
-    color: T.accent,
-    fontWeight: '700',
+    fontSize: 11,
+    color: T.mute,
+    letterSpacing: 0.8,
   },
+
   matchCard: {
     marginHorizontal: 16,
     borderRadius: 20,
     overflow: 'hidden',
-    backgroundColor: T.field,
+    backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
+    shadowOpacity: 0.10,
+    shadowRadius: 14,
     elevation: 6,
   },
-  topBadge: {
+
+  photoArea: {
+    height: 240,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  stripeOverlay: {
     position: 'absolute',
-    top: 14,
-    left: 14,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: '30%',
+    overflow: 'hidden',
   },
-  premiumBadge: {
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
+  stripe: {
+    position: 'absolute',
+    left: -60,
+    right: -60,
+    height: 10,
+    backgroundColor: 'rgba(255,255,255,0.12)',
   },
-  premiumText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#D4A017',
-    letterSpacing: 0.5,
-  },
-  cardInfo: {
-    backgroundColor: T.bg,
-    padding: 16,
-  },
-  nameRow: {
+
+  matchBadge: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginBottom: 12,
+    gap: 5,
+    backgroundColor: '#E6F4EA',
+    borderRadius: 100,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  matchBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#1A7A30',
+  },
+
+  verifiedBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: '#E6F4EA',
+    borderRadius: 100,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  verifiedBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#1A7A30',
+  },
+
+  photosCount: {
+    position: 'absolute',
+    bottom: 12,
+    left: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    borderRadius: 100,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  photosCountText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#fff',
+  },
+
+  cardInfo: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingTop: 14,
+    paddingBottom: 12,
   },
   matchName: {
     fontFamily: FONTS.display,
-    fontSize: 22,
+    fontSize: 24,
     color: T.ink,
-    fontWeight: '600',
+    marginBottom: 2,
   },
-  verifyDot: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    overflow: 'hidden',
+  matchLocation: {
+    fontSize: 13,
+    color: T.mute,
+    marginBottom: 12,
   },
+
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
-    marginBottom: 12,
+    marginBottom: 10,
   },
   statItem: {
     width: '47%',
     backgroundColor: T.field,
     borderRadius: 10,
-    padding: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
   },
   statLabel: {
     fontFamily: FONTS.mono,
     fontSize: 9,
     letterSpacing: 1,
     color: T.mute,
-    textTransform: 'uppercase',
     marginBottom: 3,
   },
   statValue: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: T.ink2,
+    fontSize: 14,
+    fontWeight: '500',
+    color: T.ink,
   },
+
   moreAboutRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 6,
+    paddingVertical: 8,
+    borderTopWidth: 1,
+    borderTopColor: T.hair,
+    marginTop: 2,
   },
   moreAboutText: {
-    fontSize: 13,
-    color: T.accent,
-    fontWeight: '500',
+    fontFamily: FONTS.mono,
+    fontSize: 10,
+    letterSpacing: 1.2,
+    color: T.mute,
   },
   whyPanel: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    padding: 14,
-    marginTop: 8,
-  },
-  whyTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: T.accent,
-    marginBottom: 10,
+    paddingTop: 8,
+    gap: 8,
   },
   whyRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 6,
+    gap: 10,
   },
-  whyIcon: { fontSize: 15 },
+  whyIcon: { fontSize: 14 },
   whyText: { fontSize: 13, color: T.ink2, flex: 1 },
+
   dotsRow: {
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     gap: 6,
-    marginVertical: 16,
+    paddingVertical: 12,
   },
   dot: {
     width: 6,
@@ -366,53 +472,41 @@ const styles = StyleSheet.create({
   },
   dotActive: {
     width: 20,
-    backgroundColor: T.accent,
+    backgroundColor: T.ink,
+    borderRadius: 3,
   },
-  tomorrowCard: {
-    marginHorizontal: 16,
-    backgroundColor: T.field,
-    borderRadius: 16,
-    padding: 16,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  tomorrowText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: T.ink,
-    marginBottom: 4,
-  },
-  tomorrowSub: {
-    fontSize: 12,
-    color: T.mute,
-  },
+
   actionRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 32,
+    alignItems: 'center',
+    gap: 28,
     paddingHorizontal: 20,
+    paddingVertical: 10,
+    paddingBottom: 16,
   },
   actionBtn: {
     alignItems: 'center',
     gap: 6,
   },
   actionCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 68,
+    height: 68,
+    borderRadius: 34,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
     elevation: 4,
   },
   passCircle: { backgroundColor: '#FFF0F0' },
   saveCircle: { backgroundColor: '#FFFAED' },
-  heartCircle: { backgroundColor: '#FFFFFF' },
+  heartCircle: { backgroundColor: '#FFF0F3' },
   actionLabel: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
+    letterSpacing: 0.3,
   },
 });
