@@ -1,9 +1,9 @@
 export const T = {
   bg: '#FFFFFF',
   surface: '#FFFFFF',
-  field: '#F7EFE4',
+  field: '#F5F5F5',
   accent: '#8B1F2E',
-  accentSoft: '#F3C9B5',
+  accentSoft: '#F9E8EA',
   accentInk: '#6E1622',
   ink: '#000000',
   ink2: '#222222',

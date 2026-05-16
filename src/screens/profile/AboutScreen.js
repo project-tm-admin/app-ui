@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     borderWidth: 1,
     borderColor: T.accentSoft,
-    backgroundColor: '#FBF3F0',
+    backgroundColor: '#FFFFFF',
   },
   aiChipText: {
     fontSize: 12,

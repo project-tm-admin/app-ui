@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   },
   selectedRow: {
     borderColor: T.accent,
-    backgroundColor: '#FBF3F0',
+    backgroundColor: '#FFFFFF',
   },
   iconWrap: {
     marginRight: 14,

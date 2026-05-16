@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: '#FBF3F0',
+    backgroundColor: '#FFFFFF',
     marginHorizontal: 16,
     borderRadius: 14,
     marginBottom: 16,

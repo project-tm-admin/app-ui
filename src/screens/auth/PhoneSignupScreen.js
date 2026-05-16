@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 10,
-    backgroundColor: '#FFF5EE',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: T.accentSoft,
     borderRadius: 14,

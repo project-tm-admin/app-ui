@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   actionCta: {
-    backgroundColor: '#FBF3F0',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 100,

@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   whyPanel: {
-    backgroundColor: '#FBF3F0',
+    backgroundColor: '#FFFFFF',
     borderRadius: 14,
     padding: 14,
     marginTop: 8,
@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
   },
   passCircle: { backgroundColor: '#FFF0F0' },
   saveCircle: { backgroundColor: '#FFFAED' },
-  heartCircle: { backgroundColor: '#FBF3F0' },
+  heartCircle: { backgroundColor: '#FFFFFF' },
   actionLabel: {
     fontSize: 12,
     fontWeight: '600',

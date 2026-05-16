@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
   detectedSelected: {
     borderColor: T.accent,
-    backgroundColor: '#FBF3F0',
+    backgroundColor: '#FFFFFF',
   },
   locationIconWrap: {
     width: 40,
