@@ -126,18 +126,6 @@ export default function MatchesScreen() {
             ))}
           </View>
 
-          {/* Match % badge — top left */}
-          <View style={styles.matchBadge}>
-            <TrendUpIcon />
-            <Text style={styles.matchBadgeText}>87% Match</Text>
-          </View>
-
-          {/* Verified badge — top right */}
-          <View style={styles.verifiedBadge}>
-            <CheckIcon />
-            <Text style={styles.verifiedBadgeText}>ID + FACE VERIFIED</Text>
-          </View>
-
           {/* Photos count — bottom left */}
           <View style={styles.photosCount}>
             <GridIcon />
