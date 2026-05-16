@@ -19,14 +19,14 @@ function CheckCircle({ selected }) {
   );
 }
 
-export default function CardRow({ icon, title, subtitle, selected, onPress, rightEl, style }) {
+export default function CardRow({ icon, title, subtitle, selected, onPress, rightEl, style, compact }) {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[styles.row, selected && styles.selectedRow, style]}
+      style={[styles.row, compact && styles.compactRow, selected && styles.selectedRow, style]}
       activeOpacity={0.7}
     >
-      {icon ? <View style={styles.iconWrap}>{icon}</View> : null}
+      {icon ? <View style={[styles.iconWrap, compact && styles.compactIconWrap]}>{icon}</View> : null}
       <View style={styles.textWrap}>
         <Text style={styles.title}>{title}</Text>
         {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
@@ -59,6 +59,16 @@ const styles = StyleSheet.create({
     backgroundColor: T.field,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  compactRow: {
+    padding: 10,
+    marginBottom: 8,
+  },
+  compactIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    marginRight: 12,
   },
   textWrap: {
     flex: 1,

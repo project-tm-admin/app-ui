@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import Svg, { Path, Circle } from 'react-native-svg';
@@ -44,73 +44,44 @@ export default function GenderScreen() {
   return (
     <SafeAreaView style={styles.safe}>
       <TopBar onSkip={() => navigation.navigate('USLocation')} />
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <View style={styles.outer}>
         <Stepper current={2} total={14} />
-        <Text style={styles.title}>Tell us{'\n'}about you</Text>
-        <Text style={styles.subtitle}>You can update your preferences any time.</Text>
+        <View style={styles.body}>
+          <Text style={styles.title}>Tell us about you</Text>
+          <Text style={styles.subtitle}>You can update your preferences any time.</Text>
 
-        <Text style={styles.sectionLabel}>I AM</Text>
-        <CardRow
-          icon={<WomanIcon />}
-          title="Woman"
-          selected={iAm === 'Woman'}
-          onPress={() => setIAm('Woman')}
-        />
-        <CardRow
-          icon={<ManIcon />}
-          title="Man"
-          selected={iAm === 'Man'}
-          onPress={() => setIAm('Man')}
-        />
-        <CardRow
-          icon={<NonBinaryIcon />}
-          title="Non-binary"
-          selected={iAm === 'Non-binary'}
-          onPress={() => setIAm('Non-binary')}
-        />
+          <Text style={styles.sectionLabel}>I AM</Text>
+          <CardRow compact icon={<WomanIcon />} title="Woman" selected={iAm === 'Woman'} onPress={() => setIAm('Woman')} />
+          <CardRow compact icon={<ManIcon />} title="Man" selected={iAm === 'Man'} onPress={() => setIAm('Man')} />
+          <CardRow compact icon={<NonBinaryIcon />} title="Non-binary" selected={iAm === 'Non-binary'} onPress={() => setIAm('Non-binary')} />
 
-        <Text style={[styles.sectionLabel, { marginTop: 20 }]}>LOOKING FOR</Text>
-        <CardRow
-          title="Men"
-          selected={lookingFor === 'Men'}
-          onPress={() => setLookingFor('Men')}
-        />
-        <CardRow
-          title="Women"
-          selected={lookingFor === 'Women'}
-          onPress={() => setLookingFor('Women')}
-        />
-        <CardRow
-          title="Everyone"
-          selected={lookingFor === 'Everyone'}
-          onPress={() => setLookingFor('Everyone')}
-        />
-
-        <Primary
-          label="Continue"
-          onPress={() => navigation.navigate('USLocation')}
-          style={{ marginTop: 24 }}
-        />
-      </ScrollView>
+          <Text style={[styles.sectionLabel, { marginTop: 12 }]}>LOOKING FOR</Text>
+          <CardRow compact title="Men" selected={lookingFor === 'Men'} onPress={() => setLookingFor('Men')} />
+          <CardRow compact title="Women" selected={lookingFor === 'Women'} onPress={() => setLookingFor('Women')} />
+          <CardRow compact title="Everyone" selected={lookingFor === 'Everyone'} onPress={() => setLookingFor('Everyone')} />
+        </View>
+        <Primary label="Continue" onPress={() => navigation.navigate('USLocation')} />
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: T.bg },
-  content: { paddingHorizontal: 24, paddingBottom: 40 },
+  outer: { flex: 1, paddingHorizontal: 24, paddingBottom: 24 },
+  body: { flex: 1 },
   title: {
     fontFamily: FONTS.display,
-    fontSize: 36,
+    fontSize: 26,
     color: T.ink,
-    lineHeight: 44,
-    marginBottom: 8,
+    lineHeight: 32,
+    marginBottom: 6,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 13,
     color: T.mute,
-    marginBottom: 24,
-    lineHeight: 20,
+    marginBottom: 16,
+    lineHeight: 18,
   },
   sectionLabel: {
     fontFamily: FONTS.mono,
@@ -118,6 +89,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
     color: T.mute,
     textTransform: 'uppercase',
-    marginBottom: 10,
+    marginBottom: 8,
   },
 });
