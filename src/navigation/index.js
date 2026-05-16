@@ -28,6 +28,9 @@ import PhotosScreen from '../screens/profile/PhotosScreen';
 import AboutScreen from '../screens/profile/AboutScreen';
 import PreferencesScreen from '../screens/profile/PreferencesScreen';
 import VerifyScreen from '../screens/profile/VerifyScreen';
+import MyProfileScreen from '../screens/profile/MyProfileScreen';
+import VerificationsScreen from '../screens/profile/VerificationsScreen';
+import ProfileVisitorsScreen from '../screens/profile/ProfileVisitorsScreen';
 
 // Browse screens
 import MatchesScreen from '../screens/browse/MatchesScreen';
@@ -44,19 +47,6 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 // Tab icons
-function HomeIcon({ focused }) {
-  return (
-    <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M3 12L12 4L21 12V20C21 20.5523 20.5523 21 20 21H15V15H9V21H4C3.44772 21 3 20.5523 3 20V12Z"
-        stroke={focused ? T.ink : T.mute}
-        strokeWidth={focused ? 2.2 : 1.6}
-        fill={focused ? T.field : 'none'}
-      />
-    </Svg>
-  );
-}
-
 function DiscoverIcon({ focused }) {
   return (
     <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
@@ -103,11 +93,10 @@ function ProfileIcon({ focused }) {
 
 function CustomTabBar({ state, descriptors, navigation }) {
   const TAB_CONFIG = [
-    { key: 'Home', icon: HomeIcon, label: 'Home' },
-    { key: 'Discover', icon: DiscoverIcon, label: 'Discover' },
-    { key: 'Matches', icon: MatchesIcon, label: 'Matches' },
-    { key: 'Inbox', icon: InboxIcon, label: 'Inbox' },
-    { key: 'Profile', icon: ProfileIcon, label: 'Profile' },
+    { key: 'Matches', icon: MatchesIcon, label: 'MATCHES' },
+    { key: 'Search', icon: DiscoverIcon, label: 'SEARCH' },
+    { key: 'Inbox', icon: InboxIcon, label: 'INBOX' },
+    { key: 'Profile', icon: ProfileIcon, label: 'PROFILE' },
   ];
 
   return (
@@ -136,35 +125,16 @@ function CustomTabBar({ state, descriptors, navigation }) {
   );
 }
 
-function HomePlaceholder() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: T.bg }}>
-      <Text style={{ fontFamily: FONTS.display, fontSize: 28, color: T.ink }}>Home</Text>
-      <Text style={{ fontSize: 14, color: T.mute, marginTop: 8 }}>Coming soon</Text>
-    </View>
-  );
-}
-
-function ProfilePlaceholder() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: T.bg }}>
-      <Text style={{ fontFamily: FONTS.display, fontSize: 28, color: T.ink }}>My Profile</Text>
-      <Text style={{ fontSize: 14, color: T.mute, marginTop: 8 }}>Anika Reddy</Text>
-    </View>
-  );
-}
-
 function MainTabs() {
   return (
     <Tab.Navigator
       tabBar={props => <CustomTabBar {...props} />}
       screenOptions={{ headerShown: false }}
     >
-      <Tab.Screen name="Home" component={HomePlaceholder} />
-      <Tab.Screen name="Discover" component={SearchScreen} />
       <Tab.Screen name="Matches" component={MatchesScreen} />
+      <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Inbox" component={InboxScreen} />
-      <Tab.Screen name="Profile" component={ProfilePlaceholder} />
+      <Tab.Screen name="Profile" component={MyProfileScreen} />
     </Tab.Navigator>
   );
 }
@@ -218,6 +188,8 @@ export default function Navigation() {
         <Stack.Screen name="Filters" component={FiltersScreen} />
         <Stack.Screen name="Chat" component={ChatScreen} />
         <Stack.Screen name="Call" component={CallScreen} />
+        <Stack.Screen name="Verifications" component={VerificationsScreen} />
+        <Stack.Screen name="ProfileVisitors" component={ProfileVisitorsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -245,13 +217,13 @@ const tabStyles = StyleSheet.create({
     position: 'relative',
   },
   tabLabel: {
-    fontSize: 10,
+    fontFamily: FONTS.mono,
+    fontSize: 9,
+    letterSpacing: 0.8,
     color: T.mute,
-    fontWeight: '400',
   },
   tabLabelActive: {
     color: T.ink,
-    fontWeight: '700',
   },
   tabDot: {
     position: 'absolute',
