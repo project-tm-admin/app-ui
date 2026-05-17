@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet, Dimensions,
   Animated, PanResponder,
@@ -155,22 +155,40 @@ export default function MatchesScreen() {
   const translateX = useRef(new Animated.Value(0)).current;
   // Ref so PanResponder closures always see the current index
   const indexRef = useRef(0);
+  // Direction the new card should enter from: 1 = from right, -1 = from left
+  const pendingEntryDir = useRef(null);
+
   useEffect(() => {
     indexRef.current = currentIndex;
     setShowWhy(false);
   }, [currentIndex]);
 
+  // Fires synchronously after render but before the native thread paints —
+  // positions the new card off-screen so it's never seen at the wrong place,
+  // then springs it in. This eliminates the gap between old card leaving and
+  // new card appearing.
+  useLayoutEffect(() => {
+    const dir = pendingEntryDir.current;
+    if (dir !== null) {
+      pendingEntryDir.current = null;
+      translateX.setValue(dir * (CARD_W + 48));
+      Animated.spring(translateX, {
+        toValue: 0,
+        useNativeDriver: true,
+        tension: 220,
+        friction: 20,
+      }).start();
+    }
+  }, [currentIndex]);
+
+  const commitSwipe = (nextIndex, entryDir) => {
+    pendingEntryDir.current = entryDir;
+    setCurrentIndex(nextIndex);
+  };
+
   const advanceTo = (next) => {
     if (next < 0 || next >= MATCH_DATA.length) return;
-    const dir = next > indexRef.current ? -1 : 1;
-    Animated.timing(translateX, {
-      toValue: dir * (CARD_W + 32),
-      duration: 220,
-      useNativeDriver: true,
-    }).start(() => {
-      setCurrentIndex(next);
-      translateX.setValue(0);
-    });
+    commitSwipe(next, next > indexRef.current ? 1 : -1);
   };
 
   const panResponder = useRef(
@@ -191,25 +209,11 @@ export default function MatchesScreen() {
       onPanResponderRelease: (_, gs) => {
         const idx = indexRef.current;
         if (gs.dx < -SWIPE_THRESHOLD && idx < MATCH_DATA.length - 1) {
-          Animated.spring(translateX, {
-            toValue: -(CARD_W + 32),
-            useNativeDriver: true,
-            tension: 120,
-            friction: 10,
-          }).start(() => {
-            setCurrentIndex(i => i + 1);
-            translateX.setValue(0);
-          });
+          // New card enters from the right
+          commitSwipe(idx + 1, 1);
         } else if (gs.dx > SWIPE_THRESHOLD && idx > 0) {
-          Animated.spring(translateX, {
-            toValue: CARD_W + 32,
-            useNativeDriver: true,
-            tension: 120,
-            friction: 10,
-          }).start(() => {
-            setCurrentIndex(i => i - 1);
-            translateX.setValue(0);
-          });
+          // New card enters from the left
+          commitSwipe(idx - 1, -1);
         } else {
           Animated.spring(translateX, {
             toValue: 0,
