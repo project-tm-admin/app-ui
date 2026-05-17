@@ -9,10 +9,10 @@ import Primary from '../../components/Primary';
 
 function EmailIcon() {
   return (
-    <Svg width={40} height={40} viewBox="0 0 40 40" fill="none">
-      <Rect width={40} height={40} rx={12} fill={T.accentSoft} />
-      <Path d="M8 13h24v16H8V13z" stroke={T.accentInk} strokeWidth={1.5} rx={2} fill="none" />
-      <Path d="M8 13l12 10L32 13" stroke={T.accentInk} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+    <Svg width={64} height={64} viewBox="0 0 64 64" fill="none">
+      <Rect width={64} height={64} rx={16} fill="#C2EDE7" />
+      <Path d="M14 22h36v22H14V22z" stroke="#2E8B7A" strokeWidth={2} fill="none" strokeLinejoin="round" />
+      <Path d="M14 22l18 14 18-14" stroke="#2E8B7A" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   );
 }
