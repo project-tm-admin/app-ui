@@ -223,8 +223,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 8,
+    paddingTop: 8,
+    paddingBottom: 6,
   },
   headerLeft: { flex: 1, marginRight: 12 },
   dateLabel: {
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
   },
 
   photoArea: {
-    height: 240,
+    height: 196,
     position: 'relative',
     overflow: 'hidden',
   },
@@ -377,8 +377,8 @@ const styles = StyleSheet.create({
   cardInfo: {
     backgroundColor: '#fff',
     paddingHorizontal: 16,
-    paddingTop: 14,
-    paddingBottom: 12,
+    paddingTop: 10,
+    paddingBottom: 8,
   },
   matchName: {
     fontFamily: FONTS.display,
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
     width: '47%',
     backgroundColor: T.field,
     borderRadius: 10,
-    paddingVertical: 8,
+    paddingVertical: 6,
     paddingHorizontal: 10,
   },
   statLabel: {
@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 6,
-    paddingVertical: 12,
+    paddingVertical: 8,
   },
   dot: {
     width: 6,
