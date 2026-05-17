@@ -1,37 +1,23 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  View, Text, TouchableOpacity, StyleSheet, Dimensions,
+  Animated, PanResponder,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import Svg, { Path, Circle, Line, Rect, Defs, Pattern } from 'react-native-svg';
+import Svg, { Path, Circle, Rect } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { T, FONTS } from '../../theme';
 
 const { width } = Dimensions.get('window');
 const CARD_W = width - 32;
+const SWIPE_THRESHOLD = Math.min(50, CARD_W * 0.2);
 
 function BellIcon() {
   return (
     <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
       <Path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" stroke={T.ink} strokeWidth={1.8} strokeLinecap="round" />
       <Path d="M13.73 21a2 2 0 01-3.46 0" stroke={T.ink} strokeWidth={1.8} strokeLinecap="round" />
-    </Svg>
-  );
-}
-
-function TrendUpIcon() {
-  return (
-    <Svg width={13} height={13} viewBox="0 0 24 24" fill="none">
-      <Path d="M23 6l-9.5 9.5-5-5L1 18" stroke="#22863a" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
-      <Path d="M17 6h6v6" stroke="#22863a" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
-    </Svg>
-  );
-}
-
-function CheckIcon() {
-  return (
-    <Svg width={12} height={12} viewBox="0 0 12 12" fill="none">
-      <Circle cx="6" cy="6" r="6" fill={T.verify} />
-      <Path d="M3.5 6l1.8 1.8L8.5 4" stroke="white" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   );
 }
@@ -63,23 +49,189 @@ function ChevronUp() {
   );
 }
 
-const WHY_REASONS = [
-  { icon: '🎓', text: "Both have US master's degrees" },
-  { icon: '📍', text: 'Dallas — same metro area' },
-  { icon: '🙏', text: 'Hindu · Kamma community match' },
-  { icon: '⭐', text: 'Compatible birth stars (Rohini–Mrigashira)' },
-];
-
-const STATS = [
-  { label: 'HEIGHT', value: "5'6\"" },
-  { label: 'RELIGION', value: 'Hindu · Kamma' },
-  { label: 'INCOME', value: '$185K / yr' },
-  { label: 'COMPLEXION', value: 'Wheatish' },
+const MATCH_DATA = [
+  {
+    name: 'Anjali R.',
+    age: 28,
+    location: 'Dallas, TX · Krishna District',
+    photos: 5,
+    gradient: ['#C4956A', '#A87050', '#8A5A3C'],
+    stats: [
+      { label: 'HEIGHT', value: "5'6\"" },
+      { label: 'RELIGION', value: 'Hindu · Kamma' },
+      { label: 'INCOME', value: '$185K / yr' },
+      { label: 'COMPLEXION', value: 'Wheatish' },
+    ],
+    whyReasons: [
+      { icon: '🎓', text: "Both have US master's degrees" },
+      { icon: '📍', text: 'Dallas — same metro area' },
+      { icon: '🙏', text: 'Hindu · Kamma community match' },
+      { icon: '⭐', text: 'Compatible birth stars (Rohini–Mrigashira)' },
+    ],
+  },
+  {
+    name: 'Priya S.',
+    age: 26,
+    location: 'Austin, TX · Guntur District',
+    photos: 3,
+    gradient: ['#9B7FA8', '#7A5F8A', '#5A4070'],
+    stats: [
+      { label: 'HEIGHT', value: "5'4\"" },
+      { label: 'RELIGION', value: 'Hindu · Velama' },
+      { label: 'INCOME', value: '$140K / yr' },
+      { label: 'COMPLEXION', value: 'Fair' },
+    ],
+    whyReasons: [
+      { icon: '🎓', text: 'Stanford MBA, IIT Hyderabad undergrad' },
+      { icon: '📍', text: 'Austin — 3 hrs from Dallas' },
+      { icon: '🙏', text: 'Hindu · Velama community' },
+      { icon: '⭐', text: 'Compatible birth stars (Ashwini–Bharani)' },
+    ],
+  },
+  {
+    name: 'Kavya M.',
+    age: 30,
+    location: 'San Jose, CA · East Godavari',
+    photos: 7,
+    gradient: ['#6A8BA8', '#4A6A8A', '#2A4A6A'],
+    stats: [
+      { label: 'HEIGHT', value: "5'5\"" },
+      { label: 'RELIGION', value: 'Hindu · Brahmin' },
+      { label: 'INCOME', value: '$220K / yr' },
+      { label: 'COMPLEXION', value: 'Wheatish' },
+    ],
+    whyReasons: [
+      { icon: '🎓', text: 'PhD Computer Science, Stanford' },
+      { icon: '📍', text: 'San Jose — large Telugu community' },
+      { icon: '🙏', text: 'Brahmin families on both sides' },
+      { icon: '⭐', text: 'Compatible birth stars (Hasta–Chitra)' },
+    ],
+  },
+  {
+    name: 'Deepika V.',
+    age: 27,
+    location: 'New York, NY · West Godavari',
+    photos: 4,
+    gradient: ['#7A9A70', '#5A7A50', '#3A5A30'],
+    stats: [
+      { label: 'HEIGHT', value: "5'7\"" },
+      { label: 'RELIGION', value: 'Hindu · Kapu' },
+      { label: 'INCOME', value: '$165K / yr' },
+      { label: 'COMPLEXION', value: 'Fair' },
+    ],
+    whyReasons: [
+      { icon: '🎓', text: 'Columbia Law School, JD' },
+      { icon: '📍', text: 'New York — open to relocating' },
+      { icon: '🙏', text: 'Hindu · Kapu community match' },
+      { icon: '⭐', text: 'Compatible birth stars (Pushya–Ashlesha)' },
+    ],
+  },
+  {
+    name: 'Swathi L.',
+    age: 29,
+    location: 'Chicago, IL · Vizag',
+    photos: 6,
+    gradient: ['#A88B6A', '#8A6A4A', '#6A4A2A'],
+    stats: [
+      { label: 'HEIGHT', value: "5'3\"" },
+      { label: 'RELIGION', value: 'Hindu · Kshatriya' },
+      { label: 'INCOME', value: '$195K / yr' },
+      { label: 'COMPLEXION', value: 'Dusky' },
+    ],
+    whyReasons: [
+      { icon: '🎓', text: 'MD from Northwestern Medical School' },
+      { icon: '📍', text: 'Chicago — large Telugu community' },
+      { icon: '🙏', text: 'Hindu · Kshatriya community' },
+      { icon: '⭐', text: 'Compatible birth stars (Magha–Purva)' },
+    ],
+  },
 ];
 
 export default function MatchesScreen() {
   const navigation = useNavigation();
   const [showWhy, setShowWhy] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const translateX = useRef(new Animated.Value(0)).current;
+  // Ref so PanResponder closures always see the current index
+  const indexRef = useRef(0);
+  useEffect(() => {
+    indexRef.current = currentIndex;
+    setShowWhy(false);
+  }, [currentIndex]);
+
+  const advanceTo = (next) => {
+    if (next < 0 || next >= MATCH_DATA.length) return;
+    const dir = next > indexRef.current ? -1 : 1;
+    Animated.timing(translateX, {
+      toValue: dir * (CARD_W + 32),
+      duration: 220,
+      useNativeDriver: true,
+    }).start(() => {
+      setCurrentIndex(next);
+      translateX.setValue(0);
+    });
+  };
+
+  const panResponder = useRef(
+    PanResponder.create({
+      // Don't steal initial touch — let children (name, more-about) handle taps
+      onStartShouldSetPanResponder: () => false,
+      onStartShouldSetPanResponderCapture: () => false,
+      // Claim only when horizontal movement clearly leads vertical
+      onMoveShouldSetPanResponder: (_, gs) =>
+        Math.abs(gs.dx) > Math.abs(gs.dy) && Math.abs(gs.dx) > 8,
+      onPanResponderMove: (_, gs) => {
+        const idx = indexRef.current;
+        const atStart = idx === 0 && gs.dx > 0;
+        const atEnd = idx === MATCH_DATA.length - 1 && gs.dx < 0;
+        // Rubber-band resistance at edges
+        translateX.setValue(atStart || atEnd ? gs.dx * 0.15 : gs.dx);
+      },
+      onPanResponderRelease: (_, gs) => {
+        const idx = indexRef.current;
+        if (gs.dx < -SWIPE_THRESHOLD && idx < MATCH_DATA.length - 1) {
+          Animated.spring(translateX, {
+            toValue: -(CARD_W + 32),
+            useNativeDriver: true,
+            tension: 120,
+            friction: 10,
+          }).start(() => {
+            setCurrentIndex(i => i + 1);
+            translateX.setValue(0);
+          });
+        } else if (gs.dx > SWIPE_THRESHOLD && idx > 0) {
+          Animated.spring(translateX, {
+            toValue: CARD_W + 32,
+            useNativeDriver: true,
+            tension: 120,
+            friction: 10,
+          }).start(() => {
+            setCurrentIndex(i => i - 1);
+            translateX.setValue(0);
+          });
+        } else {
+          Animated.spring(translateX, {
+            toValue: 0,
+            useNativeDriver: true,
+            tension: 180,
+            friction: 12,
+          }).start();
+        }
+      },
+      onPanResponderTerminate: () => {
+        Animated.spring(translateX, {
+          toValue: 0,
+          useNativeDriver: true,
+          tension: 180,
+          friction: 12,
+        }).start();
+      },
+    })
+  ).current;
+
+  const match = MATCH_DATA[currentIndex];
+  const firstName = match.name.split(' ')[0];
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -99,24 +251,22 @@ export default function MatchesScreen() {
       {/* ── Intro row ── */}
       <View style={styles.introRow}>
         <Text style={styles.introLabel}>Today's introductions</Text>
-        <Text style={styles.introCount}>1 OF 5</Text>
+        <Text style={styles.introCount}>{currentIndex + 1} OF {MATCH_DATA.length}</Text>
       </View>
 
-      {/* ── Match card ── */}
-      <TouchableOpacity
-        style={styles.matchCard}
-        onPress={() => navigation.navigate('MatchDetail')}
-        activeOpacity={0.97}
+      {/* ── Match card — swipeable, no full-card tap ── */}
+      <Animated.View
+        style={[styles.matchCard, { transform: [{ translateX }] }]}
+        {...panResponder.panHandlers}
       >
-        {/* Photo area */}
+        {/* Photo area — intentionally not tappable */}
         <View style={styles.photoArea}>
           <LinearGradient
-            colors={['#C4956A', '#A87050', '#8A5A3C']}
+            colors={match.gradient}
             start={{ x: 0.3, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={StyleSheet.absoluteFill}
           />
-          {/* Diagonal stripe overlay on right portion */}
           <View style={styles.stripeOverlay} pointerEvents="none">
             {Array.from({ length: 20 }).map((_, i) => (
               <View
@@ -125,21 +275,30 @@ export default function MatchesScreen() {
               />
             ))}
           </View>
-
-          {/* Photos count — bottom left */}
           <View style={styles.photosCount}>
             <GridIcon />
-            <Text style={styles.photosCountText}>5 photos</Text>
+            <Text style={styles.photosCountText}>{match.photos} photos</Text>
           </View>
         </View>
 
         {/* Card info */}
         <View style={styles.cardInfo}>
-          <Text style={styles.matchName}>Anjali R., 28</Text>
-          <Text style={styles.matchLocation}>Dallas, TX · Krishna District</Text>
+          {/* Name — the ONLY entry point to the full profile */}
+          <TouchableOpacity
+            onPress={() => navigation.navigate('MatchDetail')}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel={`Open ${match.name}'s full profile`}
+            style={styles.nameHitArea}
+          >
+            <Text style={styles.matchName}>{match.name}, {match.age}</Text>
+          </TouchableOpacity>
 
+          <Text style={styles.matchLocation}>{match.location}</Text>
+
+          {/* Stats chips — plain views, not tappable */}
           <View style={styles.statsGrid}>
-            {STATS.map((s, i) => (
+            {match.stats.map((s, i) => (
               <View key={i} style={styles.statItem}>
                 <Text style={styles.statLabel}>{s.label}</Text>
                 <Text style={styles.statValue}>{s.value}</Text>
@@ -147,18 +306,19 @@ export default function MatchesScreen() {
             ))}
           </View>
 
+          {/* Expander — keeps working as before */}
           <TouchableOpacity
             style={styles.moreAboutRow}
             onPress={() => setShowWhy(v => !v)}
             activeOpacity={0.7}
           >
-            <Text style={styles.moreAboutText}>MORE ABOUT ANJALI</Text>
+            <Text style={styles.moreAboutText}>MORE ABOUT {firstName.toUpperCase()}</Text>
             {showWhy ? <ChevronUp /> : <ChevronDown />}
           </TouchableOpacity>
 
           {showWhy && (
             <View style={styles.whyPanel}>
-              {WHY_REASONS.map((r, i) => (
+              {match.whyReasons.map((r, i) => (
                 <View key={i} style={styles.whyRow}>
                   <Text style={styles.whyIcon}>{r.icon}</Text>
                   <Text style={styles.whyText}>{r.text}</Text>
@@ -167,18 +327,22 @@ export default function MatchesScreen() {
             </View>
           )}
         </View>
-      </TouchableOpacity>
+      </Animated.View>
 
       {/* ── Page dots ── */}
       <View style={styles.dotsRow}>
-        {[0, 1, 2, 3, 4].map(i => (
-          <View key={i} style={[styles.dot, i === 0 && styles.dotActive]} />
+        {MATCH_DATA.map((_, i) => (
+          <View key={i} style={[styles.dot, i === currentIndex && styles.dotActive]} />
         ))}
       </View>
 
-      {/* ── Action buttons — always visible ── */}
+      {/* ── Action buttons ── */}
       <View style={styles.actionRow}>
-        <TouchableOpacity style={styles.actionBtn} activeOpacity={0.8}>
+        <TouchableOpacity
+          style={styles.actionBtn}
+          onPress={() => advanceTo(currentIndex + 1)}
+          activeOpacity={0.8}
+        >
           <View style={[styles.actionCircle, styles.passCircle]}>
             <Svg width={26} height={26} viewBox="0 0 24 24" fill="none">
               <Path d="M18 6L6 18M6 6l12 12" stroke="#E53E3E" strokeWidth={2.5} strokeLinecap="round" />
@@ -187,7 +351,11 @@ export default function MatchesScreen() {
           <Text style={[styles.actionLabel, { color: '#E53E3E' }]}>Pass</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionBtn} activeOpacity={0.8}>
+        <TouchableOpacity
+          style={styles.actionBtn}
+          onPress={() => advanceTo(currentIndex + 1)}
+          activeOpacity={0.8}
+        >
           <View style={[styles.actionCircle, styles.saveCircle]}>
             <Svg width={26} height={26} viewBox="0 0 24 24">
               <Path
@@ -199,7 +367,11 @@ export default function MatchesScreen() {
           <Text style={[styles.actionLabel, { color: '#B8860B' }]}>Save</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionBtn} activeOpacity={0.8}>
+        <TouchableOpacity
+          style={styles.actionBtn}
+          onPress={() => advanceTo(currentIndex + 1)}
+          activeOpacity={0.8}
+        >
           <View style={[styles.actionCircle, styles.heartCircle]}>
             <Svg width={26} height={26} viewBox="0 0 24 24">
               <Path
@@ -319,43 +491,6 @@ const styles = StyleSheet.create({
     height: 10,
     backgroundColor: 'rgba(255,255,255,0.12)',
   },
-
-  matchBadge: {
-    position: 'absolute',
-    top: 12,
-    left: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    backgroundColor: '#E6F4EA',
-    borderRadius: 100,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  matchBadgeText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#1A7A30',
-  },
-
-  verifiedBadge: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    backgroundColor: '#E6F4EA',
-    borderRadius: 100,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  verifiedBadgeText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#1A7A30',
-  },
-
   photosCount: {
     position: 'absolute',
     bottom: 12,
@@ -380,16 +515,22 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 8,
   },
+  // Ensures the name has a min 44pt touch target per accessibility guidelines
+  nameHitArea: {
+    minHeight: 44,
+    justifyContent: 'center',
+    marginBottom: 0,
+  },
   matchName: {
     fontFamily: FONTS.display,
     fontSize: 24,
     color: T.ink,
-    marginBottom: 2,
   },
   matchLocation: {
     fontSize: 13,
     color: T.mute,
     marginBottom: 12,
+    marginTop: 2,
   },
 
   statsGrid: {
