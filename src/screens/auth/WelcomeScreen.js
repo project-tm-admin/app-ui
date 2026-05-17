@@ -190,6 +190,7 @@ function CornerFlowers() {
     const rad = (angle * Math.PI) / 180;
     return (
       <Ellipse
+        key={angle}
         cx={cx + r * 0.9 * Math.cos(rad)}
         cy={cy + r * 0.9 * Math.sin(rad)}
         rx={r * 0.6} ry={r * 0.38}
