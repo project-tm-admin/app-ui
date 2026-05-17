@@ -5,36 +5,28 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import Svg, { Path, Circle, Line } from 'react-native-svg';
+import Svg, { Path, Circle } from 'react-native-svg';
 import { FONTS } from '../../theme';
 
 const { width, height } = Dimensions.get('window');
 
 const MAROON = '#6E1622';
 const INK2   = '#5C564F';
-const BG     = '#FFFFFF';
+const CREAM  = '#FCF4E2';
 
-// ─── Assets ──────────────────────────────────────────────────────────────────
-// Swap these PNGs for the painted extracts from assets/welcome-extracted/
 const HERO_IMG        = require('../../../assets/welcome-extracted/00-hero-full.png');
-const BELL_IMG        = require('../../../assets/welcome-extracted/01-bell.png');
 const FLORA_LEFT_IMG  = require('../../../assets/welcome-extracted/08-flora-bottom-left.png');
 const FLORA_RIGHT_IMG = require('../../../assets/welcome-extracted/09-flora-bottom-right.png');
 
-// ─── Icons ───────────────────────────────────────────────────────────────────
 function CoupleHeartIcon() {
   return (
     <Svg width={26} height={24} viewBox="0 0 26 24" fill="none">
-      <Path
-        d="M13 22C13 22 2 15 2 8C2 5.2 4.2 3 7 3C9.2 3 11.2 4.3 13 6.2C14.8 4.3 16.8 3 19 3C21.8 3 24 5.2 24 8C24 15 13 22 13 22Z"
-        fill="rgba(255,255,255,0.28)" stroke="rgba(255,255,255,0.6)" strokeWidth={1}
-      />
-      <Circle cx="9.5"  cy="9.5"  r="2.5" fill="white" opacity={0.9} />
-      <Path d="M6.5 15.5c0-1.7 1.3-3 3-3s3 1.3 3 3"
-        stroke="white" strokeWidth={1.2} fill="none" strokeLinecap="round" opacity={0.9} />
-      <Circle cx="16.5" cy="9.5"  r="2.5" fill="white" opacity={0.9} />
-      <Path d="M13.5 15.5c0-1.7 1.3-3 3-3s3 1.3 3 3"
-        stroke="white" strokeWidth={1.2} fill="none" strokeLinecap="round" opacity={0.9} />
+      <Path d="M13 22C13 22 2 15 2 8C2 5.2 4.2 3 7 3C9.2 3 11.2 4.3 13 6.2C14.8 4.3 16.8 3 19 3C21.8 3 24 5.2 24 8C24 15 13 22 13 22Z"
+        fill="rgba(255,255,255,0.28)" stroke="rgba(255,255,255,0.6)" strokeWidth={1} />
+      <Circle cx="9.5"  cy="9.5" r="2.5" fill="white" opacity={0.9} />
+      <Path d="M6.5 15.5c0-1.7 1.3-3 3-3s3 1.3 3 3" stroke="white" strokeWidth={1.2} fill="none" strokeLinecap="round" opacity={0.9} />
+      <Circle cx="16.5" cy="9.5" r="2.5" fill="white" opacity={0.9} />
+      <Path d="M13.5 15.5c0-1.7 1.3-3 3-3s3 1.3 3 3" stroke="white" strokeWidth={1.2} fill="none" strokeLinecap="round" opacity={0.9} />
     </Svg>
   );
 }
@@ -51,8 +43,7 @@ function PersonIcon() {
 function ArrowRight({ color }) {
   return (
     <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
-      <Path d="M5 12h14M13 6l6 6-6 6" stroke={color} strokeWidth={2}
-        strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M5 12h14M13 6l6 6-6 6" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   );
 }
@@ -62,78 +53,51 @@ function HeartDivider() {
     <View style={styles.heartDividerWrap}>
       <View style={styles.hairline} />
       <Svg width={14} height={12} viewBox="0 0 14 12" style={{ marginHorizontal: 10 }}>
-        <Path
-          d="M7 11C7 11 1 7 1 3.5C1 2 2.1 1 3.5 1C4.8 1 6 1.8 7 3C8 1.8 9.2 1 10.5 1C11.9 1 13 2 13 3.5C13 7 7 11 7 11Z"
-          fill={MAROON} opacity={0.55}
-        />
+        <Path d="M7 11C7 11 1 7 1 3.5C1 2 2.1 1 3.5 1C4.8 1 6 1.8 7 3C8 1.8 9.2 1 10.5 1C11.9 1 13 2 13 3.5C13 7 7 11 7 11Z"
+          fill={MAROON} opacity={0.55} />
       </Svg>
       <View style={styles.hairline} />
     </View>
   );
 }
 
-// ─── Screen ───────────────────────────────────────────────────────────────────
 export default function WelcomeScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-
-  const heroHeight = Math.round(height * 0.60);
+  const heroHeight = Math.round(height * 0.62);
 
   return (
     <View style={styles.root}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
-      {/* ── Hero illustration ── */}
+      {/* Hero — full painted scene, bell already inside */}
       <View style={[styles.heroWrap, { height: heroHeight }]}>
         <Image source={HERO_IMG} style={styles.heroImg} resizeMode="cover" />
-        {/* Bell floats at top-center, overlaid on hero */}
-        <Image
-          source={BELL_IMG}
-          style={[styles.bellImg, { top: insets.top + 2 }]}
-          resizeMode="contain"
-        />
       </View>
 
-      {/* ── Wordmark + title + tagline ── */}
+      {/* Wordmark + title + tagline */}
       <View style={styles.textBlock}>
         <Text style={styles.teluguScript}>❀ తలంభాలు ❀</Text>
         <Text style={styles.title}>Talambralu</Text>
-        <Text style={styles.tagline}>
-          Telugu matches, made for life in{'\n'}the U.S.
-        </Text>
+        <Text style={styles.tagline}>Telugu matches, made for life in{'\n'}the U.S.</Text>
         <HeartDivider />
       </View>
 
-      {/* ── CTAs ── */}
-      <View style={styles.ctaBlock}>
-        {/* Primary */}
-        <TouchableOpacity
-          style={styles.primaryBtn}
-          onPress={() => navigation.navigate('EmailSignup')}
-          activeOpacity={0.86}
-        >
-          <View style={styles.primaryIconBox}>
-            <CoupleHeartIcon />
-          </View>
+      {/* CTAs */}
+      <View style={[styles.ctaBlock, { paddingBottom: Math.max(insets.bottom, 16) + 8 }]}>
+        <TouchableOpacity style={styles.primaryBtn} onPress={() => navigation.navigate('EmailSignup')} activeOpacity={0.86}>
+          <View style={styles.primaryIconBox}><CoupleHeartIcon /></View>
           <Text style={styles.primaryLabel}>Create an account</Text>
           <ArrowRight color="#fff" />
         </TouchableOpacity>
 
-        {/* Secondary */}
-        <TouchableOpacity
-          style={styles.ghostBtn}
-          onPress={() => navigation.navigate('OTP')}
-          activeOpacity={0.72}
-        >
-          <View style={styles.ghostIconBox}>
-            <PersonIcon />
-          </View>
+        <TouchableOpacity style={styles.ghostBtn} onPress={() => navigation.navigate('OTP')} activeOpacity={0.72}>
+          <View style={styles.ghostIconBox}><PersonIcon /></View>
           <Text style={styles.ghostLabel}>I already have an account</Text>
           <ArrowRight color={MAROON} />
         </TouchableOpacity>
 
-        {/* Footer */}
-        <Text style={[styles.terms, { paddingBottom: Math.max(insets.bottom, 8) + 4 }]}>
+        <Text style={styles.terms}>
           {'By continuing you agree to our '}
           <Text style={styles.termsLink}>Terms</Text>
           {'  •  '}
@@ -141,9 +105,9 @@ export default function WelcomeScreen() {
         </Text>
       </View>
 
-      {/* ── Corner flora ── */}
-      <Image source={FLORA_LEFT_IMG}  style={styles.floraLeft}  resizeMode="contain" />
-      <Image source={FLORA_RIGHT_IMG} style={styles.floraRight} resizeMode="contain" />
+      {/* Corner flora — painted pink flowers */}
+      <Image source={FLORA_LEFT_IMG}  style={styles.floraLeft}  resizeMode="contain" pointerEvents="none" />
+      <Image source={FLORA_RIGHT_IMG} style={styles.floraRight} resizeMode="contain" pointerEvents="none" />
     </View>
   );
 }
@@ -152,25 +116,18 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: BG,
+    backgroundColor: CREAM,
   },
 
   // Hero
   heroWrap: {
     width,
     overflow: 'hidden',
-    backgroundColor: '#FCF4E2',
+    backgroundColor: CREAM,
   },
   heroImg: {
     width: '100%',
     height: '100%',
-  },
-  bellImg: {
-    position: 'absolute',
-    alignSelf: 'center',
-    width: 90,
-    height: 90,
-    zIndex: 10,
   },
 
   // Text block
