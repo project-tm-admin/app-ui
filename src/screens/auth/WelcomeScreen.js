@@ -91,7 +91,7 @@ export default function WelcomeScreen() {
           <ArrowRight color="#fff" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.ghostBtn} onPress={() => navigation.navigate('OTP')} activeOpacity={0.72}>
+        <TouchableOpacity style={styles.ghostBtn} onPress={() => navigation.navigate('SignIn')} activeOpacity={0.72}>
           <View style={styles.ghostIconBox}><PersonIcon /></View>
           <Text style={styles.ghostLabel}>I already have an account</Text>
           <ArrowRight color={MAROON} />

@@ -13,6 +13,7 @@ import EmailSignupScreen from '../screens/auth/EmailSignupScreen';
 import PhoneSignupScreen from '../screens/auth/PhoneSignupScreen';
 import OTPScreen from '../screens/auth/OTPScreen';
 import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
+import SignInScreen from '../screens/auth/SignInScreen';
 
 // Profile screens
 import NameDOBScreen from '../screens/profile/NameDOBScreen';
@@ -169,6 +170,7 @@ export default function Navigation() {
         <Stack.Screen name="PhoneSignup" component={PhoneSignupScreen} />
         <Stack.Screen name="OTP" component={OTPScreen} />
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        <Stack.Screen name="SignIn" component={SignInScreen} />
 
         {/* Profile creation */}
         <Stack.Screen name="NameDOB" component={NameDOBScreen} />
