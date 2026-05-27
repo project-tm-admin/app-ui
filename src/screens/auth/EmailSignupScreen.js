@@ -1,171 +1,201 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import Svg, { Path, Circle } from 'react-native-svg';
+import Svg, { Path, Circle, Rect } from 'react-native-svg';
 import { T, FONTS } from '../../theme';
 import TopBar from '../../components/TopBar';
-import Field from '../../components/Field';
-import Primary from '../../components/Primary';
 
-function EyeIcon({ visible }) {
+const BG    = '#FAF8F5';
+const MAROON = T.accentInk;
+
+function PhoneIcon() {
   return (
     <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
-      <Path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z"
-        stroke={T.mute} strokeWidth={1.8} strokeLinecap="round" />
-      <Circle cx="12" cy="12" r="3" stroke={T.mute} strokeWidth={1.8} />
-      {!visible && <Path d="M2 2L22 22" stroke={T.mute} strokeWidth={1.8} strokeLinecap="round" />}
+      <Rect x="5" y="2" width="14" height="20" rx="3" stroke={T.ink} strokeWidth={1.7} />
+      <Path d="M9 6h6" stroke={T.ink} strokeWidth={1.7} strokeLinecap="round" />
+      <Circle cx="12" cy="18" r="1" fill={T.ink} />
     </Svg>
   );
 }
 
-function CheckMark({ done }) {
+function GoogleIcon() {
   return (
-    <View style={[styles.checkCircle, done && styles.checkDone]}>
-      {done && (
-        <Svg width={10} height={10} viewBox="0 0 10 10">
-          <Path d="M2 5L4 7L8 3" stroke="white" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-        </Svg>
-      )}
-    </View>
+    <Svg width={20} height={20} viewBox="0 0 48 48">
+      <Path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.2l6.8-6.8C35.8 2.2 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.9 6.1C12.4 13 17.7 9.5 24 9.5z" />
+      <Path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8C43.7 37.2 46.5 31.3 46.5 24.5z" />
+      <Path fill="#FBBC05" d="M10.5 28.6A14.7 14.7 0 019.5 24c0-1.6.3-3.2.8-4.6l-7.9-6.1A23.9 23.9 0 000 24c0 3.9.9 7.5 2.6 10.7l7.9-6.1z" />
+      <Path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.2-7.7 2.2-6.3 0-11.6-3.5-13.5-9l-7.9 6.1C6.6 42.6 14.6 48 24 48z" />
+    </Svg>
   );
 }
 
-function getStrength(pw) {
-  let s = 0;
-  if (pw.length >= 8) s++;
-  if (/[A-Z]/.test(pw)) s++;
-  if (/\d/.test(pw)) s++;
-  if (/\W/.test(pw)) s++;
-  return s;
+function AppleIcon() {
+  return (
+    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
+      <Path d="M16.5 1c-1.1 1.2-2 2.9-1.7 4.6 1.5.1 3-0.8 4-2C19.8 2.4 18.8.8 16.5 1z" fill={T.ink} />
+      <Path d="M21.5 17.5c-.5 1-1 2-1.8 2.9-.9 1.1-1.9 2.3-3.3 2.3-1.3 0-1.8-.8-3.4-.8-1.7 0-2.2.8-3.5.8-1.4 0-2.3-1.1-3.3-2.3C4.3 17.8 3 14.8 3 12c0-4.2 2.7-6.4 5.4-6.4 1.4 0 2.6.9 3.5.9.8 0 2.4-1 4-1 .9 0 3.2.4 4.6 2.7-3.7 2.1-3.1 7.5.5 9.3z" fill={T.ink} />
+    </Svg>
+  );
 }
 
-const STRENGTH_COLORS = ['#E53E3E', '#E57732', '#D4AC0D', '#3D8A5C'];
-const STRENGTH_LABELS = ['', 'WEAK', 'FAIR', 'GOOD', 'STRONG'];
+function ChevronRight() {
+  return (
+    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+      <Path d="M9 6l6 6-6 6" stroke={T.mute} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+function ShieldIcon() {
+  return (
+    <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 2L4 6v6c0 5 3.6 9.7 8 11 4.4-1.3 8-6 8-11V6l-8-4z" stroke={T.mute} strokeWidth={1.6} strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+function AuthRow({ icon, label, onPress }) {
+  return (
+    <TouchableOpacity style={styles.authRow} onPress={onPress} activeOpacity={0.7}>
+      <View style={styles.authIcon}>{icon}</View>
+      <Text style={styles.authLabel}>{label}</Text>
+      <ChevronRight />
+    </TouchableOpacity>
+  );
+}
 
 export default function EmailSignupScreen() {
   const navigation = useNavigation();
-  const [name, setName] = useState('Anika Talluri');
-  const [email, setEmail] = useState('anika.talluri@gmail.com');
-  const [password, setPassword] = useState('Str0ng!pwd');
-  const [showPass, setShowPass] = useState(false);
-  const [marketing, setMarketing] = useState(true);
-
-  const strength = getStrength(password);
-  const reqs = [
-    { label: '8+ characters', done: password.length >= 8 },
-    { label: 'One number', done: /\d/.test(password) },
-    { label: 'Upper & lowercase', done: /[A-Z]/.test(password) && /[a-z]/.test(password) },
-    { label: 'Symbol (!@#$)', done: /\W/.test(password) },
-  ];
 
   return (
     <SafeAreaView style={styles.safe}>
-      <TopBar />
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>Create your account</Text>
-        <Text style={styles.sub}>Use the email your family checks too — important match updates land here.</Text>
+      <TopBar showBack />
 
-        <Field label="Full name" value={name} onChangeText={setName} placeholder="Anika Talluri" />
-        <Field label="Email" value={email} onChangeText={setEmail} placeholder="anika@example.com" keyboardType="email-address" />
+      <View style={styles.content}>
+        {/* Heading block */}
+        <View style={styles.headingBlock}>
+          <Text style={styles.heading}>Create account</Text>
+          <Text style={styles.tagline}>Rooted in Culture. Designed for Today.</Text>
+        </View>
 
-        {/* Password — custom cement box to keep eye toggle + strength meter */}
-        <View style={styles.passBox}>
-          <View style={styles.passHeader}>
-            <Text style={styles.passLabel}>PASSWORD</Text>
-            {strength === 4 && <Text style={styles.strongLabel}>STRONG</Text>}
+        {/* Auth options */}
+        <View style={styles.optionList}>
+          <AuthRow
+            icon={<PhoneIcon />}
+            label="Continue with Phone"
+            onPress={() => navigation.navigate('OTP')}
+          />
+          <AuthRow
+            icon={<GoogleIcon />}
+            label="Continue with Google"
+            onPress={() => {}}
+          />
+          <AuthRow
+            icon={<AppleIcon />}
+            label="Continue with Apple"
+            onPress={() => {}}
+          />
+        </View>
+
+        {/* Footer */}
+        <View style={styles.footer}>
+          <View style={styles.privacyRow}>
+            <ShieldIcon />
+            <Text style={styles.privacyText}>PRIVACY PROTECTED</Text>
           </View>
-          <View style={styles.passRow}>
-            <TextInput
-              style={styles.passInput}
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPass}
-              autoCapitalize="none"
-              underlineColorAndroid="transparent"
-            />
-            <TouchableOpacity onPress={() => setShowPass(v => !v)} style={styles.eyeBtn}>
-              <EyeIcon visible={showPass} />
+          <View style={styles.signInRow}>
+            <Text style={styles.signInText}>Have an account? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('SignIn')} activeOpacity={0.7}>
+              <Text style={styles.signInLink}>Sign in</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.strengthRow}>
-            {[1, 2, 3, 4].map(i => (
-              <View key={i} style={[styles.bar, { backgroundColor: i <= strength ? STRENGTH_COLORS[Math.min(strength - 1, 3)] : T.hair2 }]} />
-            ))}
-            {strength > 0 && (
-              <Text style={[styles.strengthLabel, { color: STRENGTH_COLORS[Math.min(strength - 1, 3)] }]}>
-                {STRENGTH_LABELS[strength]}
-              </Text>
-            )}
-          </View>
         </View>
-
-        {/* Requirements grid */}
-        <View style={styles.reqGrid}>
-          {reqs.map((r, i) => (
-            <View key={i} style={styles.reqItem}>
-              <CheckMark done={r.done} />
-              <Text style={[styles.reqText, r.done && styles.reqDone]}>{r.label}</Text>
-            </View>
-          ))}
-        </View>
-
-        <TouchableOpacity style={styles.checkRow} onPress={() => setMarketing(v => !v)} activeOpacity={0.7}>
-          <View style={[styles.checkbox, marketing && styles.checkboxOn]}>
-            {marketing && (
-              <Svg width={10} height={10} viewBox="0 0 10 10">
-                <Path d="M2 5L4 7L8 3" stroke="white" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-              </Svg>
-            )}
-          </View>
-          <Text style={styles.checkLabel}>Email me weekly handpicked matches and success stories.</Text>
-        </TouchableOpacity>
-
-        <Primary label="Create account" onPress={() => navigation.navigate('OTP')} style={{ marginTop: 20 }} />
-
-        <TouchableOpacity onPress={() => navigation.navigate('OTP')} style={styles.signInLink}>
-          <Text style={styles.signInText}>Have an account? <Text style={styles.signInBold}>Sign in</Text></Text>
-        </TouchableOpacity>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: T.bg },
-  content: { paddingHorizontal: 24, paddingBottom: 40 },
-  title: { fontFamily: FONTS.display, fontSize: 36, color: T.ink, marginBottom: 6, marginTop: 4 },
-  sub: { fontSize: 14, color: T.mute, marginBottom: 24, lineHeight: 20 },
-  passBox: {
-    backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: T.hair,
-    borderRadius: 16, paddingHorizontal: 16, paddingTop: 10, paddingBottom: 12, marginBottom: 12,
+  safe: { flex: 1, backgroundColor: BG },
+  content: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingTop: 8,
+    paddingBottom: 36,
   },
-  passHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
-  passLabel: { fontFamily: FONTS.mono, fontSize: 10, letterSpacing: 1, color: T.mute },
-  strongLabel: { fontFamily: FONTS.mono, fontSize: 10, letterSpacing: 1, color: T.verify, fontWeight: '700' },
-  passRow: { flexDirection: 'row', alignItems: 'center' },
-  passInput: { flex: 1, fontSize: 16, color: T.ink, padding: 0, margin: 0 },
-  eyeBtn: { padding: 4 },
-  strengthRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 10 },
-  bar: { flex: 1, height: 3, borderRadius: 2 },
-  strengthLabel: { fontFamily: FONTS.mono, fontSize: 10, letterSpacing: 1, marginLeft: 4 },
-  reqGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
-  reqItem: { flexDirection: 'row', alignItems: 'center', gap: 6, width: '47%' },
-  checkCircle: {
-    width: 16, height: 16, borderRadius: 8, borderWidth: 1.5,
-    borderColor: T.hair2, justifyContent: 'center', alignItems: 'center',
+
+  headingBlock: {
+    marginBottom: 32,
   },
-  checkDone: { backgroundColor: T.verify, borderColor: T.verify },
-  reqText: { fontSize: 12, color: T.mute, flex: 1 },
-  reqDone: { color: T.verify },
-  checkRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 8 },
-  checkbox: {
-    width: 20, height: 20, borderRadius: 5, borderWidth: 1.5,
-    borderColor: T.hair2, justifyContent: 'center', alignItems: 'center', marginTop: 1,
+  heading: {
+    fontFamily: FONTS.display,
+    fontSize: 40,
+    color: T.ink,
+    lineHeight: 48,
+    marginBottom: 6,
   },
-  checkboxOn: { backgroundColor: T.accent, borderColor: T.accent },
-  checkLabel: { flex: 1, fontSize: 13, color: T.mute, lineHeight: 20 },
-  signInLink: { alignItems: 'center', marginTop: 20 },
-  signInText: { fontSize: 14, color: T.mute },
-  signInBold: { color: T.accent, fontWeight: '600' },
+  tagline: {
+    fontFamily: FONTS.display,
+    fontSize: 15,
+    color: T.ink,
+    fontStyle: 'italic',
+  },
+
+  optionList: {
+    gap: 10,
+  },
+  authRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    borderWidth: 1,
+    borderColor: T.hair2,
+    borderRadius: 14,
+    backgroundColor: BG,
+  },
+  authIcon: {
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  authLabel: {
+    flex: 1,
+    fontSize: 16,
+    color: T.ink,
+    fontWeight: '500',
+  },
+
+  footer: {
+    marginTop: 'auto',
+    alignItems: 'center',
+    gap: 10,
+  },
+  privacyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  privacyText: {
+    fontFamily: FONTS.mono,
+    fontSize: 11,
+    color: T.mute,
+    letterSpacing: 1.2,
+  },
+  signInRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  signInText: {
+    fontSize: 14,
+    color: T.mute,
+  },
+  signInLink: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: T.ink,
+  },
 });

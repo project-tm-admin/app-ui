@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
-import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet,
-  ScrollView, KeyboardAvoidingView, Platform,
-} from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import Svg, { Path, Circle, Rect, G } from 'react-native-svg';
+import Svg, { Path, Circle, Rect } from 'react-native-svg';
 import { T, FONTS } from '../../theme';
 import TopBar from '../../components/TopBar';
 
+const BG   = '#FAF8F5';
 const MAROON = T.accentInk;
+
+function PhoneIcon() {
+  return (
+    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
+      <Rect x="5" y="2" width="14" height="20" rx="3" stroke={T.ink} strokeWidth={1.7} />
+      <Path d="M9 6h6" stroke={T.ink} strokeWidth={1.7} strokeLinecap="round" />
+      <Circle cx="12" cy="18" r="1" fill={T.ink} />
+    </Svg>
+  );
+}
 
 function GoogleIcon() {
   return (
@@ -22,210 +30,144 @@ function GoogleIcon() {
   );
 }
 
-function ChevronDown() {
+function AppleIcon() {
   return (
-    <Svg width={12} height={12} viewBox="0 0 24 24" fill="none">
-      <Path d="M6 9l6 6 6-6" stroke={T.mute} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
+      <Path d="M16.5 1c-1.1 1.2-2 2.9-1.7 4.6 1.5.1 3-0.8 4-2C19.8 2.4 18.8.8 16.5 1z" fill={T.ink} />
+      <Path d="M21.5 17.5c-.5 1-1 2-1.8 2.9-.9 1.1-1.9 2.3-3.3 2.3-1.3 0-1.8-.8-3.4-.8-1.7 0-2.2.8-3.5.8-1.4 0-2.3-1.1-3.3-2.3C4.3 17.8 3 14.8 3 12c0-4.2 2.7-6.4 5.4-6.4 1.4 0 2.6.9 3.5.9.8 0 2.4-1 4-1 .9 0 3.2.4 4.6 2.7-3.7 2.1-3.1 7.5.5 9.3z" fill={T.ink} />
     </Svg>
   );
 }
 
-function ArrowRight() {
+function ChevronRight() {
   return (
-    <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-      <Path d="M5 12h14M13 6l6 6-6 6" stroke="white" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+      <Path d="M9 6l6 6-6 6" stroke={T.mute} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
+  );
+}
+
+function AuthRow({ icon, label, onPress }) {
+  return (
+    <TouchableOpacity style={styles.authRow} onPress={onPress} activeOpacity={0.7}>
+      <View style={styles.authIcon}>{icon}</View>
+      <Text style={styles.authLabel}>{label}</Text>
+      <ChevronRight />
+    </TouchableOpacity>
   );
 }
 
 export default function SignInScreen() {
   const navigation = useNavigation();
-  const [phone, setPhone] = useState('');
-
-  const handleSendCode = () => {
-    navigation.navigate('OTP');
-  };
 
   return (
     <SafeAreaView style={styles.safe}>
       <TopBar title="SIGN IN" />
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <ScrollView
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          {/* Brand + heading */}
+
+      <View style={styles.content}>
+        {/* Heading block */}
+        <View style={styles.headingBlock}>
           <Text style={styles.telugu}>తలంభాలు</Text>
           <Text style={styles.heading}>Welcome back.</Text>
+          <Text style={styles.tagline}>Rooted in Culture. Designed for Today.</Text>
+          <Text style={styles.sub}>Private, trusted, and thoughtfully designed for Telugu families.</Text>
+        </View>
 
-          {/* Google SSO */}
-          <TouchableOpacity style={styles.googleBtn} activeOpacity={0.8}>
-            <GoogleIcon />
-            <Text style={styles.googleLabel}>Continue with Gmail</Text>
+        {/* Auth options */}
+        <View style={styles.optionList}>
+          <AuthRow
+            icon={<PhoneIcon />}
+            label="Continue with Phone"
+            onPress={() => navigation.navigate('OTP')}
+          />
+          <AuthRow
+            icon={<GoogleIcon />}
+            label="Continue with Google"
+            onPress={() => {}}
+          />
+          <AuthRow
+            icon={<AppleIcon />}
+            label="Continue with Apple"
+            onPress={() => {}}
+          />
+        </View>
+
+        {/* Footer */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>New to Talambralu? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('EmailSignup')} activeOpacity={0.7}>
+            <Text style={styles.footerLink}>Create account</Text>
           </TouchableOpacity>
-
-          {/* OR divider */}
-          <View style={styles.dividerRow}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>OR</Text>
-            <View style={styles.dividerLine} />
-          </View>
-
-          {/* Phone input row */}
-          <View style={styles.phoneBox}>
-            <TouchableOpacity style={styles.countryBtn} activeOpacity={0.7}>
-              <Text style={styles.countryLabel}>US +1</Text>
-              <ChevronDown />
-            </TouchableOpacity>
-            <View style={styles.phoneDivider} />
-            <TextInput
-              style={styles.phoneInput}
-              value={phone}
-              onChangeText={setPhone}
-              placeholder="(408) 555 0142"
-              placeholderTextColor={T.mute}
-              keyboardType="phone-pad"
-              returnKeyType="done"
-              onSubmitEditing={handleSendCode}
-            />
-            <TouchableOpacity
-              style={[styles.sendBtn, !phone && styles.sendBtnDisabled]}
-              onPress={handleSendCode}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.sendBtnText}>Send code</Text>
-              <ArrowRight />
-            </TouchableOpacity>
-          </View>
-
-          {/* Footer */}
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>New to Talambralu? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('EmailSignup')} activeOpacity={0.7}>
-              <Text style={styles.footerLink}>Create account</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: T.bg },
+  safe: { flex: 1, backgroundColor: BG },
   content: {
-    flexGrow: 1,
+    flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 12,
+    paddingTop: 8,
     paddingBottom: 32,
   },
 
+  headingBlock: {
+    marginBottom: 32,
+  },
   telugu: {
     fontFamily: FONTS.display,
-    fontSize: 15,
+    fontSize: 14,
     color: MAROON,
-    letterSpacing: 1,
-    marginBottom: 8,
+    marginBottom: 6,
   },
   heading: {
     fontFamily: FONTS.display,
-    fontSize: 42,
+    fontSize: 40,
     color: T.ink,
-    lineHeight: 50,
-    marginBottom: 36,
+    lineHeight: 48,
+    marginBottom: 6,
   },
-
-  googleBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    height: 54,
-    borderRadius: 100,
-    borderWidth: 1.5,
-    borderColor: T.hair2,
-    backgroundColor: T.bg,
-    marginBottom: 20,
-  },
-  googleLabel: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: T.ink,
-  },
-
-  dividerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 20,
-  },
-  dividerLine: {
-    flex: 1,
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: T.hair2,
-  },
-  dividerText: {
-    fontFamily: FONTS.mono,
-    fontSize: 11,
-    color: T.mute,
-    letterSpacing: 1.5,
-  },
-
-  phoneBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1.5,
-    borderColor: T.hair2,
-    borderRadius: 16,
-    overflow: 'hidden',
-    height: 58,
-    paddingLeft: 16,
-    paddingRight: 6,
-  },
-  countryBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingRight: 12,
-  },
-  countryLabel: {
+  tagline: {
+    fontFamily: FONTS.display,
     fontSize: 15,
-    fontWeight: '500',
     color: T.ink,
+    fontStyle: 'italic',
+    marginBottom: 8,
   },
-  phoneDivider: {
-    width: 1,
-    height: 22,
-    backgroundColor: T.hair2,
-    marginRight: 12,
+  sub: {
+    fontSize: 13,
+    color: T.mute,
+    lineHeight: 20,
   },
-  phoneInput: {
+
+  optionList: {
+    gap: 10,
+    marginBottom: 24,
+  },
+  authRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    borderWidth: 1,
+    borderColor: T.hair2,
+    borderRadius: 14,
+    backgroundColor: BG,
+  },
+  authIcon: {
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  authLabel: {
     flex: 1,
     fontSize: 16,
     color: T.ink,
-    padding: 0,
-  },
-  sendBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: T.ink,
-    borderRadius: 100,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    marginLeft: 8,
-  },
-  sendBtnDisabled: {
-    opacity: 0.45,
-  },
-  sendBtnText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#fff',
+    fontWeight: '500',
   },
 
   footer: {
@@ -233,7 +175,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 'auto',
-    paddingTop: 40,
   },
   footerText: {
     fontSize: 14,
