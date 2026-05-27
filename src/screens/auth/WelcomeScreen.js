@@ -12,7 +12,7 @@ const { width, height } = Dimensions.get('window');
 
 const MAROON = '#6E1622';
 const INK2   = '#5C564F';
-const CREAM  = '#FCF4E2';
+const CREAM  = '#FFFFFF';
 
 const HERO_IMG        = require('../../../assets/welcome-extracted/00-hero-full.png');
 const FLORA_LEFT_IMG  = require('../../../assets/welcome-extracted/08-flora-bottom-left.png');
