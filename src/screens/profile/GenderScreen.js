@@ -35,7 +35,7 @@ export default function GenderScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <TopBar onSkip={() => navigation.navigate('USLocation')} />
+      <TopBar onSkip={() => navigation.navigate('USLocation', { gender: iAm })} />
       <View style={styles.outer}>
         <Stepper current={2} total={14} />
         <View style={styles.body}>
@@ -49,7 +49,7 @@ export default function GenderScreen() {
           <CardRow compact title="Men" selected={lookingFor === 'Men'} onPress={() => setLookingFor('Men')} />
           <CardRow compact title="Women" selected={lookingFor === 'Women'} onPress={() => setLookingFor('Women')} />
         </View>
-        <Primary label="Continue" onPress={() => navigation.navigate('USLocation')} />
+        <Primary label="Continue" onPress={() => navigation.navigate('USLocation', { gender: iAm })} />
       </View>
     </SafeAreaView>
   );

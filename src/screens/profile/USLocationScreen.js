@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import Svg, { Path, Circle } from 'react-native-svg';
 import { T, FONTS } from '../../theme';
 import TopBar from '../../components/TopBar';
@@ -9,7 +9,29 @@ import Stepper from '../../components/Stepper';
 import Chip from '../../components/Chip';
 import Primary from '../../components/Primary';
 
-const HUBS = ['Bay Area', 'New Jersey', 'Houston', 'Dallas', 'Chicago', 'Atlanta', 'Seattle', 'NYC'];
+// Countries available to women only
+const COUNTRIES = [
+  { code: '🇺🇸', label: 'USA',       id: 'USA' },
+  { code: '🇬🇧', label: 'UK',        id: 'UK' },
+  { code: '🇨🇦', label: 'Canada',    id: 'CA' },
+  { code: '🇦🇺', label: 'Australia', id: 'AU' },
+  { code: '🇸🇬', label: 'Singapore', id: 'SG' },
+  { code: '🇦🇪', label: 'UAE',       id: 'AE' },
+  { code: '🇩🇪', label: 'Germany',   id: 'DE' },
+  { code: '🇮🇳', label: 'India',     id: 'IN' },
+  { code: '🌍',  label: 'Other',     id: 'OTHER' },
+];
+
+const HUBS_GLOBAL = [
+  'Dallas–Fort Worth', 'NYC / NJ', 'Bay Area',
+  'London', 'Toronto', 'Sydney',
+  'Singapore', 'Dubai', 'Frankfurt', 'Hyderabad',
+];
+
+const HUBS_USA = [
+  'Bay Area', 'Dallas', 'New Jersey', 'Houston',
+  'Chicago', 'Atlanta', 'Seattle', 'NYC',
+];
 
 function SearchIcon() {
   return (
@@ -20,54 +42,102 @@ function SearchIcon() {
   );
 }
 
-function LocationIcon() {
+function NavArrowIcon() {
   return (
-    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
-      <Path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke={T.accent} strokeWidth={1.8} fill="none" />
-      <Circle cx="12" cy="9" r="2.5" stroke={T.accent} strokeWidth={1.8} />
+    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 2L19 21L12 17L5 21L12 2Z" stroke={T.accent} strokeWidth={1.8} strokeLinejoin="round" fill="none" />
     </Svg>
+  );
+}
+
+function CountryChip({ country, selected, onPress }) {
+  return (
+    <TouchableOpacity
+      style={[styles.countryChip, selected && styles.countryChipSelected]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <Text style={styles.countryFlag}>{country.code}</Text>
+      <Text style={[styles.countryLabel, selected && styles.countryLabelSelected]}>
+        {country.label}
+      </Text>
+    </TouchableOpacity>
   );
 }
 
 export default function USLocationScreen() {
   const navigation = useNavigation();
+  const route = useRoute();
+  const gender = route.params?.gender ?? 'Woman';
+  const isWoman = gender === 'Woman';
+
   const [search, setSearch] = useState('');
-  const [selectedCity, setSelectedCity] = useState('Sunnyvale, CA');
+  const [selectedCountry, setSelectedCountry] = useState('USA');
+  const [selectedCity, setSelectedCity] = useState('Sunnyvale');
   const [selectedHub, setSelectedHub] = useState('Bay Area');
+
+  const hubs = isWoman ? HUBS_GLOBAL : HUBS_USA;
 
   return (
     <SafeAreaView style={styles.safe}>
       <TopBar onSkip={() => navigation.navigate('IndiaOrigin')} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={3} total={14} />
-        <Text style={styles.title}>Where in{'\n'}the U.S.?</Text>
+        <Stepper current={3} total={15} />
 
+        <Text style={styles.title}>
+          {isWoman ? 'Where are you based?' : 'Where in the U.S.?'}
+        </Text>
+        <Text style={styles.subtitle}>
+          {isWoman
+            ? "We'll prioritize matches near you, but you can search across countries."
+            : "We'll find you the best matches across the U.S."}
+        </Text>
+
+        {/* Country selector — women only */}
+        {isWoman && (
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>COUNTRY</Text>
+            <View style={styles.countryGrid}>
+              {COUNTRIES.map(c => (
+                <CountryChip
+                  key={c.id}
+                  country={c}
+                  selected={selectedCountry === c.id}
+                  onPress={() => setSelectedCountry(c.id)}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* City search */}
         <View style={styles.searchBar}>
           <SearchIcon />
           <TextInput
             style={styles.searchInput}
             value={search}
             onChangeText={setSearch}
-            placeholder="Search city or ZIP..."
+            placeholder="Search city or postcode"
             placeholderTextColor={T.mute}
           />
         </View>
 
-        <Text style={styles.sectionLabel}>DETECTED LOCATION</Text>
+        {/* Detected location */}
+        <Text style={styles.sectionLabel}>DETECTED · BAY AREA</Text>
         <TouchableOpacity
-          style={[styles.detectedCard, selectedCity === 'Sunnyvale, CA' && styles.detectedSelected]}
-          onPress={() => setSelectedCity('Sunnyvale, CA')}
+          style={[styles.detectedCard, selectedCity === 'Sunnyvale' && styles.detectedSelected]}
+          onPress={() => setSelectedCity('Sunnyvale')}
           activeOpacity={0.7}
         >
           <View style={styles.locationIconWrap}>
-            <LocationIcon />
+            <NavArrowIcon />
           </View>
           <View style={styles.detectedText}>
-            <Text style={styles.cityName}>Sunnyvale, CA</Text>
-            <Text style={styles.cityMeta}>Santa Clara County · Bay Area</Text>
+            <Text style={styles.cityName}>Sunnyvale, CA · USA</Text>
+            <Text style={styles.cityMeta}>Bay Area · 94087</Text>
           </View>
-          <View style={[styles.checkCircle, selectedCity === 'Sunnyvale, CA' && styles.checkSelected]}>
-            {selectedCity === 'Sunnyvale, CA' && (
+          <View style={[styles.checkCircle, selectedCity === 'Sunnyvale' && styles.checkSelected]}>
+            {selectedCity === 'Sunnyvale' && (
               <Svg width={10} height={10} viewBox="0 0 10 10">
                 <Path d="M2 5L4 7L8 3" stroke="white" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
               </Svg>
@@ -75,9 +145,10 @@ export default function USLocationScreen() {
           </View>
         </TouchableOpacity>
 
-        <Text style={[styles.sectionLabel, { marginTop: 20 }]}>POPULAR TELUGU HUBS</Text>
+        {/* Popular hubs */}
+        <Text style={[styles.sectionLabel, { marginTop: 24 }]}>POPULAR TELUGU HUBS</Text>
         <View style={styles.chipsWrap}>
-          {HUBS.map(hub => (
+          {hubs.map(hub => (
             <Chip
               key={hub}
               label={hub}
@@ -100,30 +171,22 @@ export default function USLocationScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: T.bg },
   content: { paddingHorizontal: 24, paddingBottom: 40 },
+
   title: {
     fontFamily: FONTS.display,
-    fontSize: 36,
+    fontSize: 34,
     color: T.ink,
-    lineHeight: 44,
+    lineHeight: 42,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: T.mute,
+    lineHeight: 20,
     marginBottom: 24,
   },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: T.field,
-    borderWidth: 1,
-    borderColor: T.hair,
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    gap: 10,
-    marginBottom: 24,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 15,
-    color: T.ink,
-  },
+
+  section: { marginBottom: 20 },
   sectionLabel: {
     fontFamily: FONTS.mono,
     fontSize: 10,
@@ -132,6 +195,53 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     marginBottom: 10,
   },
+
+  countryGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  countryChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 100,
+    borderWidth: 1.5,
+    borderColor: T.hair2,
+    backgroundColor: T.bg,
+  },
+  countryChipSelected: {
+    backgroundColor: T.accent,
+    borderColor: T.accent,
+  },
+  countryFlag: { fontSize: 14 },
+  countryLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: T.ink,
+  },
+  countryLabelSelected: { color: '#fff' },
+
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: T.field,
+    borderWidth: 1,
+    borderColor: T.hair,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    gap: 10,
+    marginBottom: 20,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 15,
+    color: T.ink,
+  },
+
   detectedCard: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -140,16 +250,16 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 14,
     gap: 12,
+    marginBottom: 4,
   },
   detectedSelected: {
     borderColor: T.accent,
-    backgroundColor: '#FFFFFF',
   },
   locationIconWrap: {
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: T.field,
+    backgroundColor: '#C2EDE7',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -157,7 +267,7 @@ const styles = StyleSheet.create({
   cityName: {
     fontSize: 15,
     fontWeight: '600',
-    color: T.ink2,
+    color: T.ink,
   },
   cityMeta: {
     fontSize: 12,
@@ -165,9 +275,9 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   checkCircle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     borderWidth: 1.5,
     borderColor: T.hair2,
     justifyContent: 'center',
@@ -177,6 +287,7 @@ const styles = StyleSheet.create({
     backgroundColor: T.accent,
     borderColor: T.accent,
   },
+
   chipsWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
