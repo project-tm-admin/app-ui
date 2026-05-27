@@ -1,77 +1,187 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import Svg, { Path, Circle, Rect } from 'react-native-svg';
+import Svg, { Path, Circle } from 'react-native-svg';
 import { T, FONTS } from '../../theme';
 import TopBar from '../../components/TopBar';
 import Stepper from '../../components/Stepper';
-import CardRow from '../../components/CardRow';
 import Primary from '../../components/Primary';
-import VerifyBadge from '../../components/VerifyBadge';
+import { getGender } from '../../store/profile';
 
-const VISA_TYPES = [
-  { id: 'H1B', label: 'H-1B', subtitle: 'Specialty occupation worker', verified: true },
-  { id: 'L1', label: 'L-1', subtitle: 'Intracompany transferee' },
-  { id: 'O1', label: 'O-1', subtitle: 'Extraordinary ability' },
-  { id: 'GC', label: 'Green Card', subtitle: 'Permanent resident' },
-  { id: 'USC', label: 'U.S. Citizen', subtitle: 'Born or naturalized' },
-  { id: 'F1', label: 'F-1 / OPT / STEM', subtitle: 'Student visa' },
-  { id: 'EAD', label: 'EAD (H-4 / L-2)', subtitle: 'Employment authorization' },
+// Per-country visa status lists
+const VISA_BY_COUNTRY = {
+  USA: [
+    { id: 'citizen',   label: 'Citizen',             subtitle: 'USA · UK · Canada · Australia · etc.' },
+    { id: 'pr',        label: 'Permanent resident',  subtitle: 'Green Card · ILR · PR · etc.' },
+    { id: 'h1b',       label: 'H-1B / Skilled worker', subtitle: 'With or without I-140 / pending PR', verified: true },
+    { id: 'dependent', label: 'Dependent visa',      subtitle: 'H-4 · spouse · partner visa' },
+    { id: 'student',   label: 'Student / post-grad', subtitle: 'F-1 / OPT · Tier 4 · PGWP · 485' },
+    { id: 'work',      label: 'Work permit · other', subtitle: 'L-1 · O-1 · Blue Card · 482 · etc.' },
+  ],
+  UK: [
+    { id: 'citizen',   label: 'British Citizen',     subtitle: 'Born or naturalised' },
+    { id: 'ilr',       label: 'Indefinite Leave to Remain', subtitle: 'Settled status · ILR' },
+    { id: 'skilled',   label: 'Skilled Worker visa', subtitle: 'Tier 2 · sponsorship required', verified: true },
+    { id: 'dependent', label: 'Dependent / partner', subtitle: 'Spouse visa · partner visa' },
+    { id: 'student',   label: 'Student visa',        subtitle: 'Tier 4 · Graduate route' },
+    { id: 'work',      label: 'Other work visa',     subtitle: 'ICT · Global Talent · etc.' },
+  ],
+  CA: [
+    { id: 'citizen',   label: 'Canadian Citizen',    subtitle: 'Born or naturalised' },
+    { id: 'pr',        label: 'Permanent Resident',  subtitle: 'PR card holder' },
+    { id: 'express',   label: 'Express Entry / LMIA',subtitle: 'Skilled worker pathway', verified: true },
+    { id: 'student',   label: 'Study permit',        subtitle: 'PGWP eligible' },
+    { id: 'dependent', label: 'Spousal / dependent', subtitle: 'Open work permit' },
+    { id: 'work',      label: 'Other work permit',   subtitle: 'IEC · TWP · etc.' },
+  ],
+  AU: [
+    { id: 'citizen',   label: 'Australian Citizen',  subtitle: 'Born or naturalised' },
+    { id: 'pr',        label: 'Permanent Resident',  subtitle: '189 · 190 · 801 visa' },
+    { id: 'skilled',   label: 'Skilled visa',        subtitle: '482 TSS · 186 · 494', verified: true },
+    { id: 'student',   label: 'Student visa',        subtitle: '500 · 485 Graduate' },
+    { id: 'dependent', label: 'Partner / dependent', subtitle: '820 · 309 · 100 visa' },
+    { id: 'work',      label: 'Other work visa',     subtitle: 'Working holiday · etc.' },
+  ],
+  SG: [
+    { id: 'citizen',   label: 'Singapore Citizen',   subtitle: 'SC holder' },
+    { id: 'pr',        label: 'Permanent Resident',  subtitle: 'SPR holder' },
+    { id: 'ep',        label: 'Employment Pass',     subtitle: 'EP / PEP', verified: true },
+    { id: 'dependent', label: 'Dependent Pass',      subtitle: 'DP / LTVP' },
+    { id: 'student',   label: 'Student Pass',        subtitle: 'Full-time study' },
+    { id: 'work',      label: 'S Pass / Work Permit',subtitle: 'Other work passes' },
+  ],
+  AE: [
+    { id: 'citizen',   label: 'UAE Citizen',         subtitle: 'Emirati national' },
+    { id: 'resident',  label: 'Resident visa',       subtitle: 'Long-term / Golden visa' },
+    { id: 'skilled',   label: 'Work / employment visa', subtitle: 'Employer sponsored', verified: true },
+    { id: 'freelance', label: 'Freelance / investor', subtitle: 'Free zone · investor visa' },
+    { id: 'dependent', label: 'Dependent / spouse',  subtitle: 'Family visa' },
+    { id: 'student',   label: 'Student visa',        subtitle: 'University sponsored' },
+  ],
+  IN: [
+    { id: 'citizen',   label: 'Indian Citizen',      subtitle: 'Indian passport holder' },
+    { id: 'oci',       label: 'OCI Card holder',     subtitle: 'Overseas Citizen of India' },
+    { id: 'work',      label: 'Work / business visa',subtitle: 'Employment · business', verified: true },
+    { id: 'student',   label: 'Student visa',        subtitle: 'University enrolled' },
+    { id: 'dependent', label: 'Dependent / spouse',  subtitle: 'Family visa' },
+    { id: 'other',     label: 'Other',               subtitle: 'Long-term / special visa' },
+  ],
+};
+
+const COUNTRIES = [
+  { id: 'USA', code: '🇺🇸', label: 'USA' },
+  { id: 'UK',  code: '🇬🇧', label: 'UK' },
+  { id: 'CA',  code: '🇨🇦', label: 'Canada' },
+  { id: 'AU',  code: '🇦🇺', label: 'Australia' },
+  { id: 'SG',  code: '🇸🇬', label: 'Singapore' },
+  { id: 'AE',  code: '🇦🇪', label: 'UAE' },
+  { id: 'IN',  code: '🇮🇳', label: 'India' },
 ];
 
-function ShieldIcon() {
+function VerifiedBadge() {
   return (
-    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
-      <Path d="M12 2L4 6v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V6L12 2z" stroke={T.verify} strokeWidth={1.8} fill={T.verifySoft} />
-      <Path d="M8 12l3 3 5-5" stroke={T.verify} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
-    </Svg>
+    <View style={styles.verifiedBadge}>
+      <Svg width={12} height={12} viewBox="0 0 12 12">
+        <Circle cx="6" cy="6" r="6" fill={T.verify} />
+        <Path d="M3.5 6l1.8 1.8L8.5 4" stroke="white" strokeWidth={1.3} strokeLinecap="round" strokeLinejoin="round" />
+      </Svg>
+      <Text style={styles.verifiedText}>VERIFIED</Text>
+    </View>
+  );
+}
+
+function StatusRow({ item, selected, onPress }) {
+  return (
+    <TouchableOpacity
+      style={[styles.statusRow, selected && styles.statusRowSelected]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <View style={styles.statusText}>
+        <View style={styles.statusTitleRow}>
+          <Text style={styles.statusLabel}>{item.label}</Text>
+          {item.verified && <VerifiedBadge />}
+        </View>
+        <Text style={styles.statusSub}>{item.subtitle}</Text>
+      </View>
+      <View style={[styles.radioOuter, selected && styles.radioOuterSelected]}>
+        {selected && <View style={styles.radioInner} />}
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+function CountryChip({ country, selected, onPress }) {
+  return (
+    <TouchableOpacity
+      style={[styles.countryChip, selected && styles.countryChipSelected]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <Text style={styles.countryFlag}>{country.code}</Text>
+      <Text style={[styles.countryChipLabel, selected && styles.countryChipLabelSelected]}>
+        {country.label}
+      </Text>
+    </TouchableOpacity>
   );
 }
 
 export default function VisaScreen() {
   const navigation = useNavigation();
-  const [selected, setSelected] = useState('H1B');
+  const isWoman = getGender() === 'Woman';
+
+  const [selectedCountry, setSelectedCountry] = useState('USA');
+  const [selectedStatus, setSelectedStatus] = useState('h1b');
+
+  const visaList = VISA_BY_COUNTRY[selectedCountry] ?? VISA_BY_COUNTRY.USA;
+  const countryName = COUNTRIES.find(c => c.id === selectedCountry)?.label ?? 'USA';
 
   return (
     <SafeAreaView style={styles.safe}>
       <TopBar onSkip={() => navigation.navigate('Family')} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={7} total={14} />
-        <Text style={styles.title}>Your status{'\n'}in the U.S.</Text>
+        <Stepper current={7} total={15} />
 
-        {VISA_TYPES.map(v => (
-          <CardRow
-            key={v.id}
-            title={v.label}
-            subtitle={v.subtitle}
-            selected={selected === v.id}
-            onPress={() => setSelected(v.id)}
-            rightEl={
-              selected === v.id && v.verified ? (
-                <VerifyBadge label="VERIFIED" />
-              ) : undefined
-            }
+        <Text style={styles.title}>Status & immigration</Text>
+        <Text style={styles.subtitle}>
+          Verified by document. A green check shows up on your profile so matches know it's real.
+        </Text>
+
+        {/* Country selector — women only */}
+        {isWoman && (
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>SETTLED IN</Text>
+            <View style={styles.countryGrid}>
+              {COUNTRIES.map(c => (
+                <CountryChip
+                  key={c.id}
+                  country={c}
+                  selected={selectedCountry === c.id}
+                  onPress={() => { setSelectedCountry(c.id); setSelectedStatus(''); }}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Status options */}
+        <Text style={styles.sectionLabel}>
+          STATUS – SHOWS OPTIONS FOR {countryName.toUpperCase()}
+        </Text>
+        {visaList.map(item => (
+          <StatusRow
+            key={item.id}
+            item={item}
+            selected={selectedStatus === item.id}
+            onPress={() => setSelectedStatus(item.id)}
           />
         ))}
-
-        <View style={styles.verifyCard}>
-          <View style={styles.verifyIconWrap}>
-            <ShieldIcon />
-          </View>
-          <View style={styles.verifyText}>
-            <Text style={styles.verifyTitle}>Verify your visa status</Text>
-            <Text style={styles.verifySubtitle}>Upload your visa document for a verified badge — 3× more matches</Text>
-          </View>
-          <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
-            <Path d="M9 18l6-6-6-6" stroke={T.verify} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-          </Svg>
-        </View>
 
         <Primary
           label="Continue"
           onPress={() => navigation.navigate('Family')}
-          style={{ marginTop: 16 }}
+          style={{ marginTop: 20 }}
         />
       </ScrollView>
     </SafeAreaView>
@@ -81,42 +191,123 @@ export default function VisaScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: T.bg },
   content: { paddingHorizontal: 24, paddingBottom: 40 },
+
   title: {
     fontFamily: FONTS.display,
-    fontSize: 36,
+    fontSize: 34,
     color: T.ink,
-    lineHeight: 44,
+    lineHeight: 42,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: T.mute,
+    lineHeight: 21,
     marginBottom: 24,
   },
-  verifyCard: {
+
+  section: { marginBottom: 20 },
+  sectionLabel: {
+    fontFamily: FONTS.mono,
+    fontSize: 10,
+    letterSpacing: 1.2,
+    color: T.mute,
+    textTransform: 'uppercase',
+    marginBottom: 10,
+  },
+
+  countryGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  countryChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: T.verifySoft,
-    borderWidth: 1,
-    borderColor: T.verify,
-    borderRadius: 16,
-    padding: 16,
-    gap: 12,
-    marginTop: 8,
+    gap: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 100,
+    borderWidth: 1.5,
+    borderColor: T.hair2,
+    backgroundColor: T.bg,
   },
-  verifyIconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: 'rgba(61,138,92,0.15)',
+  countryChipSelected: {
+    backgroundColor: T.accent,
+    borderColor: T.accent,
+  },
+  countryFlag: { fontSize: 13 },
+  countryChipLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: T.ink,
+  },
+  countryChipLabelSelected: { color: '#fff' },
+
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: T.hair,
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    marginBottom: 10,
+    backgroundColor: T.bg,
+  },
+  statusRowSelected: {
+    borderColor: T.accent,
+  },
+  statusText: { flex: 1 },
+  statusTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 3,
+  },
+  statusLabel: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: T.ink,
+  },
+  statusSub: {
+    fontSize: 13,
+    color: T.mute,
+  },
+
+  verifiedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: T.verifySoft,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 100,
+  },
+  verifiedText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: T.verify,
+    letterSpacing: 0.3,
+  },
+
+  radioOuter: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 1.5,
+    borderColor: T.hair2,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  verifyText: { flex: 1 },
-  verifyTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: T.verify,
+  radioOuterSelected: {
+    borderColor: T.accent,
+    backgroundColor: T.accent,
   },
-  verifySubtitle: {
-    fontSize: 12,
-    color: '#2D6B48',
-    marginTop: 2,
-    lineHeight: 18,
+  radioInner: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#fff',
   },
 });

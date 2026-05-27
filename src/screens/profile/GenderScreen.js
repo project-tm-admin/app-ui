@@ -8,6 +8,7 @@ import TopBar from '../../components/TopBar';
 import Stepper from '../../components/Stepper';
 import CardRow from '../../components/CardRow';
 import Primary from '../../components/Primary';
+import { setGender } from '../../store/profile';
 
 function WomanIcon() {
   return (
@@ -33,9 +34,14 @@ export default function GenderScreen() {
   const [iAm, setIAm] = useState('Woman');
   const [lookingFor, setLookingFor] = useState('Men');
 
+  const handleContinue = () => {
+    setGender(iAm);
+    navigation.navigate('USLocation', { gender: iAm });
+  };
+
   return (
     <SafeAreaView style={styles.safe}>
-      <TopBar onSkip={() => navigation.navigate('USLocation', { gender: iAm })} />
+      <TopBar onSkip={() => handleContinue()} />
       <View style={styles.outer}>
         <Stepper current={2} total={14} />
         <View style={styles.body}>
@@ -49,7 +55,7 @@ export default function GenderScreen() {
           <CardRow compact title="Men" selected={lookingFor === 'Men'} onPress={() => setLookingFor('Men')} />
           <CardRow compact title="Women" selected={lookingFor === 'Women'} onPress={() => setLookingFor('Women')} />
         </View>
-        <Primary label="Continue" onPress={() => navigation.navigate('USLocation', { gender: iAm })} />
+        <Primary label="Continue" onPress={() => handleContinue()} />
       </View>
     </SafeAreaView>
   );
