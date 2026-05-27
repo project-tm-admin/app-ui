@@ -6,7 +6,7 @@ import Svg, { Path, Circle, Rect } from 'react-native-svg';
 import { T, FONTS } from '../../theme';
 import TopBar from '../../components/TopBar';
 
-const BG    = '#FAF8F5';
+const BG    = '#FFFFFF';
 const MAROON = T.accentInk;
 
 function PhoneIcon() {
