@@ -64,11 +64,11 @@ function HeartDivider() {
 export default function WelcomeScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const heroHeight = Math.round(height * 0.62);
+  const heroHeight = Math.round(height * 0.56);
 
   return (
     <View style={styles.root}>
-      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
+      <StatusBar hidden />
 
       {/* Hero — full painted scene, bell already inside */}
       <View style={[styles.heroWrap, { height: heroHeight }]}>
@@ -133,10 +133,10 @@ const styles = StyleSheet.create({
   // Text block
   textBlock: {
     alignItems: 'center',
-    paddingTop: 14,
-    paddingBottom: 4,
+    paddingTop: 10,
+    paddingBottom: 0,
     paddingHorizontal: 24,
-    gap: 4,
+    gap: 2,
   },
   teluguScript: {
     fontFamily: FONTS.display,
