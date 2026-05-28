@@ -1,253 +1,974 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View, Text, TouchableOpacity, StyleSheet, ScrollView,
+  Dimensions,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import Svg, { Path, Circle } from 'react-native-svg';
+import Svg, { Path, Circle, Rect, Polygon } from 'react-native-svg';
+import { LinearGradient } from 'expo-linear-gradient';
 import { T, FONTS } from '../../theme';
-import PhotoPlaceholder from '../../components/PhotoPlaceholder';
-import { VerifyDot } from '../../components/VerifyBadge';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
-const BASICS = [
-  { label: 'PROFESSION', value: 'Senior SWE at Salesforce' },
-  { label: 'EDUCATION', value: "MS Computer Science" },
-  { label: 'VISA', value: 'H-1B ✓ Verified' },
-  { label: 'INCOME', value: '$185K / year' },
-  { label: 'RELIGION', value: 'Hindu' },
-  { label: 'SUB-CASTE', value: 'Kamma' },
-  { label: 'GOTHRAM', value: 'Kashyapa' },
-  { label: 'BIRTH STAR', value: 'Mrigashira · Mithuna' },
-];
+// ─── Colors ──────────────────────────────────────────────────────────────────
+const GREEN   = '#3D8A5C';
+const GREEN_S = '#DCEFE2';
+const SALMON  = '#F2C4B0';
+const SALMON_S= '#FDF0EB';
+const GOLD    = '#C8920A';
+const GOLD_S  = '#FEF3D4';
 
-const WAVEFORM = [20, 32, 44, 28, 40, 24, 36, 48, 30, 22, 42, 34, 26, 38, 18, 44, 28, 36, 24, 40];
+// ─── Profile data ─────────────────────────────────────────────────────────────
+const WAVEFORM = [12,22,38,18,44,26,34,48,20,14,40,30,16,42,22,36,18,44,28,20];
 
-function BackIcon() {
-  return (
-    <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
-      <Path d="M20 12H4M4 12L10 6M4 12L10 18" stroke="white" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-    </Svg>
-  );
-}
+const TABS = ['About', 'Career', 'Family', 'Jaathakam', 'Trust'];
 
-function ShareIcon() {
+// ─── Icons ────────────────────────────────────────────────────────────────────
+function BackIcon({ color = T.ink }) {
   return (
     <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
-      <Path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" stroke="white" strokeWidth={2} strokeLinecap="round" />
-      <Path d="M16 6L12 2 8 6M12 2v13" stroke="white" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M20 12H4M4 12l6-6M4 12l6 6" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   );
 }
-
-function MoreIcon() {
-  return (
-    <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
-      <Circle cx="12" cy="12" r="1.5" fill="white" />
-      <Circle cx="19" cy="12" r="1.5" fill="white" />
-      <Circle cx="5" cy="12" r="1.5" fill="white" />
-    </Svg>
-  );
-}
-
-function XIcon() {
-  return (
-    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
-      <Path d="M18 6L6 18M6 6l12 12" stroke="#E53E3E" strokeWidth={2.5} strokeLinecap="round" />
-    </Svg>
-  );
-}
-
-function BookmarkIcon() {
-  return (
-    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
-      <Path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" stroke={T.ink} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-    </Svg>
-  );
-}
-
-function MicIcon() {
+function DownloadIcon() {
   return (
     <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-      <Path d="M9 2h6v11a3 3 0 01-6 0V2z" stroke={T.accent} strokeWidth={1.6} fill="none" />
-      <Path d="M5 10a7 7 0 0014 0M12 19v3M8 22h8" stroke={T.accent} strokeWidth={1.6} strokeLinecap="round" />
+      <Path d="M12 2v13M7 10l5 5 5-5M3 20h18" stroke="white" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+function DotsIconV() {
+  return (
+    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="5"  r="1.5" fill="white" />
+      <Circle cx="12" cy="12" r="1.5" fill="white" />
+      <Circle cx="12" cy="19" r="1.5" fill="white" />
+    </Svg>
+  );
+}
+function PlayIcon({ color = '#fff', size = 16 }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Polygon points="5,3 19,12 5,21" fill={color} />
+    </Svg>
+  );
+}
+function VerifiedCircle({ size = 18 }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 18 18">
+      <Circle cx="9" cy="9" r="9" fill={GREEN} />
+      <Path d="M5 9l3 3 5-5" stroke="white" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+function ShieldIcon({ size = 28, color = GREEN }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 2L3 7v6c0 5 4 9.5 9 11 5-1.5 9-6 9-11V7l-9-5z" stroke={color} strokeWidth={1.6} fill={GREEN_S} />
+      <Path d="M9 12l2 2 4-4" stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+function CheckCircle({ size = 20 }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 20 20">
+      <Circle cx="10" cy="10" r="10" fill={GREEN_S} />
+      <Path d="M6 10l3 3 5-5" stroke={GREEN} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+function XCircleIcon() {
+  return (
+    <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="12" r="10" stroke={T.hair2} strokeWidth={1.5} />
+      <Path d="M15 9l-6 6M9 9l6 6" stroke={T.mute} strokeWidth={1.8} strokeLinecap="round" />
+    </Svg>
+  );
+}
+function BookmarkOutline() {
+  return (
+    <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
+      <Path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" stroke={T.ink} strokeWidth={1.8} />
     </Svg>
   );
 }
 
-export default function MatchDetailScreen() {
-  const navigation = useNavigation();
+// ─── Shared sub-components ────────────────────────────────────────────────────
+
+function SectionLabel({ text, style }) {
+  return <Text style={[s.sectionLabel, style]}>{text}</Text>;
+}
+
+function VerifiedBadge() {
+  return (
+    <View style={s.verifiedBadge}>
+      <Text style={s.verifiedBadgeText}>VERIFIED</Text>
+    </View>
+  );
+}
+
+function PremiumGate({ title, subtitle }) {
+  return (
+    <View style={s.premiumGate}>
+      <View style={s.premiumChip}>
+        <Text style={s.premiumChipText}>✦ PREMIUM</Text>
+      </View>
+      <Text style={s.premiumTitle}>{title}</Text>
+      {subtitle ? <Text style={s.premiumSub}>{subtitle}</Text> : null}
+      <TouchableOpacity style={s.premiumBtn} activeOpacity={0.85}>
+        <Text style={s.premiumBtnText}>See Premium plans  ›</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+function BottomBar({ onPass, onInterest }) {
+  return (
+    <View style={s.bottomBar}>
+      <TouchableOpacity style={s.bottomCircle} onPress={onPass} activeOpacity={0.7}>
+        <XCircleIcon />
+      </TouchableOpacity>
+      <TouchableOpacity style={s.bottomCircle} activeOpacity={0.7}>
+        <BookmarkOutline />
+      </TouchableOpacity>
+      <TouchableOpacity style={s.sendBtn} onPress={onInterest} activeOpacity={0.85}>
+        <Text style={s.sendBtnText}>Send interest  ›</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+// ─── Tab content ─────────────────────────────────────────────────────────────
+
+function AboutContent() {
+  const prompts = [
+    {
+      q: 'WHAT "HOME" MEANS TO ME',
+      a: 'Sunday filter coffee, my mom\'s voice on speakerphone, and the smell of tadka somewhere in the building.',
+    },
+    {
+      q: 'A PERFECT SATURDAY',
+      a: 'A long walk on White Rock Lake, biryani with friends, and then a film I\'ve been putting off — preferably Sankranthiki or vintage Mani Ratnam.',
+    },
+    {
+      q: 'FIRST THING YOU\'D NOTICE ABOUT ME',
+      a: 'I take filter-coffee opinions extremely seriously. Brand, decoction ratio, davara temperature — there is one right way.',
+    },
+  ];
 
   return (
-    <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Hero photo */}
-        <View style={styles.heroWrap}>
-          <PhotoPlaceholder width={width} height={380} label="Anjali R." style={{ borderRadius: 0 }} />
+    <View style={s.tabContent}>
+      <SectionLabel text="ABOUT ANJALI" />
+      {prompts.map((p, i) => (
+        <View key={i} style={s.promptBlock}>
+          <Text style={s.promptQ}>{p.q}</Text>
+          <Text style={s.promptA}>{p.a}</Text>
+        </View>
+      ))}
 
-          {/* Overlay buttons */}
-          <SafeAreaView style={styles.overlaySafe} edges={['top']}>
-            <View style={styles.overlayRow}>
-              <TouchableOpacity onPress={() => navigation.goBack()} style={styles.overlayBtn}>
-                <BackIcon />
-              </TouchableOpacity>
-              <View style={styles.overlayRight}>
-                <TouchableOpacity style={styles.overlayBtn}>
-                  <ShareIcon />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.overlayBtn}>
-                  <MoreIcon />
-                </TouchableOpacity>
+      <SectionLabel text="VOICE INTRO" style={{ marginTop: 8 }} />
+      <PremiumGate
+        title="Hear Anjali's voice intro"
+        subtitle="Voice intros are part of Premium — a small thing that says a lot."
+      />
+
+      <SectionLabel text="PERSONALITY" style={{ marginTop: 16 }} />
+      <View style={s.tagsWrap}>
+        {['Curious', 'Family-first', 'Reads a lot', 'Adventurous', 'Homebody'].map((t, i) => (
+          <View key={i} style={s.personalityTag}>
+            <Text style={s.personalityTagText}>{t}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+function CareerContent() {
+  return (
+    <View style={s.tabContent}>
+      <SectionLabel text="CURRENTLY" />
+      <View style={s.currentJob}>
+        <View style={s.currentJobTop}>
+          <Text style={s.currentTitle}>Senior Software Engineer</Text>
+          <VerifiedBadge />
+        </View>
+        <Text style={s.currentSub}>Amazon · Dallas, TX</Text>
+        <Text style={s.currentDuration}>2022 — present · 3 years 4 months</Text>
+        <View style={s.jobChips}>
+          <View style={s.jobChip}>
+            <Text style={s.jobChipLabel}>INCOME</Text>
+            <Text style={s.jobChipValue}>$180K</Text>
+          </View>
+          <View style={s.jobChip}>
+            <Text style={s.jobChipLabel}>WORK AUTH</Text>
+            <Text style={s.jobChipValue}>H1B</Text>
+          </View>
+          <View style={s.jobChip}>
+            <Text style={s.jobChipLabel}>OPEN TO RELOCATE</Text>
+            <Text style={s.jobChipValue}>Yes</Text>
+          </View>
+        </View>
+      </View>
+
+      <SectionLabel text="CAREER TIMELINE" style={{ marginTop: 8 }} />
+      {[
+        { year: '2022', company: 'Amazon',    role: 'Senior SWE · Dallas' },
+        { year: '2019', company: 'Microsoft', role: 'SDE II · Redmond' },
+        { year: '2017', company: 'UT Dallas', role: 'Research assistant · NLP lab' },
+      ].map((item, i) => (
+        <View key={i} style={s.timelineRow}>
+          <Text style={s.timelineYear}>{item.year}</Text>
+          <View style={s.timelineLine}>
+            <View style={s.timelineDot} />
+            {i < 2 && <View style={s.timelineTrack} />}
+          </View>
+          <View style={s.timelineRight}>
+            <Text style={s.timelineCompany}>{item.company}</Text>
+            <Text style={s.timelineRole}>{item.role}</Text>
+          </View>
+        </View>
+      ))}
+
+      <SectionLabel text="EDUCATION" style={{ marginTop: 8 }} />
+      {[
+        { year: '2019', degree: 'MS, Computer Science', school: 'University of Texas, Dallas · 3.9 GPA' },
+        { year: '2017', degree: 'B.Tech, CSE',          school: 'JNTU Hyderabad · 9.1 / 10' },
+      ].map((item, i) => (
+        <View key={i} style={s.timelineRow}>
+          <Text style={s.timelineYear}>{item.year}</Text>
+          <View style={s.timelineLine}>
+            <View style={s.timelineDot} />
+            {i < 1 && <View style={s.timelineTrack} />}
+          </View>
+          <View style={s.timelineRight}>
+            <Text style={s.timelineCompany}>{item.degree}</Text>
+            <Text style={s.timelineRole}>{item.school}</Text>
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+function FamilyContent() {
+  const parentTag = (label) => (
+    <View style={s.familyTag}><Text style={s.familyTagText}>{label}</Text></View>
+  );
+
+  return (
+    <View style={s.tabContent}>
+      <SectionLabel text="PARENTS" />
+
+      <View style={s.familyMember}>
+        <Text style={s.familyRole}>FATHER</Text>
+        <Text style={s.familyName}>Ramachandra Reddy</Text>
+        <Text style={s.familySub}>Retd. AP govt. officer · Hyderabad</Text>
+        <View style={s.familyTags}>{parentTag('Native')}{parentTag('In India')}</View>
+      </View>
+
+      <View style={s.familyMember}>
+        <Text style={s.familyRole}>MOTHER</Text>
+        <Text style={s.familyName}>Padma Reddy</Text>
+        <Text style={s.familySub}>Homemaker · Hyderabad</Text>
+        <View style={s.familyTags}>{parentTag('Native')}{parentTag('In India')}</View>
+      </View>
+
+      <SectionLabel text="SIBLINGS" style={{ marginTop: 8 }} />
+      <View style={s.familyMember}>
+        <Text style={s.familyRole}>YOUNGER SISTER</Text>
+        <Text style={s.familyName}>Sahasra, 25</Text>
+        <Text style={s.familySub}>Product designer · Bengaluru · unmarried</Text>
+        <View style={s.familyTags}>{parentTag('Working')}</View>
+      </View>
+
+      <SectionLabel text="ROOTS" style={{ marginTop: 8 }} />
+      <View style={s.rootsGrid}>
+        {[
+          { label: 'NATIVE PLACE', value: 'Kadapa, AP' },
+          { label: 'GREW UP IN',   value: 'Hyderabad' },
+          { label: 'MOTHER TONGUE',value: 'Telugu' },
+          { label: 'ALSO SPEAKS',  value: 'English, Hindi' },
+          { label: 'CASTE',        value: 'Reddy · Pakanati' },
+          { label: 'GOTRA',        value: 'Bharadwaja' },
+        ].map((r, i) => (
+          <View key={i} style={s.rootCell}>
+            <Text style={s.rootLabel}>{r.label}</Text>
+            <Text style={s.rootValue}>{r.value}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+function JaathakamContent() {
+  const kootas = [
+    { name: 'Varna',       score: '1/1' },
+    { name: 'Vashya',      score: '2/2' },
+    { name: 'Tara',        score: '3/3' },
+    { name: 'Yoni',        score: '3/4' },
+    { name: 'Graha Maitri',score: '4/5' },
+    { name: 'Gana',        score: '5/6' },
+    { name: 'Bhakoot',     score: '3/7' },
+    { name: 'Nadi',        score: '7/8' },
+  ];
+
+  return (
+    <View style={s.tabContent}>
+      <SectionLabel text="GUNAMILAN" />
+      <View style={s.kootaCard}>
+        <Text style={s.kootaScore}><Text style={s.kootaBig}>28</Text> / 36 koota points</Text>
+        <Text style={s.kootaSub}>Strong compatibility · above the 18-point cutoff</Text>
+        <View style={s.kootaGrid}>
+          {kootas.map((k, i) => (
+            <View key={i} style={s.kootaCell}>
+              <Text style={s.kootaName}>{k.name}</Text>
+              <Text style={s.kootaVal}>{k.score}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <SectionLabel text="BIRTH DETAILS" style={{ marginTop: 8 }} />
+      <View style={s.detailGrid}>
+        {[
+          { label: 'DATE',     value: '04 Aug 1997' },
+          { label: 'TIME',     value: '06:14 AM' },
+          { label: 'PLACE',    value: 'Hyderabad, IN' },
+          { label: 'TIMEZONE', value: 'IST · +5:30' },
+        ].map((d, i) => (
+          <View key={i} style={s.detailCell}>
+            <Text style={s.detailLabel}>{d.label}</Text>
+            <Text style={s.detailValue}>{d.value}</Text>
+          </View>
+        ))}
+      </View>
+
+      <SectionLabel text="ASTROLOGY" style={{ marginTop: 8 }} />
+      <View style={s.detailGrid}>
+        {[
+          { label: 'RASI',      value: 'Karkataka · Cancer' },
+          { label: 'NAKSHATRA', value: 'Pushyami · pada 2' },
+          { label: 'LAGNA',     value: 'Simha · Leo' },
+          { label: 'CHANDRA',   value: 'Karkataka' },
+        ].map((d, i) => (
+          <View key={i} style={s.detailCell}>
+            <Text style={s.detailLabel}>{d.label}</Text>
+            <Text style={s.detailValue}>{d.value}</Text>
+          </View>
+        ))}
+      </View>
+
+      <SectionLabel text="DOSHAS" style={{ marginTop: 8 }} />
+      <View style={s.detailGrid}>
+        {[
+          { label: 'MANGAL DOSHA', value: 'No' },
+          { label: 'KUJA DOSHA',   value: 'No' },
+        ].map((d, i) => (
+          <View key={i} style={s.detailCell}>
+            <Text style={s.detailLabel}>{d.label}</Text>
+            <Text style={s.detailValue}>{d.value}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+function TrustContent() {
+  return (
+    <View style={s.tabContent}>
+      <SectionLabel text="TRUST SCORE" />
+      <View style={s.trustScore}>
+        <View style={s.trustIconWrap}>
+          <ShieldIcon size={32} />
+        </View>
+        <View style={s.trustTextBlock}>
+          <Text style={s.trustTitle}>High trust</Text>
+          <Text style={s.trustSub}>5 of 5 verifications complete · joined 11 months ago</Text>
+        </View>
+      </View>
+
+      <SectionLabel text="VERIFICATIONS" style={{ marginTop: 8 }} />
+      {[
+        { title: 'Government ID', sub: 'Aadhaar · last 4: 3421' },
+        { title: 'Selfie match',  sub: 'Live photo · 96% match' },
+      ].map((v, i) => (
+        <View key={i} style={s.verifyRow}>
+          <CheckCircle />
+          <View style={s.verifyText}>
+            <Text style={s.verifyTitle}>{v.title}</Text>
+            <Text style={s.verifySub}>{v.sub}</Text>
+          </View>
+          <VerifiedBadge />
+        </View>
+      ))}
+
+      <PremiumGate
+        title="See full verification details"
+        subtitle="Work email, education & phone confirmations are visible to Premium members."
+      />
+
+      <SectionLabel text="PROFILE MANAGED BY" style={{ marginTop: 16 }} />
+      <View style={s.managedRow}>
+        <View style={s.managedAvatar}>
+          <Text style={s.managedAvatarText}>AR</Text>
+        </View>
+        <View>
+          <Text style={s.managedTitle}>Self-managed by Anjali</Text>
+          <Text style={s.managedSub}>Last edit · 2 days ago · responds within ~4 hrs</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+// ─── Tab bar ──────────────────────────────────────────────────────────────────
+function TabBar({ active, onPress }) {
+  return (
+    <View style={s.tabBar}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.tabBarInner}>
+        {TABS.map(t => (
+          <TouchableOpacity
+            key={t}
+            style={[s.tabChip, active === t && s.tabChipActive]}
+            onPress={() => onPress(t)}
+            activeOpacity={0.7}
+          >
+            <Text style={[s.tabChipText, active === t && s.tabChipTextActive]}>{t}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
+  );
+}
+
+// ─── Cover view (screen 24) ───────────────────────────────────────────────────
+function CoverView({ onTabPress, onBack }) {
+  return (
+    <View style={{ flex: 1, backgroundColor: T.bg }}>
+      <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+        {/* Full-screen photo */}
+        <View style={s.coverPhoto}>
+          <LinearGradient
+            colors={['#C4956A', '#A07050', '#7A4A40']}
+            start={{ x: 0.2, y: 0 }} end={{ x: 0.9, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+          {/* Dark gradient at bottom */}
+          <LinearGradient
+            colors={['transparent', 'transparent', 'rgba(0,0,0,0.7)']}
+            style={StyleSheet.absoluteFill}
+          />
+
+          {/* Overlay controls */}
+          <SafeAreaView style={s.coverOverlay} edges={['top']}>
+            <View style={s.coverTopRow}>
+              <View style={s.matchBadgeCover}>
+                <Text style={s.matchBadgeCoverText}>↗ 87% Match</Text>
+              </View>
+              <View style={s.coverTopRight}>
+                <TouchableOpacity style={s.coverBtn}><DownloadIcon /></TouchableOpacity>
+                <TouchableOpacity style={s.coverBtn}><DotsIconV /></TouchableOpacity>
               </View>
             </View>
+            <TouchableOpacity style={s.coverBackBtn} onPress={onBack}>
+              <BackIcon color="white" />
+            </TouchableOpacity>
           </SafeAreaView>
 
-          {/* Photo dots */}
-          <View style={styles.photoDots}>
-            {[0, 1, 2, 3].map(i => (
-              <View key={i} style={[styles.photoDot, i === 0 && styles.photoDotActive]} />
-            ))}
+          {/* Name at bottom of photo */}
+          <View style={s.coverNameWrap}>
+            <View style={s.coverNameRow}>
+              <Text style={s.coverName}>Anjali Reddy, 28</Text>
+              <VerifiedCircle size={20} />
+            </View>
+            <Text style={s.coverSub}>5'6" · Dallas, TX · Active 2h ago</Text>
           </View>
         </View>
 
-        <View style={styles.content}>
-          {/* Name + verify */}
-          <View style={styles.nameRow}>
-            <Text style={styles.name}>Anjali Reddy, 28</Text>
-            <VerifyDot size={16} />
-          </View>
-
-          {/* Quote prompt */}
-          <View style={styles.promptCard}>
-            <Text style={styles.promptQ}>What does "home" mean to you?</Text>
-            <Text style={styles.promptA}>
-              "Home is Vizag sunsets, chai on the porch with Amma, and a Sunday morning run along the Bay Trail. I've learned to carry home with me wherever I go."
-            </Text>
-          </View>
-
-          {/* Voice intro */}
-          <View style={styles.voiceCard}>
-            <View style={styles.voiceHeader}>
-              <MicIcon />
-              <Text style={styles.voiceTitle}>Voice intro · 0:35</Text>
-            </View>
-            <View style={styles.waveRow}>
+        {/* Voice intro */}
+        <View style={s.voiceRow}>
+          <TouchableOpacity style={s.playCircle} activeOpacity={0.8}>
+            <PlayIcon size={16} />
+          </TouchableOpacity>
+          <View style={{ flex: 1 }}>
+            <Text style={s.voiceLabel}>Voice intro · 0:24</Text>
+            <View style={s.waveRow}>
               {WAVEFORM.map((h, i) => (
-                <View key={i} style={[styles.waveBar, { height: h, backgroundColor: i < 10 ? T.accent : T.hair2 }]} />
+                <View key={i} style={[s.waveBar, { height: h }, i < 10 && { backgroundColor: T.accent }]} />
               ))}
             </View>
           </View>
-
-          {/* The basics */}
-          <Text style={styles.sectionTitle}>The basics</Text>
-          <View style={styles.basicsGrid}>
-            {BASICS.map((b, i) => (
-              <View key={i} style={styles.basicItem}>
-                <Text style={styles.basicLabel}>{b.label}</Text>
-                <Text style={styles.basicValue}>{b.value}</Text>
-              </View>
-            ))}
-          </View>
-
-          {/* Family */}
-          <Text style={styles.sectionTitle}>Family</Text>
-          <View style={styles.familyCard}>
-            <Text style={styles.familyText}>
-              Father is a retired civil engineer; mother runs a boutique in Vizag. One younger sister, Preethi, who is doing her MBA in Austin. Family is based in Visakhapatnam and visits the US every summer.
-            </Text>
-          </View>
-
-          <View style={{ height: 120 }} />
         </View>
+
+        {/* Personality tags */}
+        <View style={s.coverTags}>
+          {['Curious', 'Family-first', 'Reads a lot'].map((t, i) => (
+            <View key={i} style={s.coverTag}>
+              <Text style={s.coverTagText}>{t}</Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Tab bar */}
+        <TabBar active={null} onPress={onTabPress} />
+
+        {/* Peek of about content */}
+        <View style={s.peekSection}>
+          <SectionLabel text="ABOUT ANJALI" />
+          <View style={s.promptBlock}>
+            <Text style={s.promptQ}>WHAT "HOME" MEANS TO ME</Text>
+            <Text style={s.promptA}>Sunday filter coffee, my mom's voice on speakerphone, and the smell of tadka somewhere in the building.</Text>
+          </View>
+        </View>
+
+        <View style={{ height: 90 }} />
       </ScrollView>
 
-      {/* Sticky action bar */}
-      <SafeAreaView style={styles.stickyBar} edges={['bottom']}>
-        <TouchableOpacity style={styles.stickyPass}>
-          <XIcon />
-          <Text style={styles.stickyPassText}>Pass</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.stickyBookmark}>
-          <BookmarkIcon />
-          <Text style={styles.stickyBookmarkText}>Shortlist</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.stickyInterest}>
-          <Text style={styles.stickyInterestText}>Send interest</Text>
-        </TouchableOpacity>
+      {/* Sticky bottom bar */}
+      <SafeAreaView style={s.bottomBarWrap} edges={['bottom']}>
+        <BottomBar onPass={onBack} onInterest={() => {}} />
       </SafeAreaView>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: T.bg },
-  heroWrap: { position: 'relative' },
-  overlaySafe: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
+// ─── Tab view (screens 25-29) ─────────────────────────────────────────────────
+function TabView({ activeTab, onTabChange, onBack }) {
+  const contentMap = {
+    About:     <AboutContent />,
+    Career:    <CareerContent />,
+    Family:    <FamilyContent />,
+    Jaathakam: <JaathakamContent />,
+    Trust:     <TrustContent />,
+  };
+
+  return (
+    <View style={{ flex: 1, backgroundColor: T.bg }}>
+      {/* Compact sticky header */}
+      <SafeAreaView style={s.compactHeader} edges={['top']}>
+        <View style={s.compactHeaderRow}>
+          <TouchableOpacity onPress={onBack} style={s.compactBack} hitSlop={8}>
+            <BackIcon />
+          </TouchableOpacity>
+          <View style={s.compactAvatar}>
+            <Text style={s.compactAvatarText}>A</Text>
+          </View>
+          <View style={s.compactInfo}>
+            <View style={s.compactNameRow}>
+              <Text style={s.compactName}>Anjali Reddy, 28</Text>
+              <VerifiedCircle size={15} />
+            </View>
+            <Text style={s.compactSub}>5'6" · Dallas, TX · Active 2h ago</Text>
+          </View>
+          <View style={s.matchPill}>
+            <Text style={s.matchPillText}>87%</Text>
+          </View>
+        </View>
+        <TabBar active={activeTab} onPress={onTabChange} />
+      </SafeAreaView>
+
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {contentMap[activeTab]}
+        <View style={{ height: 90 }} />
+      </ScrollView>
+
+      <SafeAreaView style={s.bottomBarWrap} edges={['bottom']}>
+        <BottomBar onPass={onBack} onInterest={() => {}} />
+      </SafeAreaView>
+    </View>
+  );
+}
+
+// ─── Main export ──────────────────────────────────────────────────────────────
+export default function MatchDetailScreen() {
+  const navigation = useNavigation();
+  const [view, setView] = useState('cover');
+
+  const handleTabPress = (tab) => setView(tab);
+  const handleBack = () => {
+    if (view === 'cover') navigation.goBack();
+    else setView('cover');
+  };
+
+  if (view === 'cover') {
+    return <CoverView onTabPress={handleTabPress} onBack={handleBack} />;
+  }
+  return (
+    <TabView
+      activeTab={view}
+      onTabChange={handleTabPress}
+      onBack={handleBack}
+    />
+  );
+}
+
+// ─── Styles ───────────────────────────────────────────────────────────────────
+const s = StyleSheet.create({
+
+  // ── Section label ────────────────────────────────────────────────────────
+  sectionLabel: {
+    fontFamily: FONTS.mono,
+    fontSize: 10,
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+    color: T.mute,
+    marginBottom: 12,
   },
-  overlayRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 8,
+
+  // ── Verified badge ────────────────────────────────────────────────────────
+  verifiedBadge: {
+    backgroundColor: GREEN_S,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 5,
   },
-  overlayRight: {
-    flexDirection: 'row',
+  verifiedBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: GREEN,
+    letterSpacing: 0.4,
+  },
+
+  // ── Premium gate ──────────────────────────────────────────────────────────
+  premiumGate: {
+    borderWidth: 1,
+    borderColor: T.hair2,
+    borderRadius: 16,
+    padding: 18,
+    alignItems: 'center',
     gap: 8,
   },
-  overlayBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  premiumChip: {
+    backgroundColor: GOLD_S,
+    borderRadius: 100,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
+  premiumChipText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: GOLD,
+    letterSpacing: 0.5,
+  },
+  premiumTitle: {
+    fontFamily: FONTS.display,
+    fontSize: 18,
+    color: T.accent,
+    textAlign: 'center',
+  },
+  premiumSub: {
+    fontSize: 13,
+    color: T.mute,
+    textAlign: 'center',
+    lineHeight: 19,
+  },
+  premiumBtn: {
+    marginTop: 4,
+    backgroundColor: T.accent,
+    borderRadius: 100,
+    paddingHorizontal: 24,
+    paddingVertical: 11,
+  },
+  premiumBtnText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#fff',
+  },
+
+  // ── Bottom bar ────────────────────────────────────────────────────────────
+  bottomBarWrap: {
+    position: 'absolute',
+    bottom: 0, left: 0, right: 0,
+    backgroundColor: T.bg,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: T.hair,
+  },
+  bottomBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    gap: 10,
+  },
+  bottomCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1.2,
+    borderColor: T.hair2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sendBtn: {
+    flex: 1,
+    height: 48,
+    backgroundColor: T.accent,
+    borderRadius: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: T.accent,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  sendBtnText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#fff',
+  },
+
+  // ── Tab bar ───────────────────────────────────────────────────────────────
+  tabBar: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: T.hair,
+  },
+  tabBarInner: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    gap: 8,
+  },
+  tabChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 100,
+    borderWidth: 1,
+    borderColor: T.hair2,
+  },
+  tabChipActive: {
+    backgroundColor: T.ink,
+    borderColor: T.ink,
+  },
+  tabChipText: {
+    fontSize: 14,
+    color: T.ink,
+    fontWeight: '500',
+  },
+  tabChipTextActive: {
+    color: '#fff',
+    fontWeight: '600',
+  },
+
+  // ── Cover photo ───────────────────────────────────────────────────────────
+  coverPhoto: {
+    height: height * 0.58,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  coverOverlay: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0,
+  },
+  coverTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingTop: 8,
+  },
+  coverBackBtn: {
+    position: 'absolute',
+    top: 14,
+    left: 14,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  photoDots: {
-    position: 'absolute',
-    bottom: 12,
-    left: 0,
-    right: 0,
+  matchBadgeCover: {
+    backgroundColor: 'rgba(40,130,80,0.85)',
+    borderRadius: 100,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    marginLeft: 44,
+  },
+  matchBadgeCoverText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  coverTopRight: {
     flexDirection: 'row',
+    gap: 8,
+  },
+  coverBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'center',
-    gap: 5,
+    alignItems: 'center',
   },
-  photoDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: 'rgba(255,255,255,0.5)',
+  coverNameWrap: {
+    position: 'absolute',
+    bottom: 16,
+    left: 16,
+    right: 16,
   },
-  photoDotActive: {
-    width: 20,
-    backgroundColor: '#fff',
-  },
-  content: { paddingHorizontal: 20, paddingTop: 20 },
-  nameRow: {
+  coverNameRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 16,
+    marginBottom: 4,
   },
-  name: {
+  coverName: {
     fontFamily: FONTS.display,
     fontSize: 26,
+    color: '#fff',
+    fontWeight: '600',
+  },
+  coverSub: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.85)',
+  },
+
+  // ── Voice intro ───────────────────────────────────────────────────────────
+  voiceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: T.hair,
+  },
+  playCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: T.accent,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 2,
+  },
+  voiceLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: T.ink,
+    marginBottom: 6,
+  },
+  waveRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    height: 36,
+  },
+  waveBar: {
+    flex: 1,
+    borderRadius: 2,
+    backgroundColor: T.hair2,
+    minHeight: 3,
+  },
+
+  // ── Cover tags ────────────────────────────────────────────────────────────
+  coverTags: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: T.hair,
+  },
+  coverTag: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 100,
+    borderWidth: 1,
+    borderColor: T.hair2,
+  },
+  coverTagText: {
+    fontSize: 13,
     color: T.ink,
   },
-  promptCard: {
-    backgroundColor: T.field,
-    borderRadius: 16,
-    padding: 18,
-    marginBottom: 16,
+
+  // ── Peek content on cover ─────────────────────────────────────────────────
+  peekSection: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+  },
+
+  // ── Compact header ────────────────────────────────────────────────────────
+  compactHeader: {
+    backgroundColor: T.bg,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: T.hair,
+  },
+  compactHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    gap: 10,
+  },
+  compactBack: {
+    padding: 4,
+  },
+  compactAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#C4956A',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  compactAvatarText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  compactInfo: { flex: 1 },
+  compactNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  compactName: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: T.ink,
+  },
+  compactSub: {
+    fontSize: 11,
+    color: T.mute,
+    marginTop: 1,
+  },
+  matchPill: {
+    backgroundColor: SALMON,
+    borderRadius: 100,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  matchPillText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: T.accent,
+  },
+
+  // ── Tab content wrapper ───────────────────────────────────────────────────
+  tabContent: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+
+  // ── Prompts (About) ───────────────────────────────────────────────────────
+  promptBlock: {
+    marginBottom: 20,
   },
   promptQ: {
-    fontFamily: FONTS.display,
-    fontSize: 13,
-    fontStyle: 'italic',
-    color: T.accent,
-    marginBottom: 8,
+    fontFamily: FONTS.mono,
+    fontSize: 10,
+    letterSpacing: 1,
+    color: T.mute,
+    textTransform: 'uppercase',
+    marginBottom: 6,
   },
   promptA: {
     fontFamily: FONTS.display,
@@ -256,55 +977,132 @@ const styles = StyleSheet.create({
     color: T.ink2,
     lineHeight: 26,
   },
-  voiceCard: {
+
+  // ── Personality tags ──────────────────────────────────────────────────────
+  tagsWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 8,
+  },
+  personalityTag: {
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 100,
     borderWidth: 1,
     borderColor: T.hair2,
-    borderRadius: 16,
+  },
+  personalityTagText: {
+    fontSize: 13,
+    color: T.ink,
+  },
+
+  // ── Career ────────────────────────────────────────────────────────────────
+  currentJob: {
+    borderWidth: 1,
+    borderColor: T.hair2,
+    borderRadius: 14,
     padding: 14,
     marginBottom: 20,
   },
-  voiceHeader: {
+  currentJobTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 12,
+    justifyContent: 'space-between',
+    marginBottom: 4,
   },
-  voiceTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: T.ink,
-  },
-  waveRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 2,
-    height: 48,
-  },
-  waveBar: {
-    flex: 1,
-    borderRadius: 2,
-    minHeight: 3,
-  },
-  sectionTitle: {
+  currentTitle: {
     fontFamily: FONTS.display,
     fontSize: 20,
     color: T.ink,
+    flex: 1,
+    marginRight: 8,
+  },
+  currentSub: {
+    fontSize: 14,
+    color: T.mute,
+    marginBottom: 2,
+  },
+  currentDuration: {
+    fontSize: 12,
+    color: T.mute,
     marginBottom: 12,
-    marginTop: 4,
   },
-  basicsGrid: {
+  jobChips: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    marginBottom: 20,
+    gap: 8,
   },
-  basicItem: {
-    width: '47%',
+  jobChip: {
+    flex: 1,
     backgroundColor: T.field,
-    borderRadius: 12,
-    padding: 12,
+    borderRadius: 10,
+    padding: 10,
   },
-  basicLabel: {
+  jobChipLabel: {
+    fontFamily: FONTS.mono,
+    fontSize: 8,
+    letterSpacing: 0.8,
+    color: T.mute,
+    textTransform: 'uppercase',
+    marginBottom: 3,
+  },
+  jobChipValue: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: T.ink,
+  },
+
+  // ── Timeline ──────────────────────────────────────────────────────────────
+  timelineRow: {
+    flexDirection: 'row',
+    marginBottom: 4,
+    minHeight: 52,
+  },
+  timelineYear: {
+    fontFamily: FONTS.mono,
+    fontSize: 12,
+    color: T.mute,
+    width: 38,
+    paddingTop: 2,
+  },
+  timelineLine: {
+    width: 20,
+    alignItems: 'center',
+    paddingTop: 4,
+  },
+  timelineDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: T.ink,
+  },
+  timelineTrack: {
+    flex: 1,
+    width: 1.5,
+    backgroundColor: T.hair2,
+    marginTop: 2,
+  },
+  timelineRight: {
+    flex: 1,
+    paddingLeft: 8,
+    paddingBottom: 16,
+  },
+  timelineCompany: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: T.ink,
+    marginBottom: 2,
+  },
+  timelineRole: {
+    fontSize: 13,
+    color: T.mute,
+  },
+
+  // ── Family ────────────────────────────────────────────────────────────────
+  familyMember: {
+    marginBottom: 18,
+  },
+  familyRole: {
     fontFamily: FONTS.mono,
     fontSize: 9,
     letterSpacing: 1,
@@ -312,76 +1110,210 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     marginBottom: 4,
   },
-  basicValue: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: T.ink2,
+  familyName: {
+    fontFamily: FONTS.display,
+    fontSize: 20,
+    color: T.ink,
+    marginBottom: 2,
   },
-  familyCard: {
+  familySub: {
+    fontSize: 13,
+    color: T.mute,
+    marginBottom: 6,
+  },
+  familyTags: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  familyTag: {
     backgroundColor: T.field,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  familyTagText: {
+    fontSize: 12,
+    color: T.ink2,
+    fontWeight: '500',
+  },
+
+  // ── Roots grid ────────────────────────────────────────────────────────────
+  rootsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  rootCell: {
+    width: '50%',
+    paddingVertical: 10,
+    paddingRight: 12,
+  },
+  rootLabel: {
+    fontFamily: FONTS.mono,
+    fontSize: 9,
+    letterSpacing: 1,
+    color: T.mute,
+    textTransform: 'uppercase',
+    marginBottom: 3,
+  },
+  rootValue: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: T.ink,
+  },
+
+  // ── Gunamilan ─────────────────────────────────────────────────────────────
+  kootaCard: {
+    backgroundColor: SALMON_S,
     borderRadius: 16,
     padding: 16,
+    marginBottom: 20,
+  },
+  kootaScore: {
+    fontSize: 16,
+    color: T.accent,
+    fontWeight: '500',
+    marginBottom: 4,
+  },
+  kootaBig: {
+    fontFamily: FONTS.display,
+    fontSize: 36,
+    fontWeight: '700',
+    color: T.accent,
+  },
+  kootaSub: {
+    fontSize: 13,
+    color: T.mute,
     marginBottom: 16,
   },
-  familyText: {
-    fontSize: 14,
-    color: T.ink2,
-    lineHeight: 22,
-  },
-  stickyBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: T.bg,
-    borderTopWidth: 1,
-    borderTopColor: T.hair,
+  kootaGrid: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    gap: 10,
+    flexWrap: 'wrap',
+    gap: 1,
+    backgroundColor: 'rgba(0,0,0,0.06)',
+    borderRadius: 10,
+    overflow: 'hidden',
   },
-  stickyPass: {
-    width: 56,
-    height: 52,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: T.hair2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 2,
-  },
-  stickyPassText: {
-    fontSize: 10,
-    color: '#E53E3E',
-    fontWeight: '600',
-  },
-  stickyBookmark: {
-    width: 56,
-    height: 52,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: T.hair2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 2,
-  },
-  stickyBookmarkText: {
-    fontSize: 10,
-    color: T.ink,
-    fontWeight: '600',
-  },
-  stickyInterest: {
-    flex: 1,
-    height: 52,
-    backgroundColor: T.accent,
-    borderRadius: 14,
-    justifyContent: 'center',
+  kootaCell: {
+    width: '50%',
+    backgroundColor: SALMON_S,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
-  stickyInterestText: {
-    fontSize: 16,
+  kootaName: {
+    fontSize: 13,
+    color: T.ink2,
+  },
+  kootaVal: {
+    fontSize: 13,
     fontWeight: '700',
-    color: '#fff',
+    color: T.accent,
+  },
+
+  // ── Detail grid (birth/astrology) ─────────────────────────────────────────
+  detailGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 20,
+  },
+  detailCell: {
+    width: '50%',
+    paddingVertical: 8,
+    paddingRight: 12,
+  },
+  detailLabel: {
+    fontFamily: FONTS.mono,
+    fontSize: 9,
+    letterSpacing: 1,
+    color: T.mute,
+    textTransform: 'uppercase',
+    marginBottom: 3,
+  },
+  detailValue: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: T.ink,
+  },
+
+  // ── Trust ─────────────────────────────────────────────────────────────────
+  trustScore: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    backgroundColor: GREEN_S,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 20,
+  },
+  trustIconWrap: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  trustTextBlock: { flex: 1 },
+  trustTitle: {
+    fontFamily: FONTS.display,
+    fontSize: 20,
+    color: T.ink,
+    marginBottom: 4,
+  },
+  trustSub: {
+    fontSize: 13,
+    color: T.mute,
+    lineHeight: 18,
+  },
+  verifyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: T.hair,
+    marginBottom: 4,
+  },
+  verifyText: { flex: 1 },
+  verifyTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: T.ink,
+  },
+  verifySub: {
+    fontSize: 12,
+    color: T.mute,
+    marginTop: 2,
+  },
+  managedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 12,
+  },
+  managedAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: T.accentSoft,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  managedAvatarText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: T.accent,
+  },
+  managedTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: T.ink,
+    marginBottom: 2,
+  },
+  managedSub: {
+    fontSize: 12,
+    color: T.mute,
   },
 });
