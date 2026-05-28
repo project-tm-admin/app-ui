@@ -29,6 +29,7 @@ import DietScreen from '../screens/profile/DietScreen';
 import PhotosScreen from '../screens/profile/PhotosScreen';
 import AboutScreen from '../screens/profile/AboutScreen';
 import PreferencesScreen from '../screens/profile/PreferencesScreen';
+import ProfileManagerScreen from '../screens/profile/ProfileManagerScreen';
 import VerifyScreen from '../screens/profile/VerifyScreen';
 import MyProfileScreen from '../screens/profile/MyProfileScreen';
 import VerificationsScreen from '../screens/profile/VerificationsScreen';
@@ -186,6 +187,7 @@ export default function Navigation() {
         <Stack.Screen name="Photos" component={PhotosScreen} />
         <Stack.Screen name="About" component={AboutScreen} />
         <Stack.Screen name="Preferences" component={PreferencesScreen} />
+        <Stack.Screen name="ProfileManager" component={ProfileManagerScreen} />
         <Stack.Screen name="Verify" component={VerifyScreen} />
 
         {/* Main app */}

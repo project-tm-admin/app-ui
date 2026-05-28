@@ -1,196 +1,284 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState, useRef } from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  View,
+  Text,
+  PanResponder,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Svg, { Path, Circle } from 'react-native-svg';
 import { T, FONTS } from '../../theme';
 import TopBar from '../../components/TopBar';
 import Stepper from '../../components/Stepper';
-import Chip from '../../components/Chip';
 import Primary from '../../components/Primary';
 
-function ChevronRight() {
-  return (
-    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-      <Path d="M9 18l6-6-6-6" stroke={T.mute} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-    </Svg>
-  );
-}
+const AGE_MIN = 18;
+const AGE_MAX = 60;
+const THUMB_SIZE = 26;
+const TRACK_H = 2;
 
-function PrefCard({ title, value, onPress, children }) {
-  return (
-    <TouchableOpacity style={styles.prefCard} onPress={onPress} activeOpacity={0.7}>
-      <View style={styles.prefHeader}>
-        <Text style={styles.prefTitle}>{title}</Text>
-        {value ? <Text style={styles.prefValue}>{value}</Text> : <ChevronRight />}
-      </View>
-      {children}
-    </TouchableOpacity>
-  );
-}
+// ─── Dual-thumb slider ───────────────────────────────────────────────────────
 
-function AgeSlider() {
+function AgeSlider({ lowAge, highAge, onChangeLow, onChangeHigh }) {
+  const trackWidthRef = useRef(0);
+  const lowStartFrac  = useRef(0);
+  const highStartFrac = useRef(0);
+
+  function fractionToAge(frac) {
+    return Math.round(AGE_MIN + Math.max(0, Math.min(1, frac)) * (AGE_MAX - AGE_MIN));
+  }
+
+  const lowFrac  = (lowAge  - AGE_MIN) / (AGE_MAX - AGE_MIN);
+  const highFrac = (highAge - AGE_MIN) / (AGE_MAX - AGE_MIN);
+
+  const lowResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder:  () => true,
+      onPanResponderGrant: () => {
+        lowStartFrac.current = (lowAge - AGE_MIN) / (AGE_MAX - AGE_MIN);
+      },
+      onPanResponderMove: (_e, gs) => {
+        if (!trackWidthRef.current) return;
+        const newFrac = lowStartFrac.current + gs.dx / trackWidthRef.current;
+        const age = fractionToAge(newFrac);
+        onChangeLow(Math.min(age, highAge - 1));
+      },
+    }),
+  ).current;
+
+  const highResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder:  () => true,
+      onPanResponderGrant: () => {
+        highStartFrac.current = (highAge - AGE_MIN) / (AGE_MAX - AGE_MIN);
+      },
+      onPanResponderMove: (_e, gs) => {
+        if (!trackWidthRef.current) return;
+        const newFrac = highStartFrac.current + gs.dx / trackWidthRef.current;
+        const age = fractionToAge(newFrac);
+        onChangeHigh(Math.max(age, lowAge + 1));
+      },
+    }),
+  ).current;
+
   return (
-    <View style={styles.sliderWrap}>
-      <View style={styles.sliderTrack}>
-        <View style={styles.sliderFillDual} />
-        <View style={[styles.sliderThumb, { left: '15%' }]} />
-        <View style={[styles.sliderThumb, { left: '65%' }]} />
+    <View
+      style={styles.sliderOuter}
+      onLayout={e => { trackWidthRef.current = e.nativeEvent.layout.width; }}
+    >
+      {/* Background track */}
+      <View style={styles.sliderTrack} pointerEvents="none">
+        {/* Accent fill between thumbs */}
+        <View
+          style={[
+            styles.sliderFill,
+            {
+              left:  `${lowFrac  * 100}%`,
+              right: `${(1 - highFrac) * 100}%`,
+            },
+          ]}
+        />
       </View>
-      <View style={styles.sliderLabels}>
-        <Text style={styles.sliderLabel}>24</Text>
-        <Text style={styles.sliderCenter}>24 – 35 years</Text>
-        <Text style={styles.sliderLabel}>35</Text>
+
+      {/* Low thumb */}
+      <View
+        style={[styles.thumbHit, { left: `${lowFrac * 100}%` }]}
+        {...lowResponder.panHandlers}
+      >
+        <View style={styles.thumb} />
+      </View>
+
+      {/* High thumb */}
+      <View
+        style={[styles.thumbHit, { left: `${highFrac * 100}%` }]}
+        {...highResponder.panHandlers}
+      >
+        <View style={styles.thumb} />
       </View>
     </View>
   );
 }
 
-const TONGUE_PREFS = ['Telugu', 'Tamil', 'Kannada', 'Hindi', 'Any'];
-const VISA_PREFS = ['H-1B', 'Green Card', 'Citizen', 'Any'];
-const DIET_PREFS = ['Vegetarian', 'Any'];
-const EDU_PREFS = ["Bachelor's", "Master's", 'PhD', 'Any'];
+// ─── Preference card ─────────────────────────────────────────────────────────
+
+function PrefCard({ label, value, children }) {
+  return (
+    <View style={styles.card}>
+      <View style={styles.cardMain}>
+        <Text style={styles.cardLabel}>{label}</Text>
+        <Text style={styles.cardValue}>{value}</Text>
+      </View>
+      {children ? <View style={styles.cardSlot}>{children}</View> : null}
+    </View>
+  );
+}
+
+// ─── Screen ──────────────────────────────────────────────────────────────────
 
 export default function PreferencesScreen() {
   const navigation = useNavigation();
-  const [tongue, setTongue] = useState('Telugu');
-  const [visa, setVisa] = useState('Any');
-  const [diet, setDiet] = useState('Any');
-  const [edu, setEdu] = useState("Master's");
+  const [lowAge,  setLowAge]  = useState(27);
+  const [highAge, setHighAge] = useState(33);
 
   return (
     <SafeAreaView style={styles.safe}>
-      <TopBar onSkip={() => navigation.navigate('Verify')} />
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Stepper current={13} total={14} />
-        <Text style={styles.title}>Who are you{'\n'}looking for?</Text>
-        <Text style={styles.subtitle}>These are soft preferences — we'll show great matches even outside them</Text>
+      <TopBar onSkip={() => navigation.navigate('ProfileManager')} />
 
-        <PrefCard title="Age range">
-          <AgeSlider />
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        <Stepper current={13} total={15} />
+
+        <Text style={styles.title}>Who are you looking for?</Text>
+        <Text style={styles.subtitle}>
+          Soft preferences — we'll show good matches even when they don't tick every box.
+        </Text>
+
+        {/* AGE card with inline slider */}
+        <PrefCard label="AGE" value={`${lowAge} – ${highAge}`}>
+          <AgeSlider
+            lowAge={lowAge}
+            highAge={highAge}
+            onChangeLow={setLowAge}
+            onChangeHigh={setHighAge}
+          />
         </PrefCard>
 
-        <PrefCard title="Distance" value="Within 100 miles" />
-
-        <PrefCard title="Mother tongue">
-          <View style={styles.prefChips}>
-            {TONGUE_PREFS.map(t => (
-              <Chip key={t} label={t} selected={tongue === t} onPress={() => setTongue(t)} />
-            ))}
-          </View>
-        </PrefCard>
-
-        <PrefCard title="Education">
-          <View style={styles.prefChips}>
-            {EDU_PREFS.map(e => (
-              <Chip key={e} label={e} selected={edu === e} onPress={() => setEdu(e)} />
-            ))}
-          </View>
-        </PrefCard>
-
-        <PrefCard title="Visa status">
-          <View style={styles.prefChips}>
-            {VISA_PREFS.map(v => (
-              <Chip key={v} label={v} selected={visa === v} onPress={() => setVisa(v)} />
-            ))}
-          </View>
-        </PrefCard>
-
-        <PrefCard title="Diet">
-          <View style={styles.prefChips}>
-            {DIET_PREFS.map(d => (
-              <Chip key={d} label={d} selected={diet === d} onPress={() => setDiet(d)} />
-            ))}
-          </View>
-        </PrefCard>
+        <PrefCard label="COUNTRIES"    value="US USA · CA Canada · GB UK · AU Australia" />
+        <PrefCard label="DISTANCE"     value="Anywhere in selected countries" />
+        <PrefCard label="MOTHER TONGUE" value="Telugu" />
+        <PrefCard label="EDUCATION"    value="Bachelor's or higher" />
+        <PrefCard label="VISA STATUS"  value="Citizen / PR / Skilled-worker / H-1B" />
+        <PrefCard label="DIET"         value="Vegetarian" />
 
         <Primary
           label="Continue"
-          onPress={() => navigation.navigate('Verify')}
-          style={{ marginTop: 16 }}
+          onPress={() => navigation.navigate('ProfileManager')}
+          style={styles.cta}
         />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+// ─── Styles ──────────────────────────────────────────────────────────────────
+
+const HIT = THUMB_SIZE + 18;
+
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: T.bg },
-  content: { paddingHorizontal: 24, paddingBottom: 40 },
+  safe: {
+    flex: 1,
+    backgroundColor: T.bg,
+  },
+  content: {
+    paddingHorizontal: 24,
+    paddingBottom: 48,
+  },
+
   title: {
     fontFamily: FONTS.display,
-    fontSize: 36,
+    fontSize: 34,
     color: T.ink,
-    lineHeight: 44,
+    lineHeight: 42,
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 13,
-    color: T.mute,
-    marginBottom: 24,
-    lineHeight: 20,
-  },
-  prefCard: {
-    borderWidth: 1,
-    borderColor: T.hair2,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-  },
-  prefHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  prefTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: T.ink,
-  },
-  prefValue: {
     fontSize: 14,
     color: T.mute,
+    lineHeight: 21,
+    marginBottom: 20,
   },
-  prefChips: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 4,
-  },
-  sliderWrap: { marginTop: 8 },
-  sliderTrack: {
-    height: 4,
-    backgroundColor: T.hair2,
-    borderRadius: 2,
-    position: 'relative',
+
+  // ── Individual preference card ────────────────────────────────────────────
+  card: {
+    borderWidth: 1,
+    borderColor: T.hair2,
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     marginBottom: 10,
+    backgroundColor: T.bg,
   },
-  sliderFillDual: {
+  cardMain: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 16,
+  },
+  cardLabel: {
+    fontFamily: FONTS.mono,
+    fontSize: 10,
+    letterSpacing: 1.1,
+    textTransform: 'uppercase',
+    color: T.mute,
+    marginTop: 2,
+    flexShrink: 0,
+  },
+  cardValue: {
+    flex: 1,
+    fontSize: 14,
+    color: T.ink,
+    fontWeight: '500',
+    textAlign: 'right',
+    lineHeight: 20,
+  },
+  cardSlot: {
+    marginTop: 16,
+  },
+
+  // ── Slider ────────────────────────────────────────────────────────────────
+  sliderOuter: {
+    height: THUMB_SIZE,
+    marginHorizontal: THUMB_SIZE / 2,
+    position: 'relative',
+    justifyContent: 'center',
+  },
+  sliderTrack: {
     position: 'absolute',
-    left: '15%',
-    right: '35%',
+    left: 0,
+    right: 0,
+    height: TRACK_H,
+    top: (THUMB_SIZE - TRACK_H) / 2,
+    backgroundColor: T.hair2,
+    borderRadius: TRACK_H / 2,
+  },
+  sliderFill: {
+    position: 'absolute',
     top: 0,
     bottom: 0,
-    backgroundColor: T.accent,
-    borderRadius: 2,
+    backgroundColor: T.ink,
+    borderRadius: TRACK_H / 2,
   },
-  sliderThumb: {
+
+  // Transparent hit-area; visible thumb centred inside
+  thumbHit: {
     position: 'absolute',
-    top: -8,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: T.accent,
-    borderWidth: 3,
-    borderColor: '#fff',
-    marginLeft: -10,
-    elevation: 3,
-  },
-  sliderLabels: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    width: HIT,
+    height: HIT,
+    marginLeft: -(HIT / 2),
+    top: -(HIT / 2 - THUMB_SIZE / 2),
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  sliderLabel: { fontSize: 12, color: T.mute, fontFamily: FONTS.mono },
-  sliderCenter: { fontSize: 13, fontWeight: '600', color: T.ink },
+  thumb: {
+    width: THUMB_SIZE,
+    height: THUMB_SIZE,
+    borderRadius: THUMB_SIZE / 2,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: T.ink,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.12,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+
+  cta: {
+    marginTop: 24,
+  },
 });
