@@ -150,6 +150,7 @@ export default function MyProfileScreen() {
       icon: <PersonIcon />,
       title: 'Edit profile',
       subtitle: 'Photos, basics, prompts',
+      onPress: () => navigation.navigate('EditProfile'),
     },
     {
       icon: <ShieldIcon />,

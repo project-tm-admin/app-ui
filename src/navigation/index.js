@@ -34,6 +34,13 @@ import VerifyScreen from '../screens/profile/VerifyScreen';
 import MyProfileScreen from '../screens/profile/MyProfileScreen';
 import VerificationsScreen from '../screens/profile/VerificationsScreen';
 import ProfileVisitorsScreen from '../screens/profile/ProfileVisitorsScreen';
+import EditProfileScreen from '../screens/profile/EditProfileScreen';
+import EditPhotosScreen from '../screens/profile/EditPhotosScreen';
+import EditAboutScreen from '../screens/profile/EditAboutScreen';
+import EditCareerScreen from '../screens/profile/EditCareerScreen';
+import EditFamilyScreen from '../screens/profile/EditFamilyScreen';
+import EditJaathakamScreen from '../screens/profile/EditJaathakamScreen';
+import EditTrustScreen from '../screens/profile/EditTrustScreen';
 
 // Browse screens
 import MatchesScreen from '../screens/browse/MatchesScreen';
@@ -202,6 +209,13 @@ export default function Navigation() {
         <Stack.Screen name="Call" component={CallScreen} />
         <Stack.Screen name="Verifications" component={VerificationsScreen} />
         <Stack.Screen name="ProfileVisitors" component={ProfileVisitorsScreen} />
+        <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+        <Stack.Screen name="EditPhotos" component={EditPhotosScreen} />
+        <Stack.Screen name="EditAbout" component={EditAboutScreen} />
+        <Stack.Screen name="EditCareer" component={EditCareerScreen} />
+        <Stack.Screen name="EditFamily" component={EditFamilyScreen} />
+        <Stack.Screen name="EditJaathakam" component={EditJaathakamScreen} />
+        <Stack.Screen name="EditTrust" component={EditTrustScreen} />
         <Stack.Screen name="Premium" component={PremiumScreen} />
         <Stack.Screen
           name="Paywall"
