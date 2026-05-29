@@ -215,7 +215,7 @@ export default function MyProfileScreen() {
               </Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.premiumBtn} activeOpacity={0.85}>
+          <TouchableOpacity style={styles.premiumBtn} activeOpacity={0.85} onPress={() => navigation.navigate('Premium')}>
             <Text style={styles.premiumBtnText}>See plans  ›</Text>
           </TouchableOpacity>
         </View>

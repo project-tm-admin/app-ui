@@ -46,6 +46,10 @@ import InboxScreen from '../screens/messaging/InboxScreen';
 import ChatScreen from '../screens/messaging/ChatScreen';
 import CallScreen from '../screens/messaging/CallScreen';
 
+// Premium screens
+import PremiumScreen from '../screens/premium/PremiumScreen';
+import PaywallSheet from '../screens/premium/PaywallSheet';
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -198,6 +202,12 @@ export default function Navigation() {
         <Stack.Screen name="Call" component={CallScreen} />
         <Stack.Screen name="Verifications" component={VerificationsScreen} />
         <Stack.Screen name="ProfileVisitors" component={ProfileVisitorsScreen} />
+        <Stack.Screen name="Premium" component={PremiumScreen} />
+        <Stack.Screen
+          name="Paywall"
+          component={PaywallSheet}
+          options={{ presentation: 'transparentModal', cardOverlayEnabled: true }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
     </SafeAreaProvider>
