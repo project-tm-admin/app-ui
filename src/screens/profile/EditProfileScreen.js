@@ -32,7 +32,7 @@ const SECTIONS = [
     title: 'Basics',
     subtitle: "29 · 5'5\" · San Francisco, CA",
     status: 'done',
-    screen: 'EditAbout',
+    screen: 'EditBasics',
   },
   {
     icon: 'briefcase',
