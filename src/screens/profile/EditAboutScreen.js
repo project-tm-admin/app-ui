@@ -123,13 +123,7 @@ export default function EditAboutScreen() {
           <Text style={styles.topBarBackText}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>EDIT ABOUT</Text>
-        <TouchableOpacity
-          style={styles.topBarSave}
-          activeOpacity={0.7}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.topBarSaveText}>Save</Text>
-        </TouchableOpacity>
+        <View style={styles.topBarSave} />
       </View>
 
       <ScrollView

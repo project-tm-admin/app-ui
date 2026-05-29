@@ -62,9 +62,7 @@ export default function EditBasicsScreen() {
           <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.topTitle}>EDIT BASICS</Text>
-        <TouchableOpacity style={styles.topSaveBtn} hitSlop={8}>
-          <Text style={styles.saveText}>Save</Text>
-        </TouchableOpacity>
+        <View style={styles.topSaveBtn} />
       </View>
 
       <ScrollView

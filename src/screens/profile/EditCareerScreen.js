@@ -64,9 +64,7 @@ export default function EditCareerScreen() {
           <Text style={styles.backText}>{'< Back'}</Text>
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>EDIT CAREER</Text>
-        <TouchableOpacity style={styles.topBarRight}>
-          <Text style={styles.saveText}>Save</Text>
-        </TouchableOpacity>
+        <View style={styles.topBarRight} />
       </View>
 
       <ScrollView

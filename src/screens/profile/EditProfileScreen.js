@@ -280,9 +280,7 @@ export default function EditProfileScreen() {
           <Text style={styles.backText}>{'< Back'}</Text>
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>EDIT PROFILE</Text>
-        <TouchableOpacity style={[styles.topBarSide, styles.topBarRight]}>
-          <Text style={styles.saveText}>Save</Text>
-        </TouchableOpacity>
+        <View style={styles.topBarSide} />
       </View>
 
       <ScrollView

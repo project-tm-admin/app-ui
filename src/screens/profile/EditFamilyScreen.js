@@ -66,9 +66,7 @@ export default function EditFamilyScreen() {
           <Text style={styles.topBarBackText}>{'< Back'}</Text>
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>EDIT FAMILY</Text>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.topBarSave}>
-          <Text style={styles.topBarSaveText}>Save</Text>
-        </TouchableOpacity>
+        <View style={styles.topBarSave} />
       </View>
 
       <ScrollView

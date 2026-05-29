@@ -160,9 +160,7 @@ export default function EditPhotosScreen() {
           <Text style={styles.backText}>{'< Back'}</Text>
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>EDIT PHOTOS</Text>
-        <TouchableOpacity style={styles.topBarRight}>
-          <Text style={styles.saveTopText}>Save</Text>
-        </TouchableOpacity>
+        <View style={styles.topBarRight} />
       </View>
 
       <ScrollView

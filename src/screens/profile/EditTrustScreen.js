@@ -120,9 +120,7 @@ export default function EditTrustScreen() {
           <Text style={styles.backLabel}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.topTitle}>TRUST & VERIFICATION</Text>
-        <TouchableOpacity style={styles.topBtn} activeOpacity={0.7}>
-          <Text style={styles.saveLabel}>Save</Text>
-        </TouchableOpacity>
+        <View style={styles.topBtn} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>

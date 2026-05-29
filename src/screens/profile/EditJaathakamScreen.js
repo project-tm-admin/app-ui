@@ -89,9 +89,7 @@ export default function EditJaathakamScreen() {
           <Text style={styles.topBarBack}>{'< Back'}</Text>
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>EDIT JAATHAKAM</Text>
-        <TouchableOpacity style={styles.topBarRight} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-          <Text style={styles.topBarSave}>Save</Text>
-        </TouchableOpacity>
+        <View style={styles.topBarRight} />
       </View>
 
       <ScrollView
