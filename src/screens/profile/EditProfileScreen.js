@@ -10,8 +10,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path, Circle, Rect } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
-import T from '../../theme';
-import { FONTS } from '../../theme';
+import { T, FONTS } from '../../theme';
 
 const SECTIONS = [
   {
