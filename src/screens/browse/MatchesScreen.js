@@ -34,11 +34,11 @@ const MATCHES = [
       { emoji: '🌐', label: 'US Settled', bg: TEAL_S, color: TEAL_T },
     ],
     stats: [
-      { icon: '📏', label: 'Height',    value: "5'4\"" },
-      { icon: '👥', label: 'Community', value: 'Reddy' },
-      { icon: '💬', label: 'Tongue',    value: 'Telugu' },
-      { icon: '🙏', label: 'Religion',  value: 'Hindu' },
-      { icon: '🌿', label: 'Diet',      value: 'Vegetarian' },
+      { type: 'height',    label: 'Height',    value: "5'4\"",      iconBg: '#FFE4E8', iconColor: '#C0304A' },
+      { type: 'community', label: 'Community', value: 'Reddy',      iconBg: '#EDE9FE', iconColor: '#7C3AED' },
+      { type: 'tongue',    label: 'Tongue',    value: 'Telugu',     iconBg: '#D4EEF4', iconColor: '#2A7A8A' },
+      { type: 'religion',  label: 'Religion',  value: 'Hindu',      iconBg: '#FEF3D4', iconColor: '#C8920A' },
+      { type: 'diet',      label: 'Diet',      value: 'Vegetarian', iconBg: '#D4EDE0', iconColor: '#2D7A50' },
     ],
   },
   {
@@ -47,17 +47,12 @@ const MATCHES = [
     job: 'Senior Product Manager at Microsoft',
     edu: 'MBA · UT Austin',
     gradient: ['#C4956A', '#A87050', '#8A5A3C'],
-    tags: [
-      { emoji: '💕', label: 'Marriage-Focused', bg: PINK_S, color: PINK_T },
-      { emoji: '🏠', label: 'Own Home',         bg: GOLD_S, color: GOLD },
-      { emoji: '🌐', label: 'US Settled',        bg: TEAL_S, color: TEAL_T },
-    ],
     stats: [
-      { icon: '📏', label: 'Height',    value: "5'6\"" },
-      { icon: '👥', label: 'Community', value: 'Kamma' },
-      { icon: '💬', label: 'Tongue',    value: 'Telugu' },
-      { icon: '🙏', label: 'Religion',  value: 'Hindu' },
-      { icon: '🌿', label: 'Diet',      value: 'Non-Veg' },
+      { type: 'height',    label: 'Height',    value: "5'6\"",  iconBg: '#FFE4E8', iconColor: '#C0304A' },
+      { type: 'community', label: 'Community', value: 'Kamma',  iconBg: '#EDE9FE', iconColor: '#7C3AED' },
+      { type: 'tongue',    label: 'Tongue',    value: 'Telugu', iconBg: '#D4EEF4', iconColor: '#2A7A8A' },
+      { type: 'religion',  label: 'Religion',  value: 'Hindu',  iconBg: '#FEF3D4', iconColor: '#C8920A' },
+      { type: 'diet',      label: 'Diet',      value: 'Non-Veg',iconBg: '#D4EDE0', iconColor: '#2D7A50' },
     ],
   },
   {
@@ -66,17 +61,12 @@ const MATCHES = [
     job: 'Data Scientist at Google',
     edu: 'PhD Computer Science · Stanford',
     gradient: ['#6A8BA8', '#4A6A8A', '#2A4A6A'],
-    tags: [
-      { emoji: '💕', label: 'Marriage-Focused', bg: PINK_S, color: PINK_T },
-      { emoji: '👨‍👩‍👧', label: 'Family Involved', bg: GOLD_S, color: GOLD },
-      { emoji: '🌐', label: 'US Settled',        bg: TEAL_S, color: TEAL_T },
-    ],
     stats: [
-      { icon: '📏', label: 'Height',    value: "5'5\"" },
-      { icon: '👥', label: 'Community', value: 'Brahmin' },
-      { icon: '💬', label: 'Tongue',    value: 'Telugu' },
-      { icon: '🙏', label: 'Religion',  value: 'Hindu' },
-      { icon: '🌿', label: 'Diet',      value: 'Vegetarian' },
+      { type: 'height',    label: 'Height',    value: "5'5\"",      iconBg: '#FFE4E8', iconColor: '#C0304A' },
+      { type: 'community', label: 'Community', value: 'Brahmin',    iconBg: '#EDE9FE', iconColor: '#7C3AED' },
+      { type: 'tongue',    label: 'Tongue',    value: 'Telugu',     iconBg: '#D4EEF4', iconColor: '#2A7A8A' },
+      { type: 'religion',  label: 'Religion',  value: 'Hindu',      iconBg: '#FEF3D4', iconColor: '#C8920A' },
+      { type: 'diet',      label: 'Diet',      value: 'Vegetarian', iconBg: '#D4EDE0', iconColor: '#2D7A50' },
     ],
   },
 ];
@@ -183,11 +173,56 @@ function StarIcon({ color }) {
   );
 }
 
-function MicIcon() {
+function HeartIcon() {
   return (
     <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-      <Rect x="9" y="2" width="6" height="12" rx="3" stroke="white" strokeWidth={1.8} />
-      <Path d="M19 10a7 7 0 01-14 0M12 19v3M8 22h8" stroke="white" strokeWidth={1.8} strokeLinecap="round" />
+      <Path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
+        fill="white" />
+    </Svg>
+  );
+}
+
+// ─── Stat icons (colored boxes) ───────────────────────────────────────────────
+function HeightStatIcon({ color }) {
+  return (
+    <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 3v18M8 7l4-4 4 4M8 17l4 4 4-4" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+function CommunityStatIcon({ color }) {
+  return (
+    <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
+      <Circle cx="9" cy="7" r="3" stroke={color} strokeWidth={1.8} />
+      <Path d="M3 20c0-3 2.7-5 6-5s6 2 6 5" stroke={color} strokeWidth={1.8} strokeLinecap="round" />
+      <Path d="M16 11c1.7 0 3 1.3 3 3s-1.3 3-3 3" stroke={color} strokeWidth={1.8} strokeLinecap="round" />
+      <Path d="M19 20c0-2 1-3.5 2-4" stroke={color} strokeWidth={1.8} strokeLinecap="round" />
+    </Svg>
+  );
+}
+function TongueStatIcon({ color }) {
+  return (
+    <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
+      <Path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z"
+        stroke={color} strokeWidth={1.8} strokeLinejoin="round" />
+    </Svg>
+  );
+}
+function ReligionStatIcon({ color }) {
+  return (
+    <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
+      <Path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" stroke={color} strokeWidth={1.8} strokeLinecap="round" />
+      <Path d="M13.73 21a2 2 0 01-3.46 0" stroke={color} strokeWidth={1.8} strokeLinecap="round" />
+    </Svg>
+  );
+}
+function DietStatIcon({ color }) {
+  return (
+    <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 2a9 9 0 100 18A9 9 0 0012 2z" stroke={color} strokeWidth={1.8} />
+      <Path d="M8 12s1-2 4-2 4 2 4 2" stroke={color} strokeWidth={1.8} strokeLinecap="round" />
+      <Circle cx="9" cy="9" r="1" fill={color} />
+      <Circle cx="15" cy="9" r="1" fill={color} />
     </Svg>
   );
 }
@@ -261,6 +296,15 @@ export default function MatchesScreen() {
 
   const match = MATCHES[currentIndex];
 
+  const renderStatIcon = (type, color) => {
+    if (type === 'height')    return <HeightStatIcon color={color} />;
+    if (type === 'community') return <CommunityStatIcon color={color} />;
+    if (type === 'tongue')    return <TongueStatIcon color={color} />;
+    if (type === 'religion')  return <ReligionStatIcon color={color} />;
+    if (type === 'diet')      return <DietStatIcon color={color} />;
+    return null;
+  };
+
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
@@ -323,7 +367,7 @@ export default function MatchesScreen() {
             />
 
             {/* Match % badge */}
-            <View style={styles.matchBadge}>
+            <View style={[styles.matchBadge, { backgroundColor: T.accent }]}>
               <Text style={styles.matchBadgeText}>♥ {match.matchPct}% Match</Text>
             </View>
 
@@ -379,21 +423,13 @@ export default function MatchesScreen() {
               <Text style={styles.infoText}>{match.edu}</Text>
             </View>
 
-            {/* Tags */}
-            <View style={styles.tagsRow}>
-              {match.tags.map((t, i) => (
-                <View key={i} style={[styles.tag, { backgroundColor: t.bg }]}>
-                  <Text style={styles.tagEmoji}>{t.emoji}</Text>
-                  <Text style={[styles.tagLabel, { color: t.color }]}>{t.label}</Text>
-                </View>
-              ))}
-            </View>
-
             {/* Stats */}
             <View style={styles.statsGrid}>
               {match.stats.map((s, i) => (
                 <View key={i} style={styles.statCell}>
-                  <Text style={styles.statIcon}>{s.icon}</Text>
+                  <View style={[styles.statIconBox, { backgroundColor: s.iconBg }]}>
+                    {renderStatIcon(s.type, s.iconColor)}
+                  </View>
                   <View>
                     <Text style={styles.statLabel}>{s.label}</Text>
                     <Text style={styles.statValue}>{s.value}</Text>
@@ -427,8 +463,8 @@ export default function MatchesScreen() {
                 onPress={() => advanceTo(currentIndex + 1)}
                 activeOpacity={0.85}
               >
-                <MicIcon />
-                <Text style={styles.expressText}>Express Int...</Text>
+                <HeartIcon />
+                <Text style={styles.expressText}>Send Interest</Text>
               </TouchableOpacity>
             </View>
 
@@ -444,7 +480,7 @@ export default function MatchesScreen() {
         <View style={styles.upgradeBanner}>
           <Text style={styles.upgradeIcon}>⭐</Text>
           <View style={styles.upgradeText}>
-            <Text style={styles.upgradeTitle}>3 of 3 daily intros viewed</Text>
+            <Text style={[styles.upgradeTitle, { color: T.accent }]}>3 of 3 daily intros viewed</Text>
             <Text style={styles.upgradeSub}>Unlock unlimited intros & verified details with Premium.</Text>
           </View>
           <TouchableOpacity style={styles.upgradeBtn} activeOpacity={0.85}>
@@ -755,11 +791,18 @@ const styles = StyleSheet.create({
     width: '33.33%',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 7,
     paddingBottom: 8,
     paddingRight: 4,
   },
-  statIcon: { fontSize: 13 },
+  statIconBox: {
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexShrink: 0,
+  },
   statLabel: {
     fontFamily: FONTS.mono,
     fontSize: 9,
