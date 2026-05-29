@@ -42,6 +42,9 @@ import EditFamilyScreen from '../screens/profile/EditFamilyScreen';
 import EditJaathakamScreen from '../screens/profile/EditJaathakamScreen';
 import EditTrustScreen from '../screens/profile/EditTrustScreen';
 import EditBasicsScreen from '../screens/profile/EditBasicsScreen';
+import PrivacyScreen from '../screens/profile/PrivacyScreen';
+import NotificationsScreen from '../screens/profile/NotificationsScreen';
+import LoginSecurityScreen from '../screens/profile/LoginSecurityScreen';
 
 // Browse screens
 import MatchesScreen from '../screens/browse/MatchesScreen';
@@ -218,6 +221,9 @@ export default function Navigation() {
         <Stack.Screen name="EditJaathakam" component={EditJaathakamScreen} />
         <Stack.Screen name="EditTrust" component={EditTrustScreen} />
         <Stack.Screen name="EditBasics" component={EditBasicsScreen} />
+        <Stack.Screen name="Privacy" component={PrivacyScreen} />
+        <Stack.Screen name="Notifications" component={NotificationsScreen} />
+        <Stack.Screen name="LoginSecurity" component={LoginSecurityScreen} />
         <Stack.Screen name="Premium" component={PremiumScreen} />
         <Stack.Screen
           name="Paywall"

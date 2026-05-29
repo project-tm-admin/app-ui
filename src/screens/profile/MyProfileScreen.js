@@ -156,16 +156,19 @@ export default function MyProfileScreen() {
       icon: <ShieldIcon />,
       title: 'Privacy & blocked',
       subtitle: 'Profile visibility · 4 blocked',
+      onPress: () => navigation.navigate('Privacy'),
     },
     {
       icon: <BellIcon />,
       title: 'Notifications',
       subtitle: 'Push · email · WhatsApp',
+      onPress: () => navigation.navigate('Notifications'),
     },
     {
       icon: <LockIcon />,
       title: 'Login & security',
       subtitle: 'Phone · email · passkey',
+      onPress: () => navigation.navigate('LoginSecurity'),
     },
   ];
 
