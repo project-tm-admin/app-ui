@@ -1,233 +1,235 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import Svg, { Path, Circle, Rect } from 'react-native-svg';
+import Svg, { Path, Circle, Rect, Polygon } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { T, FONTS } from '../../theme';
 
-const { width } = Dimensions.get('window');
-const THUMB = (width - 48 - 32) / 5;
+const GOLD = '#C8920A';
+const GOLD_S = '#FEF3D4';
 
-function DotsIcon() {
+// ─── Icons ────────────────────────────────────────────────────────────────────
+
+function BackIcon() {
   return (
     <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
-      <Circle cx="5" cy="12" r="1.5" fill={T.ink} />
-      <Circle cx="12" cy="12" r="1.5" fill={T.ink} />
-      <Circle cx="19" cy="12" r="1.5" fill={T.ink} />
+      <Path d="M20 12H4M4 12l6-6M4 12l6 6" stroke={T.ink} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   );
 }
 
-function CameraEditIcon() {
-  return (
-    <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-      <Path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"
-        stroke="#fff" strokeWidth={1.6} fill="none" />
-      <Circle cx="12" cy="13" r="4" stroke="#fff" strokeWidth={1.6} />
-    </Svg>
-  );
-}
-
-function ChevronIcon() {
+function ChevronRight() {
   return (
     <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-      <Path d="M9 18l6-6-6-6" stroke={T.mute} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M9 18l6-6-6-6" stroke={T.hair2} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   );
 }
 
-function PlusIcon() {
+function PersonIcon() {
   return (
-    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
-      <Path d="M12 5v14M5 12h14" stroke={T.mute} strokeWidth={1.8} strokeLinecap="round" />
+    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="8" r="4" stroke={T.ink} strokeWidth={1.6} />
+      <Path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke={T.ink} strokeWidth={1.6} strokeLinecap="round" />
     </Svg>
   );
 }
 
-function StarIcon() {
+function ShieldIcon() {
   return (
-    <Svg width={11} height={11} viewBox="0 0 24 24">
-      <Path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z"
-        fill="#D4A017" />
+    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 2L3 7v6c0 5 4 9.5 9 11 5-1.5 9-6 9-11V7l-9-5z"
+        stroke={T.ink} strokeWidth={1.6} />
     </Svg>
   );
 }
 
-function VerifiedBadge() {
+function BellIcon() {
   return (
-    <View style={styles.verifiedBadge}>
-      <Svg width={10} height={10} viewBox="0 0 10 10">
-        <Circle cx="5" cy="5" r="5" fill={T.verify} />
-        <Path d="M3 5l1.5 1.5L7 3.5" stroke="white" strokeWidth={1.3} strokeLinecap="round" strokeLinejoin="round" />
-      </Svg>
-      <Text style={styles.verifiedText}>VERIFIED</Text>
+    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+      <Path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" stroke={T.ink} strokeWidth={1.6} strokeLinecap="round" />
+      <Path d="M13.73 21a2 2 0 01-3.46 0" stroke={T.ink} strokeWidth={1.6} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
+function LockIcon() {
+  return (
+    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+      <Rect x="3" y="11" width="18" height="11" rx="2" stroke={T.ink} strokeWidth={1.6} />
+      <Path d="M7 11V7a5 5 0 0110 0v4" stroke={T.ink} strokeWidth={1.6} />
+    </Svg>
+  );
+}
+
+function HelpIcon() {
+  return (
+    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="12" r="10" stroke={T.ink} strokeWidth={1.6} />
+      <Path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" stroke={T.ink} strokeWidth={1.6} strokeLinecap="round" />
+      <Circle cx="12" cy="17" r="0.8" fill={T.ink} />
+    </Svg>
+  );
+}
+
+function ChatIcon() {
+  return (
+    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+      <Path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z"
+        stroke={T.ink} strokeWidth={1.6} strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+function DocIcon() {
+  return (
+    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+      <Path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"
+        stroke={T.ink} strokeWidth={1.6} />
+      <Path d="M14 2v6h6M9 12h6M9 16h4" stroke={T.ink} strokeWidth={1.5} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
+function StarFilled() {
+  return (
+    <Svg width={22} height={22} viewBox="0 0 24 24">
+      <Path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+        fill={GOLD} />
+    </Svg>
+  );
+}
+
+// ─── Section group ────────────────────────────────────────────────────────────
+
+function SettingsRow({ icon, title, subtitle, isLast, onPress }) {
+  return (
+    <TouchableOpacity
+      style={[styles.row, !isLast && styles.rowBorder]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <View style={styles.rowIcon}>{icon}</View>
+      <View style={styles.rowText}>
+        <Text style={styles.rowTitle}>{title}</Text>
+        {subtitle ? <Text style={styles.rowSub}>{subtitle}</Text> : null}
+      </View>
+      <ChevronRight />
+    </TouchableOpacity>
+  );
+}
+
+function SettingsGroup({ label, rows }) {
+  return (
+    <View style={styles.group}>
+      <Text style={styles.groupLabel}>{label}</Text>
+      <View style={styles.groupCard}>
+        {rows.map((r, i) => (
+          <SettingsRow
+            key={r.title}
+            icon={r.icon}
+            title={r.title}
+            subtitle={r.subtitle}
+            isLast={i === rows.length - 1}
+            onPress={r.onPress}
+          />
+        ))}
+      </View>
     </View>
   );
 }
 
-function InReviewBadge() {
-  return (
-    <View style={styles.inReviewBadge}>
-      <Text style={styles.inReviewText}>⏱ IN REVIEW</Text>
-    </View>
-  );
-}
-
-function VerifyAction() {
-  return <Text style={styles.verifyAction}>VERIFY</Text>;
-}
-
-const VERIFICATIONS = [
-  { label: 'FACE VERIFICATION', title: 'Selfie matched profile photo', badge: 'verified' },
-  { label: 'VISA STATUS · H-1B', title: 'USCIS document on file', badge: 'verified' },
-  { label: 'INCOME RANGE', title: '$150K–$200K · paystub u...', badge: 'review' },
-  { label: 'EDUCATION · MS, CARNEGIE MELLON', title: 'Tap to upload transcript', badge: 'action' },
-];
+// ─── Screen ───────────────────────────────────────────────────────────────────
 
 export default function MyProfileScreen() {
   const navigation = useNavigation();
 
+  const accountRows = [
+    {
+      icon: <PersonIcon />,
+      title: 'Edit profile',
+      subtitle: 'Photos, basics, prompts',
+    },
+    {
+      icon: <ShieldIcon />,
+      title: 'Privacy & blocked',
+      subtitle: 'Profile visibility · 4 blocked',
+    },
+    {
+      icon: <BellIcon />,
+      title: 'Notifications',
+      subtitle: 'Push · email · WhatsApp',
+    },
+    {
+      icon: <LockIcon />,
+      title: 'Login & security',
+      subtitle: 'Phone · email · passkey',
+    },
+  ];
+
+  const supportRows = [
+    { icon: <HelpIcon />, title: 'Help & FAQs' },
+    { icon: <ChatIcon />, title: 'Contact us' },
+    { icon: <DocIcon />,  title: 'Terms & privacy' },
+  ];
+
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={styles.safe} edges={['top']}>
       {/* Top bar */}
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.topBtn}>
-          <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
-            <Path d="M20 12H4M4 12L10 6M4 12L10 18" stroke={T.ink} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-          </Svg>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.topBtn} hitSlop={8}>
+          <BackIcon />
         </TouchableOpacity>
-        <Text style={styles.topTitle}>MY PROFILE</Text>
-        <TouchableOpacity style={styles.topBtn}>
-          <DotsIcon />
-        </TouchableOpacity>
+        <Text style={styles.topTitle}>SETTINGS</Text>
+        <View style={styles.topBtn} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-        {/* Avatar + identity */}
+
+        {/* User identity row */}
         <View style={styles.identityRow}>
-          <View style={styles.avatarWrap}>
-            <LinearGradient colors={['#D4A574', '#C4856A', '#A86050']} style={styles.avatar}>
-              <Text style={styles.avatarInitials}>AT</Text>
-            </LinearGradient>
-            <TouchableOpacity style={styles.cameraBtn}>
-              <CameraEditIcon />
-            </TouchableOpacity>
+          <View style={styles.avatarCircle}>
+            <LinearGradient
+              colors={['#D4A574', '#C4856A', '#A86050']}
+              style={StyleSheet.absoluteFill}
+            />
+            <Text style={styles.avatarInitials}>AT</Text>
           </View>
           <View style={styles.identityText}>
-            <View style={styles.nameRow}>
-              <Text style={styles.name}>Anika Talluri</Text>
-              <Svg width={18} height={18} viewBox="0 0 18 18">
-                <Circle cx="9" cy="9" r="9" fill={T.verify} />
-                <Path d="M5 9l2.5 2.5L13 6" stroke="white" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-              </Svg>
+            <Text style={styles.identityName}>Anika Talluri</Text>
+            <Text style={styles.identitySub}>+1 415 ••• 2419 · anika@gmail.com</Text>
+          </View>
+        </View>
+
+        {/* Premium banner */}
+        <View style={styles.premiumCard}>
+          <View style={styles.premiumLeft}>
+            <View style={styles.starCircle}>
+              <StarFilled />
             </View>
-            <Text style={styles.identitySub}>29 · San Francisco · Software Engineer</Text>
-            <View style={styles.premiumBadge}>
-              <StarIcon />
-              <Text style={styles.premiumText}>PREMIUM</Text>
+            <View style={styles.premiumTextBlock}>
+              <Text style={styles.premiumTitle}>Try Talambralu Premium</Text>
+              <Text style={styles.premiumSub}>
+                Unlimited discovery · verified details · voice intros · private browsing.
+              </Text>
             </View>
           </View>
+          <TouchableOpacity style={styles.premiumBtn} activeOpacity={0.85}>
+            <Text style={styles.premiumBtnText}>See plans  ›</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Profile completion */}
-        <View style={styles.completionCard}>
-          <View style={styles.completionHeader}>
-            <Text style={styles.completionLabel}>Profile completion</Text>
-            <Text style={styles.completionPct}>84%</Text>
-          </View>
-          <View style={styles.completionTrack}>
-            <View style={styles.completionFill} />
-          </View>
-          <Text style={styles.completionHint}>Add 2 more photos and a voice note to reach 100%</Text>
-        </View>
+        {/* Account section */}
+        <SettingsGroup label="ACCOUNT" rows={accountRows} />
 
-        {/* Stats */}
-        <View style={styles.statsRow}>
-          {[
-            { value: '128', label: 'VISITORS' },
-            { value: '47', label: 'INTERESTS' },
-            { value: '12', label: 'SHORTLISTS' },
-          ].map((s, i) => (
-            <TouchableOpacity
-              key={i}
-              style={[styles.statBox, i === 0 && styles.statBoxActive]}
-              onPress={i === 0 ? () => navigation.navigate('ProfileVisitors') : undefined}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.statValue}>{s.value}</Text>
-              <Text style={styles.statLabel}>{s.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        {/* Support section */}
+        <SettingsGroup label="SUPPORT" rows={supportRows} />
 
-        {/* Photos */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>PHOTOS</Text>
-            <TouchableOpacity><Text style={styles.sectionAction}>Manage</Text></TouchableOpacity>
-          </View>
-          <View style={styles.photosRow}>
-            {/* Main photo */}
-            <View style={styles.mainThumb}>
-              <LinearGradient colors={['#D4A574', '#A86050']} style={StyleSheet.absoluteFill} />
-              <View style={styles.mainBadge}><Text style={styles.mainBadgeText}>MAIN</Text></View>
-            </View>
-            {/* Empty slots */}
-            {[0, 1, 2, 3].map(i => (
-              <View key={i} style={styles.emptyThumb} />
-            ))}
-            {/* Add */}
-            <TouchableOpacity style={styles.addThumb}>
-              <PlusIcon />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Verifications */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>VERIFICATIONS</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Verifications')}>
-              <Text style={styles.sectionAction}>View all</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.verificationsList}>
-            {VERIFICATIONS.map((v, i) => (
-              <TouchableOpacity key={i} style={[styles.verifRow, i < VERIFICATIONS.length - 1 && styles.verifRowBorder]} activeOpacity={0.7}>
-                <View style={styles.verifContent}>
-                  <Text style={styles.verifLabel}>{v.label}</Text>
-                  <Text style={styles.verifTitle}>{v.title}</Text>
-                </View>
-                {v.badge === 'verified' && <VerifiedBadge />}
-                {v.badge === 'review' && <InReviewBadge />}
-                {v.badge === 'action' && <VerifyAction />}
-                <ChevronIcon />
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* Profile details */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>PROFILE DETAILS</Text>
-            <TouchableOpacity><Text style={styles.sectionAction}>Edit</Text></TouchableOpacity>
-          </View>
-          {[
-            { label: 'Religion', value: 'Hindu · Kamma' },
-            { label: 'Education', value: 'MS · Computer Science · UT Austin' },
-            { label: 'Visa', value: 'H-1B' },
-            { label: 'Location', value: 'Sunnyvale, CA · Bay Area' },
-            { label: 'Height', value: "5'6\"" },
-            { label: 'Diet', value: 'Vegetarian' },
-          ].map((d, i, arr) => (
-            <View key={i} style={[styles.detailRow, i < arr.length - 1 && styles.detailRowBorder]}>
-              <Text style={styles.detailLabel}>{d.label}</Text>
-              <Text style={styles.detailValue}>{d.value}</Text>
-            </View>
-          ))}
-        </View>
+        {/* Sign out */}
+        <TouchableOpacity style={styles.signOutBtn} activeOpacity={0.7}>
+          <Text style={styles.signOutText}>Sign out</Text>
+        </TouchableOpacity>
 
         <View style={{ height: 32 }} />
       </ScrollView>
@@ -235,14 +237,18 @@ export default function MyProfileScreen() {
   );
 }
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: T.bg },
+
+  // ── Top bar ───────────────────────────────────────────────────────────────
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: T.hair,
   },
   topBtn: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
@@ -254,179 +260,159 @@ const styles = StyleSheet.create({
     letterSpacing: 1.5,
     color: T.ink,
   },
-  scroll: { paddingHorizontal: 20 },
+
+  scroll: { paddingHorizontal: 20, paddingTop: 20 },
+
+  // ── Identity ──────────────────────────────────────────────────────────────
   identityRow: {
     flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    marginBottom: 20,
+  },
+  avatarCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  avatarInitials: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#fff',
+    zIndex: 1,
+  },
+  identityText: { flex: 1 },
+  identityName: {
+    fontFamily: FONTS.display,
+    fontSize: 22,
+    color: T.ink,
+    marginBottom: 3,
+  },
+  identitySub: {
+    fontSize: 13,
+    color: T.mute,
+  },
+
+  // ── Premium banner ────────────────────────────────────────────────────────
+  premiumCard: {
+    backgroundColor: GOLD_S,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 28,
+    gap: 12,
+  },
+  premiumLeft: {
+    flexDirection: 'row',
     alignItems: 'flex-start',
-    paddingVertical: 20,
-    gap: 16,
+    gap: 12,
   },
-  avatarWrap: { position: 'relative' },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+  starCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
+    flexShrink: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  avatarInitials: { fontSize: 28, fontWeight: '700', color: '#fff' },
-  cameraBtn: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: T.accent,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#fff',
+  premiumTextBlock: { flex: 1 },
+  premiumTitle: {
+    fontFamily: FONTS.display,
+    fontSize: 18,
+    color: T.accent,
+    marginBottom: 4,
   },
-  identityText: { flex: 1, paddingTop: 4 },
-  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
-  name: { fontFamily: FONTS.display, fontSize: 20, color: T.ink, fontWeight: '600' },
-  identitySub: { fontSize: 13, color: T.mute, marginBottom: 8, lineHeight: 18 },
-  premiumBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    alignSelf: 'flex-start',
+  premiumSub: {
+    fontSize: 13,
+    color: T.mute,
+    lineHeight: 19,
+  },
+  premiumBtn: {
     backgroundColor: T.accent,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
     borderRadius: 100,
-  },
-  premiumText: { fontSize: 10, fontWeight: '700', color: '#fff', letterSpacing: 0.5 },
-  completionCard: {
-    backgroundColor: T.field,
-    borderRadius: 14,
-    padding: 14,
-    marginBottom: 16,
-  },
-  completionHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
-  completionLabel: { fontSize: 14, fontWeight: '600', color: T.ink },
-  completionPct: { fontSize: 14, fontWeight: '700', color: T.accent },
-  completionTrack: {
-    height: 4, backgroundColor: T.hair2, borderRadius: 2, marginBottom: 8,
-  },
-  completionFill: {
-    width: '84%', height: '100%', backgroundColor: T.accent, borderRadius: 2,
-  },
-  completionHint: { fontSize: 12, color: T.mute, lineHeight: 18 },
-  statsRow: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 24,
-  },
-  statBox: {
-    flex: 1,
-    backgroundColor: T.field,
-    borderRadius: 14,
-    padding: 14,
+    paddingVertical: 13,
     alignItems: 'center',
-    gap: 4,
+    shadowColor: T.accent,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.22,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  statBoxActive: {},
-  statValue: { fontFamily: FONTS.display, fontSize: 22, color: T.accent, fontWeight: '700' },
-  statLabel: { fontFamily: FONTS.mono, fontSize: 9, letterSpacing: 1, color: T.mute },
-  section: { marginBottom: 24 },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
+  premiumBtnText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#fff',
   },
-  sectionTitle: {
+
+  // ── Settings group ────────────────────────────────────────────────────────
+  group: { marginBottom: 24 },
+  groupLabel: {
     fontFamily: FONTS.mono,
     fontSize: 10,
     letterSpacing: 1.2,
+    textTransform: 'uppercase',
     color: T.mute,
+    marginBottom: 10,
   },
-  sectionAction: { fontSize: 13, color: T.accent, fontWeight: '600' },
-  photosRow: {
-    flexDirection: 'row',
-    gap: 6,
-    alignItems: 'center',
-  },
-  mainThumb: {
-    width: THUMB,
-    height: THUMB,
-    borderRadius: 10,
+  groupCard: {
+    borderWidth: 1,
+    borderColor: T.hair,
+    borderRadius: 16,
     overflow: 'hidden',
-    position: 'relative',
+    backgroundColor: T.bg,
   },
-  mainBadge: {
-    position: 'absolute',
-    bottom: 4,
-    left: 4,
-    backgroundColor: T.accent,
-    paddingHorizontal: 4,
-    paddingVertical: 1,
-    borderRadius: 4,
+
+  // ── Row ───────────────────────────────────────────────────────────────────
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    gap: 14,
+    backgroundColor: T.bg,
   },
-  mainBadgeText: { fontSize: 8, fontWeight: '700', color: '#fff', letterSpacing: 0.3 },
-  emptyThumb: {
-    width: THUMB,
-    height: THUMB,
+  rowBorder: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: T.hair,
+  },
+  rowIcon: {
+    width: 36,
+    height: 36,
     borderRadius: 10,
     backgroundColor: T.field,
-    borderWidth: 1,
-    borderColor: T.hair,
-  },
-  addThumb: {
-    width: THUMB,
-    height: THUMB,
-    borderRadius: 10,
-    borderWidth: 1.5,
-    borderColor: T.hair2,
-    borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
+    flexShrink: 0,
   },
-  verificationsList: {
-    borderWidth: 1,
-    borderColor: T.hair,
-    borderRadius: 14,
-    overflow: 'hidden',
+  rowText: { flex: 1 },
+  rowTitle: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: T.ink,
+    marginBottom: 2,
   },
-  verifRow: {
-    flexDirection: 'row',
+  rowSub: {
+    fontSize: 12,
+    color: T.mute,
+  },
+
+  // ── Sign out ──────────────────────────────────────────────────────────────
+  signOutBtn: {
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    gap: 8,
-    backgroundColor: '#fff',
+    paddingVertical: 14,
   },
-  verifRowBorder: { borderBottomWidth: 1, borderBottomColor: T.hair },
-  verifContent: { flex: 1 },
-  verifLabel: { fontFamily: FONTS.mono, fontSize: 9, letterSpacing: 0.8, color: T.mute, marginBottom: 2 },
-  verifTitle: { fontSize: 13, fontWeight: '500', color: T.ink },
-  verifiedBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: T.verifySoft,
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderRadius: 100,
+  signOutText: {
+    fontSize: 15,
+    color: '#E53E3E',
+    fontWeight: '500',
   },
-  verifiedText: { fontSize: 10, fontWeight: '700', color: T.verify, letterSpacing: 0.3 },
-  inReviewBadge: {
-    backgroundColor: '#FEF3C7',
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderRadius: 100,
-  },
-  inReviewText: { fontSize: 10, fontWeight: '700', color: '#92400E', letterSpacing: 0.2 },
-  verifyAction: { fontSize: 12, fontWeight: '700', color: T.accent, letterSpacing: 0.5 },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-  },
-  detailRowBorder: { borderBottomWidth: 1, borderBottomColor: T.hair },
-  detailLabel: { fontSize: 14, color: T.mute },
-  detailValue: { fontSize: 14, fontWeight: '500', color: T.ink, textAlign: 'right', flex: 1, marginLeft: 16 },
 });
