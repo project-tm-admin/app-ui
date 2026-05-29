@@ -123,7 +123,7 @@ export default function EditBasicsScreen() {
         {/* ── GENDER ───────────────────────────────────────────────────── */}
         <Text style={styles.sectionLabel}>GENDER</Text>
         <PillSelector
-          options={['Woman', 'Man', 'Non-binary']}
+          options={['Woman', 'Man']}
           selected={gender}
           onSelect={setGender}
         />
