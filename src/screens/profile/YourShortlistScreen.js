@@ -161,11 +161,6 @@ function ProfileCard({ profile }) {
           </View>
         )}
 
-        {/* Match pill — bottom left */}
-        <View style={styles.matchPill}>
-          <Text style={styles.matchText}>{profile.match}% Match</Text>
-        </View>
-
         {/* Bookmark — top right */}
         <TouchableOpacity style={styles.bookmarkBtn} activeOpacity={0.8}>
           <BookmarkIcon />

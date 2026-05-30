@@ -181,11 +181,6 @@ function PersonRow({ person }) {
 
       <View style={styles.rowMiddle}>
         <View style={styles.nameRow}>
-          {person.match !== null && (
-            <View style={styles.matchPill}>
-              <Text style={styles.matchText}>{person.match}%</Text>
-            </View>
-          )}
           <Text style={[styles.personName, person.hidden && styles.personNameMuted]}>
             {person.name}
           </Text>

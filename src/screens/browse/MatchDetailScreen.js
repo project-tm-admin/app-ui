@@ -499,9 +499,6 @@ export default function MatchDetailScreen() {
 
           <SafeAreaView style={s.coverOverlay} edges={['top']}>
             <View style={s.coverTopRow}>
-              <View style={s.matchBadgeCover}>
-                <Text style={s.matchBadgeCoverText}>↗ 87% Match</Text>
-              </View>
               <View style={s.coverTopRight}>
                 <TouchableOpacity style={s.coverBtn}><DownloadIcon /></TouchableOpacity>
                 <TouchableOpacity style={s.coverBtn}><DotsIconV /></TouchableOpacity>
@@ -710,18 +707,6 @@ const s = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  matchBadgeCover: {
-    backgroundColor: 'rgba(40,130,80,0.85)',
-    borderRadius: 100,
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    marginLeft: 44,
-  },
-  matchBadgeCoverText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#fff',
   },
   coverTopRight: {
     flexDirection: 'row',
