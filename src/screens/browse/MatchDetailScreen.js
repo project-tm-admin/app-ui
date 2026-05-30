@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet, ScrollView,
-  Dimensions,
+  Dimensions, Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import Svg, { Path, Circle, Rect, Polygon } from 'react-native-svg';
+import Svg, { Path, Circle, Polygon } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { T, FONTS } from '../../theme';
 
@@ -19,10 +19,9 @@ const SALMON_S= '#FDF0EB';
 const GOLD    = '#C8920A';
 const GOLD_S  = '#FEF3D4';
 
-// ─── Profile data ─────────────────────────────────────────────────────────────
+// ─── Data ─────────────────────────────────────────────────────────────────────
 const WAVEFORM = [12,22,38,18,44,26,34,48,20,14,40,30,16,42,22,36,18,44,28,20];
-
-const TABS = ['About', 'Career', 'Family', 'Jaathakam', 'Trust'];
+const SECTIONS = ['About', 'Career', 'Family', 'Jaathakam', 'Trust'];
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 function BackIcon({ color = T.ink }) {
@@ -94,9 +93,15 @@ function BookmarkOutline() {
     </Svg>
   );
 }
+function ChevronIcon() {
+  return (
+    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
+      <Path d="M6 9l6 6 6-6" stroke={T.mute} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
 
 // ─── Shared sub-components ────────────────────────────────────────────────────
-
 function SectionLabel({ text, style }) {
   return <Text style={[s.sectionLabel, style]}>{text}</Text>;
 }
@@ -140,13 +145,12 @@ function BottomBar({ onPass, onInterest }) {
   );
 }
 
-// ─── Tab content ─────────────────────────────────────────────────────────────
-
+// ─── Section content ──────────────────────────────────────────────────────────
 function AboutContent() {
   const prompts = [
     {
       q: 'WHAT "HOME" MEANS TO ME',
-      a: 'Sunday filter coffee, my mom\'s voice on speakerphone, and the smell of tadka somewhere in the building.',
+      a: "Sunday filter coffee, my mom's voice on speakerphone, and the smell of tadka somewhere in the building.",
     },
     {
       q: 'A PERFECT SATURDAY',
@@ -159,7 +163,7 @@ function AboutContent() {
   ];
 
   return (
-    <View style={s.tabContent}>
+    <View style={s.sectionContent}>
       <SectionLabel text="ABOUT ANJALI" />
       {prompts.map((p, i) => (
         <View key={i} style={s.promptBlock}>
@@ -182,13 +186,14 @@ function AboutContent() {
           </View>
         ))}
       </View>
+      <View style={{ height: 8 }} />
     </View>
   );
 }
 
 function CareerContent() {
   return (
-    <View style={s.tabContent}>
+    <View style={s.sectionContent}>
       <SectionLabel text="CURRENTLY" />
       <View style={s.currentJob}>
         <View style={s.currentJobTop}>
@@ -249,6 +254,7 @@ function CareerContent() {
           </View>
         </View>
       ))}
+      <View style={{ height: 8 }} />
     </View>
   );
 }
@@ -259,7 +265,7 @@ function FamilyContent() {
   );
 
   return (
-    <View style={s.tabContent}>
+    <View style={s.sectionContent}>
       <SectionLabel text="PARENTS" />
 
       <View style={s.familyMember}>
@@ -300,6 +306,7 @@ function FamilyContent() {
           </View>
         ))}
       </View>
+      <View style={{ height: 8 }} />
     </View>
   );
 }
@@ -317,7 +324,7 @@ function JaathakamContent() {
   ];
 
   return (
-    <View style={s.tabContent}>
+    <View style={s.sectionContent}>
       <SectionLabel text="GUNAMILAN" />
       <View style={s.kootaCard}>
         <Text style={s.kootaScore}><Text style={s.kootaBig}>28</Text> / 36 koota points</Text>
@@ -374,13 +381,14 @@ function JaathakamContent() {
           </View>
         ))}
       </View>
+      <View style={{ height: 8 }} />
     </View>
   );
 }
 
 function TrustContent() {
   return (
-    <View style={s.tabContent}>
+    <View style={s.sectionContent}>
       <SectionLabel text="TRUST SCORE" />
       <View style={s.trustScore}>
         <View style={s.trustIconWrap}>
@@ -422,49 +430,73 @@ function TrustContent() {
           <Text style={s.managedSub}>Last edit · 2 days ago · responds within ~4 hrs</Text>
         </View>
       </View>
+      <View style={{ height: 8 }} />
     </View>
   );
 }
 
-// ─── Tab bar ──────────────────────────────────────────────────────────────────
-function TabBar({ active, onPress }) {
+// ─── Accordion section ────────────────────────────────────────────────────────
+function AccordionSection({ label, isOpen, onToggle, children }) {
+  const anim = useRef(new Animated.Value(isOpen ? 1 : 0)).current;
+
+  useEffect(() => {
+    Animated.timing(anim, {
+      toValue: isOpen ? 1 : 0,
+      duration: 260,
+      useNativeDriver: false,
+    }).start();
+  }, [isOpen]);
+
+  const maxHeight = anim.interpolate({ inputRange: [0, 1], outputRange: [0, 1500] });
+  const chevronRotate = anim.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '180deg'] });
+
   return (
-    <View style={s.tabBar}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.tabBarInner}>
-        {TABS.map(t => (
-          <TouchableOpacity
-            key={t}
-            style={[s.tabChip, active === t && s.tabChipActive]}
-            onPress={() => onPress(t)}
-            activeOpacity={0.7}
-          >
-            <Text style={[s.tabChipText, active === t && s.tabChipTextActive]}>{t}</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+    <View style={s.accordion}>
+      <TouchableOpacity style={s.accordionHeader} onPress={onToggle} activeOpacity={0.7}>
+        <Text style={[s.accordionTitle, isOpen && s.accordionTitleOpen]}>{label}</Text>
+        <Animated.View style={{ transform: [{ rotate: chevronRotate }] }}>
+          <ChevronIcon />
+        </Animated.View>
+      </TouchableOpacity>
+      <Animated.View style={{ maxHeight, overflow: 'hidden' }}>
+        {children}
+      </Animated.View>
     </View>
   );
 }
 
-// ─── Cover view (screen 24) ───────────────────────────────────────────────────
-function CoverView({ onTabPress, onBack }) {
+// ─── Main screen ──────────────────────────────────────────────────────────────
+export default function MatchDetailScreen() {
+  const navigation = useNavigation();
+  const [openSection, setOpenSection] = useState('About');
+
+  const toggle = (key) => {
+    setOpenSection(prev => (prev === key ? null : key));
+  };
+
+  const contentMap = {
+    About:     <AboutContent />,
+    Career:    <CareerContent />,
+    Family:    <FamilyContent />,
+    Jaathakam: <JaathakamContent />,
+    Trust:     <TrustContent />,
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: T.bg }}>
       <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
-        {/* Full-screen photo */}
+        {/* Cover photo */}
         <View style={s.coverPhoto}>
           <LinearGradient
             colors={['#C4956A', '#A07050', '#7A4A40']}
             start={{ x: 0.2, y: 0 }} end={{ x: 0.9, y: 1 }}
             style={StyleSheet.absoluteFill}
           />
-          {/* Dark gradient at bottom */}
           <LinearGradient
             colors={['transparent', 'transparent', 'rgba(0,0,0,0.7)']}
             style={StyleSheet.absoluteFill}
           />
 
-          {/* Overlay controls */}
           <SafeAreaView style={s.coverOverlay} edges={['top']}>
             <View style={s.coverTopRow}>
               <View style={s.matchBadgeCover}>
@@ -475,12 +507,11 @@ function CoverView({ onTabPress, onBack }) {
                 <TouchableOpacity style={s.coverBtn}><DotsIconV /></TouchableOpacity>
               </View>
             </View>
-            <TouchableOpacity style={s.coverBackBtn} onPress={onBack}>
+            <TouchableOpacity style={s.coverBackBtn} onPress={() => navigation.goBack()}>
               <BackIcon color="white" />
             </TouchableOpacity>
           </SafeAreaView>
 
-          {/* Name at bottom of photo */}
           <View style={s.coverNameWrap}>
             <View style={s.coverNameRow}>
               <Text style={s.coverName}>Anjali Reddy, 28</Text>
@@ -514,96 +545,25 @@ function CoverView({ onTabPress, onBack }) {
           ))}
         </View>
 
-        {/* Tab bar */}
-        <TabBar active={null} onPress={onTabPress} />
-
-        {/* Peek of about content */}
-        <View style={s.peekSection}>
-          <SectionLabel text="ABOUT ANJALI" />
-          <View style={s.promptBlock}>
-            <Text style={s.promptQ}>WHAT "HOME" MEANS TO ME</Text>
-            <Text style={s.promptA}>Sunday filter coffee, my mom's voice on speakerphone, and the smell of tadka somewhere in the building.</Text>
-          </View>
-        </View>
+        {/* Accordion sections */}
+        {SECTIONS.map(key => (
+          <AccordionSection
+            key={key}
+            label={key}
+            isOpen={openSection === key}
+            onToggle={() => toggle(key)}
+          >
+            {contentMap[key]}
+          </AccordionSection>
+        ))}
 
         <View style={{ height: 90 }} />
       </ScrollView>
 
-      {/* Sticky bottom bar */}
       <SafeAreaView style={s.bottomBarWrap} edges={['bottom']}>
-        <BottomBar onPass={onBack} onInterest={() => {}} />
+        <BottomBar onPass={() => navigation.goBack()} onInterest={() => {}} />
       </SafeAreaView>
     </View>
-  );
-}
-
-// ─── Tab view (screens 25-29) ─────────────────────────────────────────────────
-function TabView({ activeTab, onTabChange, onBack }) {
-  const contentMap = {
-    About:     <AboutContent />,
-    Career:    <CareerContent />,
-    Family:    <FamilyContent />,
-    Jaathakam: <JaathakamContent />,
-    Trust:     <TrustContent />,
-  };
-
-  return (
-    <View style={{ flex: 1, backgroundColor: T.bg }}>
-      {/* Compact sticky header */}
-      <SafeAreaView style={s.compactHeader} edges={['top']}>
-        <View style={s.compactHeaderRow}>
-          <TouchableOpacity onPress={onBack} style={s.compactBack} hitSlop={8}>
-            <BackIcon />
-          </TouchableOpacity>
-          <View style={s.compactAvatar}>
-            <Text style={s.compactAvatarText}>A</Text>
-          </View>
-          <View style={s.compactInfo}>
-            <View style={s.compactNameRow}>
-              <Text style={s.compactName}>Anjali Reddy, 28</Text>
-              <VerifiedCircle size={15} />
-            </View>
-            <Text style={s.compactSub}>5'6" · Dallas, TX · Active 2h ago</Text>
-          </View>
-          <View style={s.matchPill}>
-            <Text style={s.matchPillText}>87%</Text>
-          </View>
-        </View>
-        <TabBar active={activeTab} onPress={onTabChange} />
-      </SafeAreaView>
-
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {contentMap[activeTab]}
-        <View style={{ height: 90 }} />
-      </ScrollView>
-
-      <SafeAreaView style={s.bottomBarWrap} edges={['bottom']}>
-        <BottomBar onPass={onBack} onInterest={() => {}} />
-      </SafeAreaView>
-    </View>
-  );
-}
-
-// ─── Main export ──────────────────────────────────────────────────────────────
-export default function MatchDetailScreen() {
-  const navigation = useNavigation();
-  const [view, setView] = useState('cover');
-
-  const handleTabPress = (tab) => setView(tab);
-  const handleBack = () => {
-    if (view === 'cover') navigation.goBack();
-    else setView('cover');
-  };
-
-  if (view === 'cover') {
-    return <CoverView onTabPress={handleTabPress} onBack={handleBack} />;
-  }
-  return (
-    <TabView
-      activeTab={view}
-      onTabChange={handleTabPress}
-      onBack={handleBack}
-    />
   );
 }
 
@@ -721,38 +681,6 @@ const s = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#fff',
-  },
-
-  // ── Tab bar ───────────────────────────────────────────────────────────────
-  tabBar: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: T.hair,
-  },
-  tabBarInner: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    gap: 8,
-  },
-  tabChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 100,
-    borderWidth: 1,
-    borderColor: T.hair2,
-  },
-  tabChipActive: {
-    backgroundColor: T.ink,
-    borderColor: T.ink,
-  },
-  tabChipText: {
-    fontSize: 14,
-    color: T.ink,
-    fontWeight: '500',
-  },
-  tabChipTextActive: {
-    color: '#fff',
-    fontWeight: '600',
   },
 
   // ── Cover photo ───────────────────────────────────────────────────────────
@@ -889,73 +817,31 @@ const s = StyleSheet.create({
     color: T.ink,
   },
 
-  // ── Peek content on cover ─────────────────────────────────────────────────
-  peekSection: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
-  },
-
-  // ── Compact header ────────────────────────────────────────────────────────
-  compactHeader: {
-    backgroundColor: T.bg,
+  // ── Accordion ─────────────────────────────────────────────────────────────
+  accordion: {
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: T.hair,
   },
-  compactHeaderRow: {
+  accordionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    gap: 10,
-  },
-  compactBack: {
-    padding: 4,
-  },
-  compactAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#C4956A',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  compactAvatarText: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#fff',
-  },
-  compactInfo: { flex: 1 },
-  compactNameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-  },
-  compactName: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: T.ink,
-  },
-  compactSub: {
-    fontSize: 11,
-    color: T.mute,
-    marginTop: 1,
-  },
-  matchPill: {
-    backgroundColor: SALMON,
-    borderRadius: 100,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-  },
-  matchPillText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: T.accent,
-  },
-
-  // ── Tab content wrapper ───────────────────────────────────────────────────
-  tabContent: {
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingVertical: 18,
+  },
+  accordionTitle: {
+    fontFamily: FONTS.display,
+    fontSize: 18,
+    color: T.ink2,
+    fontWeight: '500',
+  },
+  accordionTitleOpen: {
+    color: T.ink,
+    fontWeight: '600',
+  },
+  sectionContent: {
+    paddingHorizontal: 20,
+    paddingTop: 4,
   },
 
   // ── Prompts (About) ───────────────────────────────────────────────────────
