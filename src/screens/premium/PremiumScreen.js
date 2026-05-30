@@ -1,178 +1,219 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet, ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import Svg, { Path, Circle, Rect } from 'react-native-svg';
+import Svg, { Path, Circle } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { T, FONTS } from '../../theme';
 
-const CREAM    = '#FAF5ED';
 const GOLD_INK = '#7A5810';
+const GOLD_BG  = '#F5ECD0';
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 function XIcon() {
   return (
-    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-      <Path d="M18 6L6 18M6 6l12 12" stroke={T.mute} strokeWidth={2} strokeLinecap="round" />
+    <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+      <Path d="M18 6L6 18M6 6l12 12" stroke={T.ink} strokeWidth={2.2} strokeLinecap="round" />
     </Svg>
   );
 }
 
-function ShieldIcon() {
+function CheckIcon() {
   return (
-    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-      <Path d="M12 2L3 7v6c0 5 4 9.5 9 11 5-1.5 9-6 9-11V7l-9-5z"
-        stroke={GOLD_INK} strokeWidth={1.6} />
+    <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+      <Path d="M20 6L9 17l-5-5" stroke="#fff" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   );
 }
 
-function MicIcon() {
-  return (
-    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-      <Rect x="9" y="2" width="6" height="12" rx="3" stroke={GOLD_INK} strokeWidth={1.6} />
-      <Path d="M19 10a7 7 0 01-14 0M12 19v3M8 22h8" stroke={GOLD_INK} strokeWidth={1.6} strokeLinecap="round" />
-    </Svg>
-  );
-}
+// ─── Plan data ────────────────────────────────────────────────────────────────
+const PLANS = [
+  {
+    id: '12mo',
+    duration: '12 months',
+    badge: 'BEST VALUE',
+    badgeColor: '#2D7A4A',
+    billing: '$179.88 billed yearly',
+    original: '$34.99',
+    price: '$14.99',
+    unit: '/mo · save 57%',
+  },
+  {
+    id: '6mo',
+    duration: '6 months',
+    badge: 'MOST CHOSEN',
+    badgeColor: T.accent,
+    billing: '$119.94 billed every 6 months',
+    original: '$34.99',
+    price: '$19.99',
+    unit: '/mo · save 43%',
+  },
+  {
+    id: '1mo',
+    duration: '1 month',
+    badge: null,
+    billing: 'Billed monthly · cancel anytime',
+    original: null,
+    price: '$34.99',
+    unit: '/ month',
+  },
+];
 
-function FilterIcon() {
-  return (
-    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-      <Circle cx="12" cy="12" r="9" stroke={GOLD_INK} strokeWidth={1.6} />
-      <Circle cx="12" cy="12" r="3" stroke={GOLD_INK} strokeWidth={1.6} />
-      <Path d="M12 3v6M12 15v6M3 12h6M15 12h6" stroke={GOLD_INK} strokeWidth={1.4} strokeLinecap="round" />
-    </Svg>
-  );
-}
-
-function InfinityIcon() {
-  return (
-    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-      <Path d="M12 12c-2-2.5-4-4-6-4a4 4 0 000 8c2 0 4-1.5 6-4z"
-        stroke={GOLD_INK} strokeWidth={1.6} />
-      <Path d="M12 12c2 2.5 4 4 6 4a4 4 0 000-8c-2 0-4 1.5-6 4z"
-        stroke={GOLD_INK} strokeWidth={1.6} />
-    </Svg>
-  );
-}
-
-function EyeIcon() {
-  return (
-    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-      <Path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
-        stroke={GOLD_INK} strokeWidth={1.6} />
-      <Circle cx="12" cy="12" r="3" stroke={GOLD_INK} strokeWidth={1.6} />
-    </Svg>
-  );
-}
-
-// ─── Feature data ─────────────────────────────────────────────────────────────
 const FEATURES = [
-  {
-    icon: <ShieldIcon />,
-    title: 'See full verified profile details',
-    sub: 'ID · job · family · income confirmations · everything they shared.',
-  },
-  {
-    icon: <MicIcon />,
-    title: 'Voice intros & private messages',
-    sub: 'Hear how they speak. Continue conversations after interest is accepted.',
-  },
-  {
-    icon: <FilterIcon />,
-    title: 'Advanced filters that matter',
-    sub: 'Visa, community, gothram, profession, lifestyle, family preferences.',
-  },
-  {
-    icon: <InfinityIcon />,
-    title: 'Unlimited discovery & interests',
-    sub: 'Beyond your 3 daily curated matches — explore freely, send freely.',
-  },
-  {
-    icon: <EyeIcon />,
-    title: "See who's interested in you",
-    sub: 'Profile visitors, shortlisters, and pending interests — no guesswork.',
-  },
+  'Full verified details — ID, income & family',
+  'Voice intros & private messaging',
+  'Advanced filters: visa, community, profession',
+  'Unlimited discovery & interests',
+  "See who's interested in you",
 ];
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
 export default function PremiumScreen() {
   const navigation = useNavigation();
+  const [selected, setSelected] = useState('6mo');
+
+  const selectedPlan = PLANS.find(p => p.id === selected);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
-      {/* Header */}
+      {/* Top bar */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>TALAMBRALU · PREMIUM</Text>
+        <View style={styles.headerLeft}>
+          <Text style={styles.starLabel}>★</Text>
+          <Text style={styles.headerTitle}>PREMIUM</Text>
+        </View>
         <TouchableOpacity style={styles.closeBtn} onPress={() => navigation.goBack()} activeOpacity={0.7}>
           <XIcon />
         </TouchableOpacity>
       </View>
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scroll}
-      >
-        {/* Hero star sphere */}
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+
+        {/* ── Sphere ────────────────────────────────────────────────────── */}
         <View style={styles.sphereWrap}>
           <LinearGradient
-            colors={['#F5ECD0', '#E8D48A', '#D4B860', '#C8A840']}
-            start={{ x: 0.2, y: 0.1 }}
-            end={{ x: 0.9, y: 0.9 }}
+            colors={['#F0E0B0', '#E8C87A', '#D4AA50', '#C49030']}
+            start={{ x: 0.25, y: 0.1 }}
+            end={{ x: 0.85, y: 0.9 }}
             style={styles.sphere}
           >
-            {/* Shine lines */}
-            {[0, 1, 2, 3, 4].map(i => (
-              <View key={i} style={[styles.shineLine, { top: 28 + i * 12 }]} />
-            ))}
-            <Svg width={44} height={44} viewBox="0 0 24 24" style={{ zIndex: 2 }}>
+            <Svg width={40} height={40} viewBox="0 0 24 24">
               <Path
                 d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                fill="#7A4A08"
+                fill="#5A3A06"
               />
             </Svg>
           </LinearGradient>
         </View>
 
-        {/* Headline */}
+        {/* ── Headline ──────────────────────────────────────────────────── */}
         <Text style={styles.headline}>
-          {'More '}
-          <Text style={styles.italic}>meaningful{'\n'}</Text>
-          {'introductions.'}
+          {'Be the introduction\nfamilies '}
+          <Text style={styles.italic}>say yes</Text>
+          {' to.'}
         </Text>
 
-        {/* Subtitle */}
+        {/* ── Subtitle ──────────────────────────────────────────────────── */}
         <Text style={styles.subtitle}>
-          Premium opens the doors family members usually open for you — deeper verification, private discovery, and unhurried conversations.
+          Premium opens the doors that matter — deeper verification, voice intros, and the filters serious families look for.
         </Text>
 
-        {/* Features card */}
+        {/* ── Social proof ──────────────────────────────────────────────── */}
+        <View style={styles.socialRow}>
+          <View style={styles.avatarStack}>
+            <View style={[styles.avatar, { backgroundColor: '#B8865C', zIndex: 3 }]}>
+              <Text style={styles.avatarText}>RT</Text>
+            </View>
+            <View style={[styles.avatar, { backgroundColor: '#C4858A', zIndex: 2, marginLeft: -10 }]}>
+              <Text style={styles.avatarText}>AK</Text>
+            </View>
+            <LinearGradient
+              colors={['#D4A574', '#A87050']}
+              style={[styles.avatar, { zIndex: 1, marginLeft: -10 }]}
+            />
+            <View style={styles.plusChip}>
+              <Text style={styles.plusText}>+12k</Text>
+            </View>
+          </View>
+          <View style={styles.socialRight}>
+            <Text style={styles.stars}>★★★★★</Text>
+            <Text style={styles.socialLabel}>12,000+ premium members</Text>
+          </View>
+        </View>
+
+        {/* ── Plan chooser ──────────────────────────────────────────────── */}
+        <View style={styles.planHeader}>
+          <Text style={styles.planHeaderLabel}>CHOOSE A PLAN</Text>
+          <Text style={styles.planHeaderRight}>7-day free trial included</Text>
+        </View>
+
+        {PLANS.map(plan => {
+          const isSelected = selected === plan.id;
+          return (
+            <TouchableOpacity
+              key={plan.id}
+              style={[styles.planCard, isSelected && styles.planCardSelected]}
+              onPress={() => setSelected(plan.id)}
+              activeOpacity={0.85}
+            >
+              {/* Radio */}
+              <View style={[styles.radio, isSelected && styles.radioSelected]}>
+                {isSelected && <CheckIcon />}
+              </View>
+
+              {/* Plan info */}
+              <View style={styles.planInfo}>
+                <View style={styles.planNameRow}>
+                  <Text style={styles.planDuration}>{plan.duration}</Text>
+                  {plan.badge && (
+                    <View style={[styles.badge, { backgroundColor: plan.badgeColor }]}>
+                      <Text style={styles.badgeText}>{plan.badge}</Text>
+                    </View>
+                  )}
+                </View>
+                <Text style={styles.planBilling}>{plan.billing}</Text>
+              </View>
+
+              {/* Price */}
+              <View style={styles.priceBlock}>
+                {plan.original && (
+                  <Text style={styles.priceOriginal}>{plan.original}</Text>
+                )}
+                <Text style={styles.price}>{plan.price}</Text>
+                <Text style={styles.priceUnit}>{plan.unit}</Text>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+
+        {/* ── Features ──────────────────────────────────────────────────── */}
+        <Text style={styles.featuresLabel}>EVERYTHING YOU UNLOCK</Text>
         <View style={styles.featuresCard}>
           {FEATURES.map((f, i) => (
             <View key={i} style={[styles.featureRow, i < FEATURES.length - 1 && styles.featureRowBorder]}>
-              <View style={styles.featureIcon}>{f.icon}</View>
-              <View style={styles.featureText}>
-                <Text style={styles.featureTitle}>{f.title}</Text>
-                <Text style={styles.featureSub}>{f.sub}</Text>
+              <View style={styles.checkBox}>
+                <Svg width={12} height={12} viewBox="0 0 24 24" fill="none">
+                  <Path d="M20 6L9 17l-5-5" stroke={GOLD_INK} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+                </Svg>
               </View>
+              <Text style={styles.featureText}>{f}</Text>
             </View>
           ))}
         </View>
 
-        <View style={{ height: 100 }} />
+        <View style={{ height: 110 }} />
       </ScrollView>
 
-      {/* Sticky CTA */}
+      {/* ── Sticky CTA ────────────────────────────────────────────────── */}
       <View style={styles.footer}>
         <TouchableOpacity style={styles.ctaBtn} activeOpacity={0.86}>
-          <Text style={styles.ctaText}>★  Continue with Premium · 6 months</Text>
+          <Text style={styles.ctaText}>Start 7-day free trial  ›</Text>
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.goBack()}>
-          <Text style={styles.notNow}>Not now · keep exploring on Free</Text>
-        </TouchableOpacity>
+        <Text style={styles.finePrint}>
+          Then {selectedPlan?.price}/mo, billed per {selectedPlan?.id === '12mo' ? '12 months' : selectedPlan?.id === '6mo' ? '6 months' : 'month'}. Cancel anytime.
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -180,15 +221,24 @@ export default function PremiumScreen() {
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: CREAM },
+  safe: { flex: 1, backgroundColor: '#fff' },
 
+  // ── Header ───────────────────────────────────────────────────────────────
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 14,
-    position: 'relative',
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  starLabel: {
+    fontSize: 14,
+    color: GOLD_INK,
   },
   headerTitle: {
     fontFamily: FONTS.mono,
@@ -197,48 +247,42 @@ const styles = StyleSheet.create({
     color: GOLD_INK,
   },
   closeBtn: {
-    position: 'absolute',
-    right: 16,
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'rgba(0,0,0,0.08)',
+    backgroundColor: '#F0EDE8',
     justifyContent: 'center',
     alignItems: 'center',
   },
 
-  scroll: { paddingHorizontal: 24, alignItems: 'center' },
+  scroll: { paddingHorizontal: 20, alignItems: 'center' },
 
-  // ── Sphere ────────────────────────────────────────────────────────────────
-  sphereWrap: { marginVertical: 24 },
+  // ── Sphere ───────────────────────────────────────────────────────────────
+  sphereWrap: {
+    marginBottom: 20,
+    shadowColor: GOLD_INK,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.22,
+    shadowRadius: 14,
+    elevation: 8,
+  },
   sphere: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 96,
+    height: 96,
+    borderRadius: 48,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
-    shadowColor: GOLD_INK,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 10,
-  },
-  shineLine: {
-    position: 'absolute',
-    left: 0, right: 0,
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.18)',
   },
 
-  // ── Text ──────────────────────────────────────────────────────────────────
+  // ── Headline ─────────────────────────────────────────────────────────────
   headline: {
     fontFamily: FONTS.display,
-    fontSize: 36,
+    fontSize: 32,
     color: T.accent,
     textAlign: 'center',
-    lineHeight: 44,
-    marginBottom: 16,
+    lineHeight: 42,
+    marginBottom: 14,
   },
   italic: {
     fontStyle: 'italic',
@@ -248,71 +292,230 @@ const styles = StyleSheet.create({
     color: T.mute,
     textAlign: 'center',
     lineHeight: 22,
-    marginBottom: 28,
-    paddingHorizontal: 8,
+    marginBottom: 20,
+    paddingHorizontal: 4,
   },
 
-  // ── Features card ─────────────────────────────────────────────────────────
-  featuresCard: {
-    backgroundColor: '#fff',
-    borderRadius: 18,
-    width: '100%',
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  featureRow: {
+  // ── Social proof ─────────────────────────────────────────────────────────
+  socialRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    padding: 16,
-    gap: 14,
+    alignItems: 'center',
+    gap: 12,
+    borderWidth: 1,
+    borderColor: '#E8E4DE',
+    borderRadius: 100,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    marginBottom: 24,
+    alignSelf: 'center',
   },
-  featureRowBorder: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(0,0,0,0.07)',
+  avatarStack: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  featureIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    backgroundColor: '#FAF5ED',
+  avatar: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#fff',
+  },
+  avatarText: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  plusChip: {
+    marginLeft: -4,
+    backgroundColor: GOLD_BG,
+    borderRadius: 100,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderWidth: 1.5,
+    borderColor: '#fff',
+  },
+  plusText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: GOLD_INK,
+  },
+  socialRight: {
+    gap: 1,
+  },
+  stars: {
+    fontSize: 11,
+    color: '#C8920A',
+    letterSpacing: 1,
+  },
+  socialLabel: {
+    fontSize: 11,
+    color: T.mute,
+    fontWeight: '500',
+  },
+
+  // ── Plan chooser ─────────────────────────────────────────────────────────
+  planHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 10,
+  },
+  planHeaderLabel: {
+    fontFamily: FONTS.mono,
+    fontSize: 10,
+    letterSpacing: 1.2,
+    color: T.mute,
+  },
+  planHeaderRight: {
+    fontSize: 11,
+    color: T.mute,
+  },
+  planCard: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderWidth: 1,
+    borderColor: '#E0DCD6',
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 8,
+    backgroundColor: '#fff',
+  },
+  planCardSelected: {
+    borderColor: T.accent,
+    borderWidth: 1.8,
+  },
+  radio: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 1.5,
+    borderColor: '#C8C4BE',
     justifyContent: 'center',
     alignItems: 'center',
     flexShrink: 0,
-    marginTop: 2,
   },
-  featureText: { flex: 1 },
-  featureTitle: {
+  radioSelected: {
+    backgroundColor: '#3A1A10',
+    borderColor: '#3A1A10',
+  },
+  planInfo: {
+    flex: 1,
+    gap: 3,
+  },
+  planNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  planDuration: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: '700',
     color: T.ink,
-    marginBottom: 4,
   },
-  featureSub: {
-    fontSize: 13,
+  badge: {
+    borderRadius: 100,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  badgeText: {
+    fontFamily: FONTS.mono,
+    fontSize: 9,
+    letterSpacing: 0.5,
+    color: '#fff',
+    fontWeight: '700',
+  },
+  planBilling: {
+    fontSize: 12,
     color: T.mute,
-    lineHeight: 19,
+  },
+  priceBlock: {
+    alignItems: 'flex-end',
+    flexShrink: 0,
+  },
+  priceOriginal: {
+    fontSize: 11,
+    color: T.mute,
+    textDecorationLine: 'line-through',
+  },
+  price: {
+    fontFamily: FONTS.display,
+    fontSize: 22,
+    fontWeight: '700',
+    color: T.accent,
+    lineHeight: 26,
+  },
+  priceUnit: {
+    fontSize: 11,
+    color: T.mute,
   },
 
-  // ── Footer ────────────────────────────────────────────────────────────────
+  // ── Features ─────────────────────────────────────────────────────────────
+  featuresLabel: {
+    fontFamily: FONTS.mono,
+    fontSize: 10,
+    letterSpacing: 1.2,
+    color: T.mute,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+    marginBottom: 10,
+  },
+  featuresCard: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#E0DCD6',
+    borderRadius: 14,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+  },
+  featureRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  featureRowBorder: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#E8E4DE',
+  },
+  checkBox: {
+    width: 26,
+    height: 26,
+    borderRadius: 6,
+    backgroundColor: GOLD_BG,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexShrink: 0,
+  },
+  featureText: {
+    fontSize: 14,
+    color: T.ink,
+    fontWeight: '500',
+    flex: 1,
+  },
+
+  // ── Footer ───────────────────────────────────────────────────────────────
   footer: {
     position: 'absolute',
     bottom: 0, left: 0, right: 0,
-    backgroundColor: CREAM,
-    paddingHorizontal: 24,
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
     paddingTop: 12,
     paddingBottom: 32,
-    gap: 12,
     alignItems: 'center',
+    gap: 8,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'rgba(0,0,0,0.06)',
+    borderTopColor: '#E8E4DE',
   },
   ctaBtn: {
     width: '100%',
-    height: 52,
+    height: 54,
     backgroundColor: T.accent,
     borderRadius: 100,
     justifyContent: 'center',
@@ -324,13 +527,14 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   ctaText: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
     color: '#fff',
     letterSpacing: 0.2,
   },
-  notNow: {
-    fontSize: 13,
+  finePrint: {
+    fontSize: 12,
     color: T.mute,
+    textAlign: 'center',
   },
 });
