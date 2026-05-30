@@ -320,9 +320,6 @@ export default function MatchesScreen() {
               <BellIcon />
               <View style={styles.bellDot} />
             </TouchableOpacity>
-            <View style={styles.avatarCircle}>
-              <Text style={styles.avatarText}>A</Text>
-            </View>
           </View>
         </View>
 
@@ -365,25 +362,6 @@ export default function MatchesScreen() {
               end={{ x: 1, y: 1 }}
               style={StyleSheet.absoluteFill}
             />
-
-            {/* Match % badge */}
-            <View style={[styles.matchBadge, { backgroundColor: T.accent }]}>
-              <Text style={styles.matchBadgeText}>♥ {match.matchPct}% Match</Text>
-            </View>
-
-            {/* Three-dot menu */}
-            <TouchableOpacity style={styles.dotsBtn} activeOpacity={0.7}>
-              <DotsIcon />
-            </TouchableOpacity>
-
-            {/* Voice intro overlay */}
-            <View style={styles.voiceOverlay}>
-              <View style={styles.playBtn}><PlayIcon /></View>
-              <View>
-                <Text style={styles.voiceLabel}>Voice Intro</Text>
-                <Text style={styles.voiceDuration}>0:24</Text>
-              </View>
-            </View>
           </View>
 
           {/* Card body */}
@@ -397,12 +375,7 @@ export default function MatchesScreen() {
               >
                 <Text style={styles.name}>{match.name}, {match.age}</Text>
               </TouchableOpacity>
-              <View style={styles.nameRight}>
-                <VerifiedBadge />
-                <TouchableOpacity style={styles.bookmarkBtn} activeOpacity={0.7}>
-                  <BookmarkIcon />
-                </TouchableOpacity>
-              </View>
+              <VerifiedBadge />
             </View>
 
             {/* Location */}
@@ -425,15 +398,10 @@ export default function MatchesScreen() {
 
             {/* Stats */}
             <View style={styles.statsGrid}>
-              {match.stats.map((s, i) => (
+              {match.stats.filter(s => s.type !== 'tongue').map((s, i) => (
                 <View key={i} style={styles.statCell}>
-                  <View style={[styles.statIconBox, { backgroundColor: s.iconBg }]}>
-                    {renderStatIcon(s.type, s.iconColor)}
-                  </View>
-                  <View>
-                    <Text style={styles.statLabel}>{s.label}</Text>
-                    <Text style={styles.statValue}>{s.value}</Text>
-                  </View>
+                  <Text style={styles.statLabel}>{s.label}</Text>
+                  <Text style={styles.statValue}>{s.value}</Text>
                 </View>
               ))}
             </View>
@@ -781,37 +749,30 @@ const styles = StyleSheet.create({
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 0,
+    gap: 8,
     marginBottom: 12,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: T.hair,
-    paddingTop: 10,
+    marginTop: 10,
   },
   statCell: {
-    width: '33.33%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 7,
-    paddingBottom: 8,
-    paddingRight: 4,
-  },
-  statIconBox: {
-    width: 30,
-    height: 30,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexShrink: 0,
+    width: '47%',
+    flexGrow: 1,
+    backgroundColor: '#F5F2EE',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: T.hair,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
   },
   statLabel: {
     fontFamily: FONTS.mono,
     fontSize: 9,
     color: T.mute,
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
     textTransform: 'uppercase',
+    marginBottom: 3,
   },
   statValue: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     color: T.ink,
   },
