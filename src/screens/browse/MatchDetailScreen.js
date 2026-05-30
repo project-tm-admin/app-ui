@@ -446,9 +446,6 @@ export default function MatchDetailScreen() {
               <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()} activeOpacity={0.8}>
                 <BackIcon color="white" />
               </TouchableOpacity>
-              <TouchableOpacity style={s.dotsBtn} activeOpacity={0.8}>
-                <DotsIconV />
-              </TouchableOpacity>
             </View>
           </SafeAreaView>
           <View style={s.photoDots}>
