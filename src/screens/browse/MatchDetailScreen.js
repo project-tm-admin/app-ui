@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions,
 } from 'react-native';
@@ -88,7 +88,6 @@ function BookmarkOutline() {
 function SectionLabel({ text, style }) {
   return <Text style={[s.sectionLabel, style]}>{text}</Text>;
 }
-
 function VerifiedBadge() {
   return (
     <View style={s.verifiedBadge}>
@@ -96,7 +95,6 @@ function VerifiedBadge() {
     </View>
   );
 }
-
 function PremiumGate({ title, subtitle }) {
   return (
     <View style={s.premiumGate}>
@@ -111,7 +109,6 @@ function PremiumGate({ title, subtitle }) {
     </View>
   );
 }
-
 function BottomBar({ onPass, onInterest }) {
   return (
     <View style={s.bottomBar}>
@@ -144,9 +141,8 @@ function AboutContent() {
       a: 'I take filter-coffee opinions extremely seriously. Brand, decoction ratio, davara temperature — there is one right way.',
     },
   ];
-
   return (
-    <View style={s.tabContent}>
+    <View style={s.sectionContent}>
       <SectionLabel text="ABOUT ANJALI" />
       {prompts.map((p, i) => (
         <View key={i} style={s.promptBlock}>
@@ -154,8 +150,6 @@ function AboutContent() {
           <Text style={s.promptA}>{p.a}</Text>
         </View>
       ))}
-
-      {/* Voice intro */}
       <SectionLabel text="VOICE INTRO" style={{ marginTop: 4 }} />
       <View style={s.voiceRow}>
         <TouchableOpacity style={s.playCircle} activeOpacity={0.8}>
@@ -170,8 +164,6 @@ function AboutContent() {
           </View>
         </View>
       </View>
-
-      {/* Personality tags */}
       <SectionLabel text="PERSONALITY" style={{ marginTop: 20 }} />
       <View style={s.tagsWrap}>
         {['Curious', 'Family-first', 'Reads a lot', 'Adventurous', 'Homebody'].map((t, i) => (
@@ -186,7 +178,7 @@ function AboutContent() {
 
 function CareerContent() {
   return (
-    <View style={s.tabContent}>
+    <View style={s.sectionContent}>
       <SectionLabel text="CURRENTLY" />
       <View style={s.currentJob}>
         <View style={s.currentJobTop}>
@@ -196,21 +188,11 @@ function CareerContent() {
         <Text style={s.currentSub}>Amazon · Dallas, TX</Text>
         <Text style={s.currentDuration}>2022 — present · 3 years 4 months</Text>
         <View style={s.jobChips}>
-          <View style={s.jobChip}>
-            <Text style={s.jobChipLabel}>INCOME</Text>
-            <Text style={s.jobChipValue}>$180K</Text>
-          </View>
-          <View style={s.jobChip}>
-            <Text style={s.jobChipLabel}>WORK AUTH</Text>
-            <Text style={s.jobChipValue}>H1B</Text>
-          </View>
-          <View style={s.jobChip}>
-            <Text style={s.jobChipLabel}>OPEN TO RELOCATE</Text>
-            <Text style={s.jobChipValue}>Yes</Text>
-          </View>
+          <View style={s.jobChip}><Text style={s.jobChipLabel}>INCOME</Text><Text style={s.jobChipValue}>$180K</Text></View>
+          <View style={s.jobChip}><Text style={s.jobChipLabel}>WORK AUTH</Text><Text style={s.jobChipValue}>H1B</Text></View>
+          <View style={s.jobChip}><Text style={s.jobChipLabel}>RELOCATE</Text><Text style={s.jobChipValue}>Yes</Text></View>
         </View>
       </View>
-
       <SectionLabel text="CAREER TIMELINE" style={{ marginTop: 4 }} />
       {[
         { year: '2022', company: 'Amazon',    role: 'Senior SWE · Dallas' },
@@ -229,7 +211,6 @@ function CareerContent() {
           </View>
         </View>
       ))}
-
       <SectionLabel text="EDUCATION" style={{ marginTop: 8 }} />
       {[
         { year: '2019', degree: 'MS, Computer Science', school: 'University of Texas, Dallas · 3.9 GPA' },
@@ -256,7 +237,7 @@ function FamilyContent() {
     <View style={s.familyTag}><Text style={s.familyTagText}>{label}</Text></View>
   );
   return (
-    <View style={s.tabContent}>
+    <View style={s.sectionContent}>
       <SectionLabel text="PARENTS" />
       <View style={s.familyMember}>
         <Text style={s.familyRole}>FATHER</Text>
@@ -270,7 +251,6 @@ function FamilyContent() {
         <Text style={s.familySub}>Homemaker · Hyderabad</Text>
         <View style={s.familyTags}>{tag('Native')}{tag('In India')}</View>
       </View>
-
       <SectionLabel text="SIBLINGS" style={{ marginTop: 4 }} />
       <View style={s.familyMember}>
         <Text style={s.familyRole}>YOUNGER SISTER</Text>
@@ -278,7 +258,6 @@ function FamilyContent() {
         <Text style={s.familySub}>Product designer · Bengaluru · unmarried</Text>
         <View style={s.familyTags}>{tag('Working')}</View>
       </View>
-
       <SectionLabel text="ROOTS" style={{ marginTop: 4 }} />
       <View style={s.rootsGrid}>
         {[
@@ -301,17 +280,13 @@ function FamilyContent() {
 
 function JaathakamContent() {
   const kootas = [
-    { name: 'Varna',        score: '1/1' },
-    { name: 'Vashya',       score: '2/2' },
-    { name: 'Tara',         score: '3/3' },
-    { name: 'Yoni',         score: '3/4' },
-    { name: 'Graha Maitri', score: '4/5' },
-    { name: 'Gana',         score: '5/6' },
-    { name: 'Bhakoot',      score: '3/7' },
-    { name: 'Nadi',         score: '7/8' },
+    { name: 'Varna',        score: '1/1' }, { name: 'Vashya',       score: '2/2' },
+    { name: 'Tara',         score: '3/3' }, { name: 'Yoni',         score: '3/4' },
+    { name: 'Graha Maitri', score: '4/5' }, { name: 'Gana',         score: '5/6' },
+    { name: 'Bhakoot',      score: '3/7' }, { name: 'Nadi',         score: '7/8' },
   ];
   return (
-    <View style={s.tabContent}>
+    <View style={s.sectionContent}>
       <SectionLabel text="GUNAMILAN" />
       <View style={s.kootaCard}>
         <Text style={s.kootaScore}><Text style={s.kootaBig}>28</Text> / 36 koota points</Text>
@@ -325,14 +300,11 @@ function JaathakamContent() {
           ))}
         </View>
       </View>
-
       <SectionLabel text="BIRTH DETAILS" style={{ marginTop: 4 }} />
       <View style={s.detailGrid}>
         {[
-          { label: 'DATE',     value: '04 Aug 1997' },
-          { label: 'TIME',     value: '06:14 AM' },
-          { label: 'PLACE',    value: 'Hyderabad, IN' },
-          { label: 'TIMEZONE', value: 'IST · +5:30' },
+          { label: 'DATE', value: '04 Aug 1997' }, { label: 'TIME', value: '06:14 AM' },
+          { label: 'PLACE', value: 'Hyderabad, IN' }, { label: 'TIMEZONE', value: 'IST · +5:30' },
         ].map((d, i) => (
           <View key={i} style={s.detailCell}>
             <Text style={s.detailLabel}>{d.label}</Text>
@@ -340,14 +312,11 @@ function JaathakamContent() {
           </View>
         ))}
       </View>
-
       <SectionLabel text="ASTROLOGY" style={{ marginTop: 4 }} />
       <View style={s.detailGrid}>
         {[
-          { label: 'RASI',      value: 'Karkataka · Cancer' },
-          { label: 'NAKSHATRA', value: 'Pushyami · pada 2' },
-          { label: 'LAGNA',     value: 'Simha · Leo' },
-          { label: 'CHANDRA',   value: 'Karkataka' },
+          { label: 'RASI', value: 'Karkataka · Cancer' }, { label: 'NAKSHATRA', value: 'Pushyami · pada 2' },
+          { label: 'LAGNA', value: 'Simha · Leo' },       { label: 'CHANDRA', value: 'Karkataka' },
         ].map((d, i) => (
           <View key={i} style={s.detailCell}>
             <Text style={s.detailLabel}>{d.label}</Text>
@@ -355,12 +324,10 @@ function JaathakamContent() {
           </View>
         ))}
       </View>
-
       <SectionLabel text="DOSHAS" style={{ marginTop: 4 }} />
       <View style={s.detailGrid}>
         {[
-          { label: 'MANGAL DOSHA', value: 'No' },
-          { label: 'KUJA DOSHA',   value: 'No' },
+          { label: 'MANGAL DOSHA', value: 'No' }, { label: 'KUJA DOSHA', value: 'No' },
         ].map((d, i) => (
           <View key={i} style={s.detailCell}>
             <Text style={s.detailLabel}>{d.label}</Text>
@@ -374,18 +341,15 @@ function JaathakamContent() {
 
 function TrustContent() {
   return (
-    <View style={s.tabContent}>
+    <View style={s.sectionContent}>
       <SectionLabel text="TRUST SCORE" />
       <View style={s.trustScore}>
-        <View style={s.trustIconWrap}>
-          <ShieldIcon size={32} />
-        </View>
+        <View style={s.trustIconWrap}><ShieldIcon size={32} /></View>
         <View style={s.trustTextBlock}>
           <Text style={s.trustTitle}>High trust</Text>
           <Text style={s.trustSub}>5 of 5 verifications complete · joined 11 months ago</Text>
         </View>
       </View>
-
       <SectionLabel text="VERIFICATIONS" style={{ marginTop: 4 }} />
       {[
         { title: 'Government ID', sub: 'Aadhaar · last 4: 3421' },
@@ -400,12 +364,10 @@ function TrustContent() {
           <VerifiedBadge />
         </View>
       ))}
-
       <PremiumGate
         title="See full verification details"
         subtitle="Work email, education & phone confirmations are visible to Premium members."
       />
-
       <SectionLabel text="PROFILE MANAGED BY" style={{ marginTop: 16 }} />
       <View style={s.managedRow}>
         <View style={s.managedAvatar}>
@@ -425,96 +387,150 @@ export default function MatchDetailScreen() {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState('About');
 
-  const contentMap = {
-    About:     <AboutContent />,
-    Career:    <CareerContent />,
-    Family:    <FamilyContent />,
-    Jaathakam: <JaathakamContent />,
-    Trust:     <TrustContent />,
-  };
+  const scrollRef       = useRef(null);
+  const sectionOffsets  = useRef({});
+  const tabBarH         = useRef(50);
+  const activeTabRef    = useRef('About');
+  const isProgrammatic  = useRef(false);
+
+  // Tap a tab → scroll to its section
+  const handleTabPress = useCallback((tab) => {
+    const y = sectionOffsets.current[tab];
+    if (y == null || !scrollRef.current) return;
+    isProgrammatic.current = true;
+    activeTabRef.current = tab;
+    setActiveTab(tab);
+    scrollRef.current.scrollTo({ y: Math.max(0, y - tabBarH.current), animated: true });
+    setTimeout(() => { isProgrammatic.current = false; }, 600);
+  }, []);
+
+  // Scroll → update active tab (scroll-spy)
+  const handleScroll = useCallback((event) => {
+    if (isProgrammatic.current) return;
+    const scrollY = event.nativeEvent.contentOffset.y;
+    const h = tabBarH.current;
+    let current = TABS[0];
+    for (const tab of TABS) {
+      const y = sectionOffsets.current[tab];
+      if (y != null && y - h <= scrollY + 16) current = tab;
+    }
+    if (current !== activeTabRef.current) {
+      activeTabRef.current = current;
+      setActiveTab(current);
+    }
+  }, []);
 
   return (
     <View style={{ flex: 1, backgroundColor: T.bg }}>
-
-      {/* ── Photo area ───────────────────────────────────────────────────── */}
-      <View style={s.photoArea}>
-        <LinearGradient
-          colors={['#C4956A', '#A07050', '#7A4A40']}
-          start={{ x: 0.2, y: 0 }} end={{ x: 0.9, y: 1 }}
-          style={StyleSheet.absoluteFill}
-        />
-        <LinearGradient
-          colors={['rgba(0,0,0,0.18)', 'transparent', 'transparent']}
-          style={StyleSheet.absoluteFill}
-        />
-
-        <SafeAreaView style={s.photoOverlay} edges={['top']}>
-          <View style={s.photoTopRow}>
-            <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()} activeOpacity={0.8}>
-              <BackIcon color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity style={s.dotsBtn} activeOpacity={0.8}>
-              <DotsIconV />
-            </TouchableOpacity>
-          </View>
-        </SafeAreaView>
-
-        {/* Photo pagination dots */}
-        <View style={s.photoDots}>
-          <View style={[s.photoDot, s.photoDotActive]} />
-          <View style={s.photoDot} />
-          <View style={s.photoDot} />
-        </View>
-      </View>
-
-      {/* ── Profile info ─────────────────────────────────────────────────── */}
-      <View style={s.profileInfo}>
-        <View style={s.nameRow}>
-          <Text style={s.nameText}>Anjali Reddy, 28</Text>
-          <VerifiedCircle size={18} />
-        </View>
-        <View style={s.metaRow}>
-          <Text style={s.metaText}>5'6"</Text>
-          <Text style={s.metaGap}>{'   '}</Text>
-          <Text style={s.metaText}>Dallas, TX</Text>
-          <Text style={s.metaSep}>  •  </Text>
-          <View style={s.onlineDot} />
-          <Text style={s.activeText}>Active 2h ago</Text>
-        </View>
-      </View>
-
-      {/* ── Horizontal tab bar ───────────────────────────────────────────── */}
-      <View style={s.tabBar}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={s.tabBarInner}
-          bounces={false}
-        >
-          {TABS.map(tab => (
-            <TouchableOpacity
-              key={tab}
-              style={[s.tabPill, activeTab === tab && s.tabPillActive]}
-              onPress={() => setActiveTab(tab)}
-              activeOpacity={0.7}
-            >
-              <Text style={[s.tabText, activeTab === tab && s.tabTextActive]}>{tab}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-
-      {/* ── Scrollable tab content ───────────────────────────────────────── */}
       <ScrollView
-        style={{ flex: 1 }}
+        ref={scrollRef}
+        stickyHeaderIndices={[2]}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+        bounces={false}
       >
-        {contentMap[activeTab]}
-        <View style={{ height: 90 }} />
+        {/* ── 0: Photo ──────────────────────────────────────────────── */}
+        <View style={s.photoArea}>
+          <LinearGradient
+            colors={['#C4956A', '#A07050', '#7A4A40']}
+            start={{ x: 0.2, y: 0 }} end={{ x: 0.9, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+          <LinearGradient
+            colors={['rgba(0,0,0,0.18)', 'transparent', 'transparent']}
+            style={StyleSheet.absoluteFill}
+          />
+          <SafeAreaView style={s.photoOverlay} edges={['top']}>
+            <View style={s.photoTopRow}>
+              <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()} activeOpacity={0.8}>
+                <BackIcon color="white" />
+              </TouchableOpacity>
+              <TouchableOpacity style={s.dotsBtn} activeOpacity={0.8}>
+                <DotsIconV />
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+          <View style={s.photoDots}>
+            <View style={[s.photoDot, s.photoDotActive]} />
+            <View style={s.photoDot} />
+            <View style={s.photoDot} />
+          </View>
+        </View>
+
+        {/* ── 1: Profile info ───────────────────────────────────────── */}
+        <View style={s.profileInfo}>
+          <View style={s.nameRow}>
+            <Text style={s.nameText}>Anjali Reddy, 28</Text>
+            <VerifiedCircle size={18} />
+          </View>
+          <View style={s.metaRow}>
+            <Text style={s.metaText}>5'6"</Text>
+            <Text style={s.metaGap}>{'   '}</Text>
+            <Text style={s.metaText}>Dallas, TX</Text>
+            <Text style={s.metaSep}>  •  </Text>
+            <View style={s.onlineDot} />
+            <Text style={s.activeText}>Active 2h ago</Text>
+          </View>
+        </View>
+
+        {/* ── 2: Tab bar — STICKY ───────────────────────────────────── */}
+        <View
+          style={s.tabBar}
+          onLayout={e => { tabBarH.current = e.nativeEvent.layout.height; }}
+        >
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={s.tabBarInner}
+            bounces={false}
+          >
+            {TABS.map(tab => (
+              <TouchableOpacity
+                key={tab}
+                style={[s.tabPill, activeTab === tab && s.tabPillActive]}
+                onPress={() => handleTabPress(tab)}
+                activeOpacity={0.7}
+              >
+                <Text style={[s.tabText, activeTab === tab && s.tabTextActive]}>{tab}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* ── 3–7: Sections (stacked, full-page scroll) ─────────────── */}
+        <View onLayout={e => { sectionOffsets.current['About'] = e.nativeEvent.layout.y; }}>
+          <AboutContent />
+        </View>
+
+        <View style={s.sectionDivider} />
+
+        <View onLayout={e => { sectionOffsets.current['Career'] = e.nativeEvent.layout.y; }}>
+          <CareerContent />
+        </View>
+
+        <View style={s.sectionDivider} />
+
+        <View onLayout={e => { sectionOffsets.current['Family'] = e.nativeEvent.layout.y; }}>
+          <FamilyContent />
+        </View>
+
+        <View style={s.sectionDivider} />
+
+        <View onLayout={e => { sectionOffsets.current['Jaathakam'] = e.nativeEvent.layout.y; }}>
+          <JaathakamContent />
+        </View>
+
+        <View style={s.sectionDivider} />
+
+        <View onLayout={e => { sectionOffsets.current['Trust'] = e.nativeEvent.layout.y; }}>
+          <TrustContent />
+        </View>
+
+        <View style={{ height: 100 }} />
       </ScrollView>
 
-      {/* ── Sticky bottom bar ────────────────────────────────────────────── */}
+      {/* ── Sticky bottom bar ─────────────────────────────────────────── */}
       <SafeAreaView style={s.bottomBarWrap} edges={['bottom']}>
         <BottomBar onPass={() => navigation.goBack()} onInterest={() => {}} />
       </SafeAreaView>
@@ -525,7 +541,7 @@ export default function MatchDetailScreen() {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
 
-  // ── Photo area ────────────────────────────────────────────────────────────
+  // ── Photo ─────────────────────────────────────────────────────────────────
   photoArea: {
     height: height * 0.44,
     overflow: 'hidden',
@@ -542,34 +558,24 @@ const s = StyleSheet.create({
     paddingTop: 8,
   },
   backBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 36, height: 36, borderRadius: 18,
     backgroundColor: 'rgba(0,0,0,0.40)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'center', alignItems: 'center',
   },
   dotsBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 36, height: 36, borderRadius: 18,
     backgroundColor: 'rgba(0,0,0,0.40)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'center', alignItems: 'center',
   },
   photoDots: {
     position: 'absolute',
-    bottom: 12,
-    left: 0,
-    right: 0,
+    bottom: 12, left: 0, right: 0,
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 5,
   },
   photoDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
+    width: 5, height: 5, borderRadius: 3,
     backgroundColor: 'rgba(255,255,255,0.5)',
   },
   photoDotActive: {
@@ -585,46 +591,26 @@ const s = StyleSheet.create({
     backgroundColor: T.bg,
   },
   nameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 5,
+    flexDirection: 'row', alignItems: 'center',
+    gap: 8, marginBottom: 5,
   },
   nameText: {
     fontFamily: FONTS.display,
-    fontSize: 24,
-    fontWeight: '600',
-    color: T.ink,
+    fontSize: 24, fontWeight: '600', color: T.ink,
   },
   metaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'row', alignItems: 'center',
   },
-  metaText: {
-    fontSize: 13,
-    color: T.ink2,
-  },
-  metaGap: {
-    fontSize: 13,
-    color: T.mute,
-  },
-  metaSep: {
-    fontSize: 13,
-    color: T.mute,
-  },
+  metaText:  { fontSize: 13, color: T.ink2 },
+  metaGap:   { fontSize: 13, color: T.mute },
+  metaSep:   { fontSize: 13, color: T.mute },
   onlineDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: GREEN,
-    marginRight: 5,
+    width: 7, height: 7, borderRadius: 4,
+    backgroundColor: GREEN, marginRight: 5,
   },
-  activeText: {
-    fontSize: 13,
-    color: T.ink2,
-  },
+  activeText: { fontSize: 13, color: T.ink2 },
 
-  // ── Tab bar ───────────────────────────────────────────────────────────────
+  // ── Tab bar (sticky) ──────────────────────────────────────────────────────
   tabBar: {
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: T.hair,
@@ -639,11 +625,9 @@ const s = StyleSheet.create({
     gap: 8,
   },
   tabPill: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: 16, paddingVertical: 8,
     borderRadius: 100,
-    borderWidth: 1,
-    borderColor: T.hair2,
+    borderWidth: 1, borderColor: T.hair2,
     backgroundColor: T.bg,
   },
   tabPillActive: {
@@ -651,528 +635,172 @@ const s = StyleSheet.create({
     backgroundColor: T.ink,
   },
   tabText: {
-    fontSize: 14,
-    color: T.ink2,
-    fontWeight: '400',
+    fontSize: 14, color: T.ink2, fontWeight: '400',
   },
   tabTextActive: {
-    color: '#fff',
-    fontWeight: '600',
+    color: '#fff', fontWeight: '600',
   },
 
-  // ── Tab content ───────────────────────────────────────────────────────────
-  tabContent: {
+  // ── Section divider ───────────────────────────────────────────────────────
+  sectionDivider: {
+    height: 8,
+    backgroundColor: T.field,
+  },
+
+  // ── Section content padding ───────────────────────────────────────────────
+  sectionContent: {
     paddingHorizontal: 20,
     paddingTop: 20,
+    paddingBottom: 20,
   },
 
   // ── Section label ─────────────────────────────────────────────────────────
   sectionLabel: {
     fontFamily: FONTS.mono,
-    fontSize: 10,
-    letterSpacing: 1.2,
+    fontSize: 10, letterSpacing: 1.2,
     textTransform: 'uppercase',
-    color: T.mute,
-    marginBottom: 12,
+    color: T.mute, marginBottom: 12,
   },
 
   // ── Prompts ───────────────────────────────────────────────────────────────
   promptBlock: {
-    marginBottom: 20,
+    marginBottom: 14,
     backgroundColor: T.field,
-    borderRadius: 12,
-    padding: 14,
+    borderRadius: 12, padding: 14,
   },
   promptQ: {
     fontFamily: FONTS.mono,
-    fontSize: 9,
-    letterSpacing: 1,
-    color: T.mute,
-    textTransform: 'uppercase',
-    marginBottom: 6,
+    fontSize: 9, letterSpacing: 1, color: T.mute,
+    textTransform: 'uppercase', marginBottom: 6,
   },
   promptA: {
     fontFamily: FONTS.display,
-    fontSize: 16,
-    fontStyle: 'italic',
-    color: T.ink2,
-    lineHeight: 25,
+    fontSize: 16, fontStyle: 'italic',
+    color: T.ink2, lineHeight: 25,
   },
 
   // ── Voice intro ───────────────────────────────────────────────────────────
   voiceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    backgroundColor: T.field,
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 4,
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    backgroundColor: T.field, borderRadius: 12, padding: 12, marginBottom: 4,
   },
   playCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 44, height: 44, borderRadius: 22,
     backgroundColor: T.accent,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingLeft: 2,
+    justifyContent: 'center', alignItems: 'center', paddingLeft: 2,
   },
-  voiceLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: T.ink,
-    marginBottom: 6,
-  },
-  waveRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 2,
-    height: 32,
-  },
-  waveBar: {
-    flex: 1,
-    borderRadius: 2,
-    backgroundColor: T.hair2,
-    minHeight: 3,
-  },
+  voiceLabel: { fontSize: 13, fontWeight: '600', color: T.ink, marginBottom: 6 },
+  waveRow: { flexDirection: 'row', alignItems: 'center', gap: 2, height: 32 },
+  waveBar: { flex: 1, borderRadius: 2, backgroundColor: T.hair2, minHeight: 3 },
 
   // ── Personality tags ──────────────────────────────────────────────────────
-  tagsWrap: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 8,
-  },
+  tagsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 },
   personalityTag: {
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 100,
-    borderWidth: 1,
-    borderColor: T.hair2,
+    paddingHorizontal: 14, paddingVertical: 7,
+    borderRadius: 100, borderWidth: 1, borderColor: T.hair2,
   },
-  personalityTagText: {
-    fontSize: 13,
-    color: T.ink,
-  },
+  personalityTagText: { fontSize: 13, color: T.ink },
 
   // ── Verified badge ────────────────────────────────────────────────────────
   verifiedBadge: {
     backgroundColor: GREEN_S,
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderRadius: 5,
+    paddingHorizontal: 7, paddingVertical: 3, borderRadius: 5,
   },
-  verifiedBadgeText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: GREEN,
-    letterSpacing: 0.4,
-  },
+  verifiedBadgeText: { fontSize: 10, fontWeight: '700', color: GREEN, letterSpacing: 0.4 },
 
   // ── Premium gate ──────────────────────────────────────────────────────────
   premiumGate: {
-    borderWidth: 1,
-    borderColor: T.hair2,
-    borderRadius: 16,
-    padding: 18,
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 8,
+    borderWidth: 1, borderColor: T.hair2,
+    borderRadius: 16, padding: 18,
+    alignItems: 'center', gap: 8, marginTop: 8,
   },
   premiumChip: {
-    backgroundColor: GOLD_S,
-    borderRadius: 100,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    backgroundColor: GOLD_S, borderRadius: 100,
+    paddingHorizontal: 12, paddingVertical: 4,
   },
-  premiumChipText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: GOLD,
-    letterSpacing: 0.5,
-  },
-  premiumTitle: {
-    fontFamily: FONTS.display,
-    fontSize: 18,
-    color: T.accent,
-    textAlign: 'center',
-  },
-  premiumSub: {
-    fontSize: 13,
-    color: T.mute,
-    textAlign: 'center',
-    lineHeight: 19,
-  },
+  premiumChipText: { fontSize: 11, fontWeight: '700', color: GOLD, letterSpacing: 0.5 },
+  premiumTitle: { fontFamily: FONTS.display, fontSize: 18, color: T.accent, textAlign: 'center' },
+  premiumSub: { fontSize: 13, color: T.mute, textAlign: 'center', lineHeight: 19 },
   premiumBtn: {
-    marginTop: 4,
-    backgroundColor: T.accent,
-    borderRadius: 100,
-    paddingHorizontal: 24,
-    paddingVertical: 11,
+    marginTop: 4, backgroundColor: T.accent,
+    borderRadius: 100, paddingHorizontal: 24, paddingVertical: 11,
   },
-  premiumBtnText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#fff',
-  },
+  premiumBtnText: { fontSize: 14, fontWeight: '700', color: '#fff' },
 
   // ── Career ────────────────────────────────────────────────────────────────
   currentJob: {
-    borderWidth: 1,
-    borderColor: T.hair2,
-    borderRadius: 14,
-    padding: 14,
-    marginBottom: 20,
+    borderWidth: 1, borderColor: T.hair2, borderRadius: 14, padding: 14, marginBottom: 20,
   },
-  currentJobTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-  },
-  currentTitle: {
-    fontFamily: FONTS.display,
-    fontSize: 20,
-    color: T.ink,
-    flex: 1,
-    marginRight: 8,
-  },
-  currentSub: {
-    fontSize: 14,
-    color: T.mute,
-    marginBottom: 2,
-  },
-  currentDuration: {
-    fontSize: 12,
-    color: T.mute,
-    marginBottom: 12,
-  },
-  jobChips: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  jobChip: {
-    flex: 1,
-    backgroundColor: T.field,
-    borderRadius: 10,
-    padding: 10,
-  },
-  jobChipLabel: {
-    fontFamily: FONTS.mono,
-    fontSize: 8,
-    letterSpacing: 0.8,
-    color: T.mute,
-    textTransform: 'uppercase',
-    marginBottom: 3,
-  },
-  jobChipValue: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: T.ink,
-  },
+  currentJobTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
+  currentTitle: { fontFamily: FONTS.display, fontSize: 20, color: T.ink, flex: 1, marginRight: 8 },
+  currentSub: { fontSize: 14, color: T.mute, marginBottom: 2 },
+  currentDuration: { fontSize: 12, color: T.mute, marginBottom: 12 },
+  jobChips: { flexDirection: 'row', gap: 8 },
+  jobChip: { flex: 1, backgroundColor: T.field, borderRadius: 10, padding: 10 },
+  jobChipLabel: { fontFamily: FONTS.mono, fontSize: 8, letterSpacing: 0.8, color: T.mute, textTransform: 'uppercase', marginBottom: 3 },
+  jobChipValue: { fontSize: 14, fontWeight: '600', color: T.ink },
 
   // ── Timeline ──────────────────────────────────────────────────────────────
-  timelineRow: {
-    flexDirection: 'row',
-    marginBottom: 4,
-    minHeight: 52,
-  },
-  timelineYear: {
-    fontFamily: FONTS.mono,
-    fontSize: 12,
-    color: T.mute,
-    width: 38,
-    paddingTop: 2,
-  },
-  timelineLine: {
-    width: 20,
-    alignItems: 'center',
-    paddingTop: 4,
-  },
-  timelineDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: T.ink,
-  },
-  timelineTrack: {
-    flex: 1,
-    width: 1.5,
-    backgroundColor: T.hair2,
-    marginTop: 2,
-  },
-  timelineRight: {
-    flex: 1,
-    paddingLeft: 8,
-    paddingBottom: 16,
-  },
-  timelineCompany: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: T.ink,
-    marginBottom: 2,
-  },
-  timelineRole: {
-    fontSize: 13,
-    color: T.mute,
-  },
+  timelineRow: { flexDirection: 'row', marginBottom: 4, minHeight: 52 },
+  timelineYear: { fontFamily: FONTS.mono, fontSize: 12, color: T.mute, width: 38, paddingTop: 2 },
+  timelineLine: { width: 20, alignItems: 'center', paddingTop: 4 },
+  timelineDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: T.ink },
+  timelineTrack: { flex: 1, width: 1.5, backgroundColor: T.hair2, marginTop: 2 },
+  timelineRight: { flex: 1, paddingLeft: 8, paddingBottom: 16 },
+  timelineCompany: { fontSize: 15, fontWeight: '600', color: T.ink, marginBottom: 2 },
+  timelineRole: { fontSize: 13, color: T.mute },
 
   // ── Family ────────────────────────────────────────────────────────────────
-  familyMember: {
-    marginBottom: 18,
-  },
-  familyRole: {
-    fontFamily: FONTS.mono,
-    fontSize: 9,
-    letterSpacing: 1,
-    color: T.mute,
-    textTransform: 'uppercase',
-    marginBottom: 4,
-  },
-  familyName: {
-    fontFamily: FONTS.display,
-    fontSize: 20,
-    color: T.ink,
-    marginBottom: 2,
-  },
-  familySub: {
-    fontSize: 13,
-    color: T.mute,
-    marginBottom: 6,
-  },
-  familyTags: {
-    flexDirection: 'row',
-    gap: 6,
-  },
-  familyTag: {
-    backgroundColor: T.field,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  familyTagText: {
-    fontSize: 12,
-    color: T.ink2,
-    fontWeight: '500',
-  },
-  rootsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  rootCell: {
-    width: '50%',
-    paddingVertical: 10,
-    paddingRight: 12,
-  },
-  rootLabel: {
-    fontFamily: FONTS.mono,
-    fontSize: 9,
-    letterSpacing: 1,
-    color: T.mute,
-    textTransform: 'uppercase',
-    marginBottom: 3,
-  },
-  rootValue: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: T.ink,
-  },
+  familyMember: { marginBottom: 18 },
+  familyRole: { fontFamily: FONTS.mono, fontSize: 9, letterSpacing: 1, color: T.mute, textTransform: 'uppercase', marginBottom: 4 },
+  familyName: { fontFamily: FONTS.display, fontSize: 20, color: T.ink, marginBottom: 2 },
+  familySub: { fontSize: 13, color: T.mute, marginBottom: 6 },
+  familyTags: { flexDirection: 'row', gap: 6 },
+  familyTag: { backgroundColor: T.field, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
+  familyTagText: { fontSize: 12, color: T.ink2, fontWeight: '500' },
+  rootsGrid: { flexDirection: 'row', flexWrap: 'wrap' },
+  rootCell: { width: '50%', paddingVertical: 10, paddingRight: 12 },
+  rootLabel: { fontFamily: FONTS.mono, fontSize: 9, letterSpacing: 1, color: T.mute, textTransform: 'uppercase', marginBottom: 3 },
+  rootValue: { fontSize: 14, fontWeight: '500', color: T.ink },
 
   // ── Gunamilan ─────────────────────────────────────────────────────────────
-  kootaCard: {
-    backgroundColor: SALMON_S,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 20,
-  },
-  kootaScore: {
-    fontSize: 16,
-    color: T.accent,
-    fontWeight: '500',
-    marginBottom: 4,
-  },
-  kootaBig: {
-    fontFamily: FONTS.display,
-    fontSize: 36,
-    fontWeight: '700',
-    color: T.accent,
-  },
-  kootaSub: {
-    fontSize: 13,
-    color: T.mute,
-    marginBottom: 16,
-  },
-  kootaGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 1,
-    backgroundColor: 'rgba(0,0,0,0.06)',
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-  kootaCell: {
-    width: '50%',
-    backgroundColor: SALMON_S,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  kootaName: {
-    fontSize: 13,
-    color: T.ink2,
-  },
-  kootaVal: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: T.accent,
-  },
-  detailGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 20,
-  },
-  detailCell: {
-    width: '50%',
-    paddingVertical: 8,
-    paddingRight: 12,
-  },
-  detailLabel: {
-    fontFamily: FONTS.mono,
-    fontSize: 9,
-    letterSpacing: 1,
-    color: T.mute,
-    textTransform: 'uppercase',
-    marginBottom: 3,
-  },
-  detailValue: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: T.ink,
-  },
+  kootaCard: { backgroundColor: SALMON_S, borderRadius: 16, padding: 16, marginBottom: 20 },
+  kootaScore: { fontSize: 16, color: T.accent, fontWeight: '500', marginBottom: 4 },
+  kootaBig: { fontFamily: FONTS.display, fontSize: 36, fontWeight: '700', color: T.accent },
+  kootaSub: { fontSize: 13, color: T.mute, marginBottom: 16 },
+  kootaGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 1, backgroundColor: 'rgba(0,0,0,0.06)', borderRadius: 10, overflow: 'hidden' },
+  kootaCell: { width: '50%', backgroundColor: SALMON_S, paddingHorizontal: 12, paddingVertical: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  kootaName: { fontSize: 13, color: T.ink2 },
+  kootaVal: { fontSize: 13, fontWeight: '700', color: T.accent },
+  detailGrid: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 20 },
+  detailCell: { width: '50%', paddingVertical: 8, paddingRight: 12 },
+  detailLabel: { fontFamily: FONTS.mono, fontSize: 9, letterSpacing: 1, color: T.mute, textTransform: 'uppercase', marginBottom: 3 },
+  detailValue: { fontSize: 14, fontWeight: '500', color: T.ink },
 
   // ── Trust ─────────────────────────────────────────────────────────────────
-  trustScore: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    backgroundColor: GREEN_S,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 20,
-  },
-  trustIconWrap: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  trustScore: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: GREEN_S, borderRadius: 16, padding: 16, marginBottom: 20 },
+  trustIconWrap: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' },
   trustTextBlock: { flex: 1 },
-  trustTitle: {
-    fontFamily: FONTS.display,
-    fontSize: 20,
-    color: T.ink,
-    marginBottom: 4,
-  },
-  trustSub: {
-    fontSize: 13,
-    color: T.mute,
-    lineHeight: 18,
-  },
-  verifyRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: T.hair,
-    marginBottom: 4,
-  },
+  trustTitle: { fontFamily: FONTS.display, fontSize: 20, color: T.ink, marginBottom: 4 },
+  trustSub: { fontSize: 13, color: T.mute, lineHeight: 18 },
+  verifyRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: T.hair, marginBottom: 4 },
   verifyText: { flex: 1 },
-  verifyTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: T.ink,
-  },
-  verifySub: {
-    fontSize: 12,
-    color: T.mute,
-    marginTop: 2,
-  },
-  managedRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 12,
-  },
-  managedAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: T.accentSoft,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  managedAvatarText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: T.accent,
-  },
-  managedTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: T.ink,
-    marginBottom: 2,
-  },
-  managedSub: {
-    fontSize: 12,
-    color: T.mute,
-  },
+  verifyTitle: { fontSize: 14, fontWeight: '600', color: T.ink },
+  verifySub: { fontSize: 12, color: T.mute, marginTop: 2 },
+  managedRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12 },
+  managedAvatar: { width: 44, height: 44, borderRadius: 22, backgroundColor: T.accentSoft, justifyContent: 'center', alignItems: 'center' },
+  managedAvatarText: { fontSize: 14, fontWeight: '700', color: T.accent },
+  managedTitle: { fontSize: 14, fontWeight: '600', color: T.ink, marginBottom: 2 },
+  managedSub: { fontSize: 12, color: T.mute },
 
   // ── Bottom bar ────────────────────────────────────────────────────────────
   bottomBarWrap: {
-    position: 'absolute',
-    bottom: 0, left: 0, right: 0,
+    position: 'absolute', bottom: 0, left: 0, right: 0,
     backgroundColor: T.bg,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: T.hair,
+    borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: T.hair,
   },
-  bottomBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    gap: 10,
-  },
-  bottomCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 1.2,
-    borderColor: T.hair2,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sendBtn: {
-    flex: 1,
-    height: 48,
-    backgroundColor: T.accent,
-    borderRadius: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: T.accent,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  sendBtnText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#fff',
-  },
+  bottomBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 10, gap: 10 },
+  bottomCircle: { width: 48, height: 48, borderRadius: 24, borderWidth: 1.2, borderColor: T.hair2, justifyContent: 'center', alignItems: 'center' },
+  sendBtn: { flex: 1, height: 48, backgroundColor: T.accent, borderRadius: 100, justifyContent: 'center', alignItems: 'center', shadowColor: T.accent, shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.25, shadowRadius: 8, elevation: 5 },
+  sendBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
 });
