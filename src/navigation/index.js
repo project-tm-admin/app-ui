@@ -45,6 +45,8 @@ import EditBasicsScreen from '../screens/profile/EditBasicsScreen';
 import PrivacyScreen from '../screens/profile/PrivacyScreen';
 import NotificationsScreen from '../screens/profile/NotificationsScreen';
 import LoginSecurityScreen from '../screens/profile/LoginSecurityScreen';
+import ShortlistedYouScreen from '../screens/profile/ShortlistedYouScreen';
+import YourShortlistScreen from '../screens/profile/YourShortlistScreen';
 
 // Browse screens
 import MatchesScreen from '../screens/browse/MatchesScreen';
@@ -224,6 +226,8 @@ export default function Navigation() {
         <Stack.Screen name="Privacy" component={PrivacyScreen} />
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="LoginSecurity" component={LoginSecurityScreen} />
+        <Stack.Screen name="ShortlistedYou" component={ShortlistedYouScreen} />
+        <Stack.Screen name="YourShortlist" component={YourShortlistScreen} />
         <Stack.Screen name="Premium" component={PremiumScreen} />
         <Stack.Screen
           name="Paywall"
