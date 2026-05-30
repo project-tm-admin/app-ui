@@ -64,9 +64,10 @@ const PLANS = [
 const FEATURES = [
   'Full verified details — ID, income & family',
   'Voice intros & private messaging',
-  'Advanced filters: visa, community, profession',
-  'Unlimited discovery & interests',
-  "See who's interested in you",
+  'Advanced filters — visa, community, gothram',
+  'See everyone who\'s interested in you',
+  'Unlimited daily matches & interests',
+  'Private, incognito browsing',
 ];
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
@@ -143,6 +144,21 @@ export default function PremiumScreen() {
           </View>
         </View>
 
+        {/* ── Features ──────────────────────────────────────────────────── */}
+        <Text style={styles.featuresLabel}>EVERYTHING YOU UNLOCK</Text>
+        <View style={styles.featuresCard}>
+          {FEATURES.map((f, i) => (
+            <View key={i} style={[styles.featureRow, i < FEATURES.length - 1 && styles.featureRowBorder]}>
+              <View style={styles.checkBox}>
+                <Svg width={12} height={12} viewBox="0 0 24 24" fill="none">
+                  <Path d="M20 6L9 17l-5-5" stroke={GOLD_INK} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+                </Svg>
+              </View>
+              <Text style={styles.featureText}>{f}</Text>
+            </View>
+          ))}
+        </View>
+
         {/* ── Plan chooser ──────────────────────────────────────────────── */}
         <View style={styles.planHeader}>
           <Text style={styles.planHeaderLabel}>CHOOSE A PLAN</Text>
@@ -187,21 +203,6 @@ export default function PremiumScreen() {
             </TouchableOpacity>
           );
         })}
-
-        {/* ── Features ──────────────────────────────────────────────────── */}
-        <Text style={styles.featuresLabel}>EVERYTHING YOU UNLOCK</Text>
-        <View style={styles.featuresCard}>
-          {FEATURES.map((f, i) => (
-            <View key={i} style={[styles.featureRow, i < FEATURES.length - 1 && styles.featureRowBorder]}>
-              <View style={styles.checkBox}>
-                <Svg width={12} height={12} viewBox="0 0 24 24" fill="none">
-                  <Path d="M20 6L9 17l-5-5" stroke={GOLD_INK} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
-                </Svg>
-              </View>
-              <Text style={styles.featureText}>{f}</Text>
-            </View>
-          ))}
-        </View>
 
         <View style={{ height: 110 }} />
       </ScrollView>
