@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  View, Text, TouchableOpacity, StyleSheet, ScrollView,
-  Dimensions, Animated,
+  View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -9,32 +8,23 @@ import Svg, { Path, Circle, Polygon } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { T, FONTS } from '../../theme';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 // ─── Colors ──────────────────────────────────────────────────────────────────
 const GREEN   = '#3D8A5C';
 const GREEN_S = '#DCEFE2';
-const SALMON  = '#F2C4B0';
 const SALMON_S= '#FDF0EB';
 const GOLD    = '#C8920A';
 const GOLD_S  = '#FEF3D4';
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
 const WAVEFORM = [12,22,38,18,44,26,34,48,20,14,40,30,16,42,22,36,18,44,28,20];
-const SECTIONS = ['About', 'Career', 'Family', 'Jaathakam', 'Trust'];
+const TABS = ['About', 'Career', 'Family', 'Jaathakam', 'Trust'];
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 function BackIcon({ color = T.ink }) {
   return (
-    <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
-      <Path d="M20 12H4M4 12l6-6M4 12l6 6" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-    </Svg>
-  );
-}
-function DownloadIcon() {
-  return (
-    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-      <Path d="M12 2v13M7 10l5 5 5-5M3 20h18" stroke="white" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
+      <Path d="M20 12H4M4 12l6-6M4 12l6 6" stroke={color} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   );
 }
@@ -47,10 +37,10 @@ function DotsIconV() {
     </Svg>
   );
 }
-function PlayIcon({ color = '#fff', size = 16 }) {
+function PlayIcon({ size = 16 }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Polygon points="5,3 19,12 5,21" fill={color} />
+      <Polygon points="5,3 19,12 5,21" fill="#fff" />
     </Svg>
   );
 }
@@ -62,11 +52,11 @@ function VerifiedCircle({ size = 18 }) {
     </Svg>
   );
 }
-function ShieldIcon({ size = 28, color = GREEN }) {
+function ShieldIcon({ size = 28 }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path d="M12 2L3 7v6c0 5 4 9.5 9 11 5-1.5 9-6 9-11V7l-9-5z" stroke={color} strokeWidth={1.6} fill={GREEN_S} />
-      <Path d="M9 12l2 2 4-4" stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M12 2L3 7v6c0 5 4 9.5 9 11 5-1.5 9-6 9-11V7l-9-5z" stroke={GREEN} strokeWidth={1.6} fill={GREEN_S} />
+      <Path d="M9 12l2 2 4-4" stroke={GREEN} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   );
 }
@@ -90,13 +80,6 @@ function BookmarkOutline() {
   return (
     <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
       <Path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" stroke={T.ink} strokeWidth={1.8} />
-    </Svg>
-  );
-}
-function ChevronIcon() {
-  return (
-    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
-      <Path d="M6 9l6 6 6-6" stroke={T.mute} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   );
 }
@@ -154,16 +137,16 @@ function AboutContent() {
     },
     {
       q: 'A PERFECT SATURDAY',
-      a: 'A long walk on White Rock Lake, biryani with friends, and then a film I\'ve been putting off — preferably Sankranthiki or vintage Mani Ratnam.',
+      a: "A long walk on White Rock Lake, biryani with friends, and then a film I've been putting off — preferably Sankranthiki or vintage Mani Ratnam.",
     },
     {
-      q: 'FIRST THING YOU\'D NOTICE ABOUT ME',
+      q: "FIRST THING YOU'D NOTICE ABOUT ME",
       a: 'I take filter-coffee opinions extremely seriously. Brand, decoction ratio, davara temperature — there is one right way.',
     },
   ];
 
   return (
-    <View style={s.sectionContent}>
+    <View style={s.tabContent}>
       <SectionLabel text="ABOUT ANJALI" />
       {prompts.map((p, i) => (
         <View key={i} style={s.promptBlock}>
@@ -172,13 +155,24 @@ function AboutContent() {
         </View>
       ))}
 
-      <SectionLabel text="VOICE INTRO" style={{ marginTop: 8 }} />
-      <PremiumGate
-        title="Hear Anjali's voice intro"
-        subtitle="Voice intros are part of Premium — a small thing that says a lot."
-      />
+      {/* Voice intro */}
+      <SectionLabel text="VOICE INTRO" style={{ marginTop: 4 }} />
+      <View style={s.voiceRow}>
+        <TouchableOpacity style={s.playCircle} activeOpacity={0.8}>
+          <PlayIcon size={16} />
+        </TouchableOpacity>
+        <View style={{ flex: 1 }}>
+          <Text style={s.voiceLabel}>Voice intro · 0:24</Text>
+          <View style={s.waveRow}>
+            {WAVEFORM.map((h, i) => (
+              <View key={i} style={[s.waveBar, { height: h }, i < 10 && { backgroundColor: T.accent }]} />
+            ))}
+          </View>
+        </View>
+      </View>
 
-      <SectionLabel text="PERSONALITY" style={{ marginTop: 16 }} />
+      {/* Personality tags */}
+      <SectionLabel text="PERSONALITY" style={{ marginTop: 20 }} />
       <View style={s.tagsWrap}>
         {['Curious', 'Family-first', 'Reads a lot', 'Adventurous', 'Homebody'].map((t, i) => (
           <View key={i} style={s.personalityTag}>
@@ -186,14 +180,13 @@ function AboutContent() {
           </View>
         ))}
       </View>
-      <View style={{ height: 8 }} />
     </View>
   );
 }
 
 function CareerContent() {
   return (
-    <View style={s.sectionContent}>
+    <View style={s.tabContent}>
       <SectionLabel text="CURRENTLY" />
       <View style={s.currentJob}>
         <View style={s.currentJobTop}>
@@ -218,7 +211,7 @@ function CareerContent() {
         </View>
       </View>
 
-      <SectionLabel text="CAREER TIMELINE" style={{ marginTop: 8 }} />
+      <SectionLabel text="CAREER TIMELINE" style={{ marginTop: 4 }} />
       {[
         { year: '2022', company: 'Amazon',    role: 'Senior SWE · Dallas' },
         { year: '2019', company: 'Microsoft', role: 'SDE II · Redmond' },
@@ -254,43 +247,39 @@ function CareerContent() {
           </View>
         </View>
       ))}
-      <View style={{ height: 8 }} />
     </View>
   );
 }
 
 function FamilyContent() {
-  const parentTag = (label) => (
+  const tag = (label) => (
     <View style={s.familyTag}><Text style={s.familyTagText}>{label}</Text></View>
   );
-
   return (
-    <View style={s.sectionContent}>
+    <View style={s.tabContent}>
       <SectionLabel text="PARENTS" />
-
       <View style={s.familyMember}>
         <Text style={s.familyRole}>FATHER</Text>
         <Text style={s.familyName}>Ramachandra Reddy</Text>
         <Text style={s.familySub}>Retd. AP govt. officer · Hyderabad</Text>
-        <View style={s.familyTags}>{parentTag('Native')}{parentTag('In India')}</View>
+        <View style={s.familyTags}>{tag('Native')}{tag('In India')}</View>
       </View>
-
       <View style={s.familyMember}>
         <Text style={s.familyRole}>MOTHER</Text>
         <Text style={s.familyName}>Padma Reddy</Text>
         <Text style={s.familySub}>Homemaker · Hyderabad</Text>
-        <View style={s.familyTags}>{parentTag('Native')}{parentTag('In India')}</View>
+        <View style={s.familyTags}>{tag('Native')}{tag('In India')}</View>
       </View>
 
-      <SectionLabel text="SIBLINGS" style={{ marginTop: 8 }} />
+      <SectionLabel text="SIBLINGS" style={{ marginTop: 4 }} />
       <View style={s.familyMember}>
         <Text style={s.familyRole}>YOUNGER SISTER</Text>
         <Text style={s.familyName}>Sahasra, 25</Text>
         <Text style={s.familySub}>Product designer · Bengaluru · unmarried</Text>
-        <View style={s.familyTags}>{parentTag('Working')}</View>
+        <View style={s.familyTags}>{tag('Working')}</View>
       </View>
 
-      <SectionLabel text="ROOTS" style={{ marginTop: 8 }} />
+      <SectionLabel text="ROOTS" style={{ marginTop: 4 }} />
       <View style={s.rootsGrid}>
         {[
           { label: 'NATIVE PLACE', value: 'Kadapa, AP' },
@@ -306,25 +295,23 @@ function FamilyContent() {
           </View>
         ))}
       </View>
-      <View style={{ height: 8 }} />
     </View>
   );
 }
 
 function JaathakamContent() {
   const kootas = [
-    { name: 'Varna',       score: '1/1' },
-    { name: 'Vashya',      score: '2/2' },
-    { name: 'Tara',        score: '3/3' },
-    { name: 'Yoni',        score: '3/4' },
-    { name: 'Graha Maitri',score: '4/5' },
-    { name: 'Gana',        score: '5/6' },
-    { name: 'Bhakoot',     score: '3/7' },
-    { name: 'Nadi',        score: '7/8' },
+    { name: 'Varna',        score: '1/1' },
+    { name: 'Vashya',       score: '2/2' },
+    { name: 'Tara',         score: '3/3' },
+    { name: 'Yoni',         score: '3/4' },
+    { name: 'Graha Maitri', score: '4/5' },
+    { name: 'Gana',         score: '5/6' },
+    { name: 'Bhakoot',      score: '3/7' },
+    { name: 'Nadi',         score: '7/8' },
   ];
-
   return (
-    <View style={s.sectionContent}>
+    <View style={s.tabContent}>
       <SectionLabel text="GUNAMILAN" />
       <View style={s.kootaCard}>
         <Text style={s.kootaScore}><Text style={s.kootaBig}>28</Text> / 36 koota points</Text>
@@ -339,7 +326,7 @@ function JaathakamContent() {
         </View>
       </View>
 
-      <SectionLabel text="BIRTH DETAILS" style={{ marginTop: 8 }} />
+      <SectionLabel text="BIRTH DETAILS" style={{ marginTop: 4 }} />
       <View style={s.detailGrid}>
         {[
           { label: 'DATE',     value: '04 Aug 1997' },
@@ -354,7 +341,7 @@ function JaathakamContent() {
         ))}
       </View>
 
-      <SectionLabel text="ASTROLOGY" style={{ marginTop: 8 }} />
+      <SectionLabel text="ASTROLOGY" style={{ marginTop: 4 }} />
       <View style={s.detailGrid}>
         {[
           { label: 'RASI',      value: 'Karkataka · Cancer' },
@@ -369,7 +356,7 @@ function JaathakamContent() {
         ))}
       </View>
 
-      <SectionLabel text="DOSHAS" style={{ marginTop: 8 }} />
+      <SectionLabel text="DOSHAS" style={{ marginTop: 4 }} />
       <View style={s.detailGrid}>
         {[
           { label: 'MANGAL DOSHA', value: 'No' },
@@ -381,14 +368,13 @@ function JaathakamContent() {
           </View>
         ))}
       </View>
-      <View style={{ height: 8 }} />
     </View>
   );
 }
 
 function TrustContent() {
   return (
-    <View style={s.sectionContent}>
+    <View style={s.tabContent}>
       <SectionLabel text="TRUST SCORE" />
       <View style={s.trustScore}>
         <View style={s.trustIconWrap}>
@@ -400,7 +386,7 @@ function TrustContent() {
         </View>
       </View>
 
-      <SectionLabel text="VERIFICATIONS" style={{ marginTop: 8 }} />
+      <SectionLabel text="VERIFICATIONS" style={{ marginTop: 4 }} />
       {[
         { title: 'Government ID', sub: 'Aadhaar · last 4: 3421' },
         { title: 'Selfie match',  sub: 'Live photo · 96% match' },
@@ -430,37 +416,6 @@ function TrustContent() {
           <Text style={s.managedSub}>Last edit · 2 days ago · responds within ~4 hrs</Text>
         </View>
       </View>
-      <View style={{ height: 8 }} />
-    </View>
-  );
-}
-
-// ─── Accordion section ────────────────────────────────────────────────────────
-function AccordionSection({ label, isOpen, onToggle, children }) {
-  const anim = useRef(new Animated.Value(isOpen ? 1 : 0)).current;
-
-  useEffect(() => {
-    Animated.timing(anim, {
-      toValue: isOpen ? 1 : 0,
-      duration: 260,
-      useNativeDriver: false,
-    }).start();
-  }, [isOpen]);
-
-  const maxHeight = anim.interpolate({ inputRange: [0, 1], outputRange: [0, 1500] });
-  const chevronRotate = anim.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '180deg'] });
-
-  return (
-    <View style={s.accordion}>
-      <TouchableOpacity style={s.accordionHeader} onPress={onToggle} activeOpacity={0.7}>
-        <Text style={[s.accordionTitle, isOpen && s.accordionTitleOpen]}>{label}</Text>
-        <Animated.View style={{ transform: [{ rotate: chevronRotate }] }}>
-          <ChevronIcon />
-        </Animated.View>
-      </TouchableOpacity>
-      <Animated.View style={{ maxHeight, overflow: 'hidden' }}>
-        {children}
-      </Animated.View>
     </View>
   );
 }
@@ -468,11 +423,7 @@ function AccordionSection({ label, isOpen, onToggle, children }) {
 // ─── Main screen ──────────────────────────────────────────────────────────────
 export default function MatchDetailScreen() {
   const navigation = useNavigation();
-  const [openSection, setOpenSection] = useState('About');
-
-  const toggle = (key) => {
-    setOpenSection(prev => (prev === key ? null : key));
-  };
+  const [activeTab, setActiveTab] = useState('About');
 
   const contentMap = {
     About:     <AboutContent />,
@@ -484,79 +435,86 @@ export default function MatchDetailScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: T.bg }}>
-      <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
-        {/* Cover photo */}
-        <View style={s.coverPhoto}>
-          <LinearGradient
-            colors={['#C4956A', '#A07050', '#7A4A40']}
-            start={{ x: 0.2, y: 0 }} end={{ x: 0.9, y: 1 }}
-            style={StyleSheet.absoluteFill}
-          />
-          <LinearGradient
-            colors={['transparent', 'transparent', 'rgba(0,0,0,0.7)']}
-            style={StyleSheet.absoluteFill}
-          />
 
-          <SafeAreaView style={s.coverOverlay} edges={['top']}>
-            <View style={s.coverTopRow}>
-              <View style={s.coverTopRight}>
-                <TouchableOpacity style={s.coverBtn}><DownloadIcon /></TouchableOpacity>
-                <TouchableOpacity style={s.coverBtn}><DotsIconV /></TouchableOpacity>
-              </View>
-            </View>
-            <TouchableOpacity style={s.coverBackBtn} onPress={() => navigation.goBack()}>
+      {/* ── Photo area ───────────────────────────────────────────────────── */}
+      <View style={s.photoArea}>
+        <LinearGradient
+          colors={['#C4956A', '#A07050', '#7A4A40']}
+          start={{ x: 0.2, y: 0 }} end={{ x: 0.9, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
+        <LinearGradient
+          colors={['rgba(0,0,0,0.18)', 'transparent', 'transparent']}
+          style={StyleSheet.absoluteFill}
+        />
+
+        <SafeAreaView style={s.photoOverlay} edges={['top']}>
+          <View style={s.photoTopRow}>
+            <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()} activeOpacity={0.8}>
               <BackIcon color="white" />
             </TouchableOpacity>
-          </SafeAreaView>
-
-          <View style={s.coverNameWrap}>
-            <View style={s.coverNameRow}>
-              <Text style={s.coverName}>Anjali Reddy, 28</Text>
-              <VerifiedCircle size={20} />
-            </View>
-            <Text style={s.coverSub}>5'6" · Dallas, TX · Active 2h ago</Text>
+            <TouchableOpacity style={s.dotsBtn} activeOpacity={0.8}>
+              <DotsIconV />
+            </TouchableOpacity>
           </View>
-        </View>
+        </SafeAreaView>
 
-        {/* Voice intro */}
-        <View style={s.voiceRow}>
-          <TouchableOpacity style={s.playCircle} activeOpacity={0.8}>
-            <PlayIcon size={16} />
-          </TouchableOpacity>
-          <View style={{ flex: 1 }}>
-            <Text style={s.voiceLabel}>Voice intro · 0:24</Text>
-            <View style={s.waveRow}>
-              {WAVEFORM.map((h, i) => (
-                <View key={i} style={[s.waveBar, { height: h }, i < 10 && { backgroundColor: T.accent }]} />
-              ))}
-            </View>
-          </View>
+        {/* Photo pagination dots */}
+        <View style={s.photoDots}>
+          <View style={[s.photoDot, s.photoDotActive]} />
+          <View style={s.photoDot} />
+          <View style={s.photoDot} />
         </View>
+      </View>
 
-        {/* Personality tags */}
-        <View style={s.coverTags}>
-          {['Curious', 'Family-first', 'Reads a lot'].map((t, i) => (
-            <View key={i} style={s.coverTag}>
-              <Text style={s.coverTagText}>{t}</Text>
-            </View>
+      {/* ── Profile info ─────────────────────────────────────────────────── */}
+      <View style={s.profileInfo}>
+        <View style={s.nameRow}>
+          <Text style={s.nameText}>Anjali Reddy, 28</Text>
+          <VerifiedCircle size={18} />
+        </View>
+        <View style={s.metaRow}>
+          <Text style={s.metaText}>5'6"</Text>
+          <Text style={s.metaGap}>{'   '}</Text>
+          <Text style={s.metaText}>Dallas, TX</Text>
+          <Text style={s.metaSep}>  •  </Text>
+          <View style={s.onlineDot} />
+          <Text style={s.activeText}>Active 2h ago</Text>
+        </View>
+      </View>
+
+      {/* ── Horizontal tab bar ───────────────────────────────────────────── */}
+      <View style={s.tabBar}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={s.tabBarInner}
+          bounces={false}
+        >
+          {TABS.map(tab => (
+            <TouchableOpacity
+              key={tab}
+              style={[s.tabPill, activeTab === tab && s.tabPillActive]}
+              onPress={() => setActiveTab(tab)}
+              activeOpacity={0.7}
+            >
+              <Text style={[s.tabText, activeTab === tab && s.tabTextActive]}>{tab}</Text>
+            </TouchableOpacity>
           ))}
-        </View>
+        </ScrollView>
+      </View>
 
-        {/* Accordion sections */}
-        {SECTIONS.map(key => (
-          <AccordionSection
-            key={key}
-            label={key}
-            isOpen={openSection === key}
-            onToggle={() => toggle(key)}
-          >
-            {contentMap[key]}
-          </AccordionSection>
-        ))}
-
+      {/* ── Scrollable tab content ───────────────────────────────────────── */}
+      <ScrollView
+        style={{ flex: 1 }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        {contentMap[activeTab]}
         <View style={{ height: 90 }} />
       </ScrollView>
 
+      {/* ── Sticky bottom bar ────────────────────────────────────────────── */}
       <SafeAreaView style={s.bottomBarWrap} edges={['bottom']}>
         <BottomBar onPass={() => navigation.goBack()} onInterest={() => {}} />
       </SafeAreaView>
@@ -567,7 +525,148 @@ export default function MatchDetailScreen() {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
 
-  // ── Section label ────────────────────────────────────────────────────────
+  // ── Photo area ────────────────────────────────────────────────────────────
+  photoArea: {
+    height: height * 0.44,
+    overflow: 'hidden',
+  },
+  photoOverlay: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0,
+  },
+  photoTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 14,
+    paddingTop: 8,
+  },
+  backBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0,0,0,0.40)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dotsBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0,0,0,0.40)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  photoDots: {
+    position: 'absolute',
+    bottom: 12,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 5,
+  },
+  photoDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: 'rgba(255,255,255,0.5)',
+  },
+  photoDotActive: {
+    width: 18,
+    backgroundColor: '#fff',
+  },
+
+  // ── Profile info ──────────────────────────────────────────────────────────
+  profileInfo: {
+    paddingHorizontal: 18,
+    paddingTop: 14,
+    paddingBottom: 12,
+    backgroundColor: T.bg,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 5,
+  },
+  nameText: {
+    fontFamily: FONTS.display,
+    fontSize: 24,
+    fontWeight: '600',
+    color: T.ink,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  metaText: {
+    fontSize: 13,
+    color: T.ink2,
+  },
+  metaGap: {
+    fontSize: 13,
+    color: T.mute,
+  },
+  metaSep: {
+    fontSize: 13,
+    color: T.mute,
+  },
+  onlineDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: GREEN,
+    marginRight: 5,
+  },
+  activeText: {
+    fontSize: 13,
+    color: T.ink2,
+  },
+
+  // ── Tab bar ───────────────────────────────────────────────────────────────
+  tabBar: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: T.hair,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: T.hair,
+    backgroundColor: T.bg,
+  },
+  tabBarInner: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    gap: 8,
+  },
+  tabPill: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 100,
+    borderWidth: 1,
+    borderColor: T.hair2,
+    backgroundColor: T.bg,
+  },
+  tabPillActive: {
+    borderColor: T.ink,
+    backgroundColor: T.ink,
+  },
+  tabText: {
+    fontSize: 14,
+    color: T.ink2,
+    fontWeight: '400',
+  },
+  tabTextActive: {
+    color: '#fff',
+    fontWeight: '600',
+  },
+
+  // ── Tab content ───────────────────────────────────────────────────────────
+  tabContent: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+
+  // ── Section label ─────────────────────────────────────────────────────────
   sectionLabel: {
     fontFamily: FONTS.mono,
     fontSize: 10,
@@ -575,6 +674,86 @@ const s = StyleSheet.create({
     textTransform: 'uppercase',
     color: T.mute,
     marginBottom: 12,
+  },
+
+  // ── Prompts ───────────────────────────────────────────────────────────────
+  promptBlock: {
+    marginBottom: 20,
+    backgroundColor: T.field,
+    borderRadius: 12,
+    padding: 14,
+  },
+  promptQ: {
+    fontFamily: FONTS.mono,
+    fontSize: 9,
+    letterSpacing: 1,
+    color: T.mute,
+    textTransform: 'uppercase',
+    marginBottom: 6,
+  },
+  promptA: {
+    fontFamily: FONTS.display,
+    fontSize: 16,
+    fontStyle: 'italic',
+    color: T.ink2,
+    lineHeight: 25,
+  },
+
+  // ── Voice intro ───────────────────────────────────────────────────────────
+  voiceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    backgroundColor: T.field,
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 4,
+  },
+  playCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: T.accent,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 2,
+  },
+  voiceLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: T.ink,
+    marginBottom: 6,
+  },
+  waveRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    height: 32,
+  },
+  waveBar: {
+    flex: 1,
+    borderRadius: 2,
+    backgroundColor: T.hair2,
+    minHeight: 3,
+  },
+
+  // ── Personality tags ──────────────────────────────────────────────────────
+  tagsWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 8,
+  },
+  personalityTag: {
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 100,
+    borderWidth: 1,
+    borderColor: T.hair2,
+  },
+  personalityTagText: {
+    fontSize: 13,
+    color: T.ink,
   },
 
   // ── Verified badge ────────────────────────────────────────────────────────
@@ -599,6 +778,7 @@ const s = StyleSheet.create({
     padding: 18,
     alignItems: 'center',
     gap: 8,
+    marginTop: 8,
   },
   premiumChip: {
     backgroundColor: GOLD_S,
@@ -635,237 +815,6 @@ const s = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: '#fff',
-  },
-
-  // ── Bottom bar ────────────────────────────────────────────────────────────
-  bottomBarWrap: {
-    position: 'absolute',
-    bottom: 0, left: 0, right: 0,
-    backgroundColor: T.bg,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: T.hair,
-  },
-  bottomBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    gap: 10,
-  },
-  bottomCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 1.2,
-    borderColor: T.hair2,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sendBtn: {
-    flex: 1,
-    height: 48,
-    backgroundColor: T.accent,
-    borderRadius: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: T.accent,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  sendBtnText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#fff',
-  },
-
-  // ── Cover photo ───────────────────────────────────────────────────────────
-  coverPhoto: {
-    height: height * 0.58,
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  coverOverlay: {
-    position: 'absolute',
-    top: 0, left: 0, right: 0,
-  },
-  coverTopRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingTop: 8,
-  },
-  coverBackBtn: {
-    position: 'absolute',
-    top: 14,
-    left: 14,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  coverTopRight: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  coverBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  coverNameWrap: {
-    position: 'absolute',
-    bottom: 16,
-    left: 16,
-    right: 16,
-  },
-  coverNameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 4,
-  },
-  coverName: {
-    fontFamily: FONTS.display,
-    fontSize: 26,
-    color: '#fff',
-    fontWeight: '600',
-  },
-  coverSub: {
-    fontSize: 13,
-    color: 'rgba(255,255,255,0.85)',
-  },
-
-  // ── Voice intro ───────────────────────────────────────────────────────────
-  voiceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: T.hair,
-  },
-  playCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: T.accent,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingLeft: 2,
-  },
-  voiceLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: T.ink,
-    marginBottom: 6,
-  },
-  waveRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 2,
-    height: 36,
-  },
-  waveBar: {
-    flex: 1,
-    borderRadius: 2,
-    backgroundColor: T.hair2,
-    minHeight: 3,
-  },
-
-  // ── Cover tags ────────────────────────────────────────────────────────────
-  coverTags: {
-    flexDirection: 'row',
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: T.hair,
-  },
-  coverTag: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 100,
-    borderWidth: 1,
-    borderColor: T.hair2,
-  },
-  coverTagText: {
-    fontSize: 13,
-    color: T.ink,
-  },
-
-  // ── Accordion ─────────────────────────────────────────────────────────────
-  accordion: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: T.hair,
-  },
-  accordionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 18,
-  },
-  accordionTitle: {
-    fontFamily: FONTS.display,
-    fontSize: 18,
-    color: T.ink2,
-    fontWeight: '500',
-  },
-  accordionTitleOpen: {
-    color: T.ink,
-    fontWeight: '600',
-  },
-  sectionContent: {
-    paddingHorizontal: 20,
-    paddingTop: 4,
-  },
-
-  // ── Prompts (About) ───────────────────────────────────────────────────────
-  promptBlock: {
-    marginBottom: 20,
-  },
-  promptQ: {
-    fontFamily: FONTS.mono,
-    fontSize: 10,
-    letterSpacing: 1,
-    color: T.mute,
-    textTransform: 'uppercase',
-    marginBottom: 6,
-  },
-  promptA: {
-    fontFamily: FONTS.display,
-    fontSize: 16,
-    fontStyle: 'italic',
-    color: T.ink2,
-    lineHeight: 26,
-  },
-
-  // ── Personality tags ──────────────────────────────────────────────────────
-  tagsWrap: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 8,
-  },
-  personalityTag: {
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 100,
-    borderWidth: 1,
-    borderColor: T.hair2,
-  },
-  personalityTagText: {
-    fontSize: 13,
-    color: T.ink,
   },
 
   // ── Career ────────────────────────────────────────────────────────────────
@@ -1007,8 +956,6 @@ const s = StyleSheet.create({
     color: T.ink2,
     fontWeight: '500',
   },
-
-  // ── Roots grid ────────────────────────────────────────────────────────────
   rootsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -1082,8 +1029,6 @@ const s = StyleSheet.create({
     fontWeight: '700',
     color: T.accent,
   },
-
-  // ── Detail grid (birth/astrology) ─────────────────────────────────────────
   detailGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -1186,5 +1131,48 @@ const s = StyleSheet.create({
   managedSub: {
     fontSize: 12,
     color: T.mute,
+  },
+
+  // ── Bottom bar ────────────────────────────────────────────────────────────
+  bottomBarWrap: {
+    position: 'absolute',
+    bottom: 0, left: 0, right: 0,
+    backgroundColor: T.bg,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: T.hair,
+  },
+  bottomBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    gap: 10,
+  },
+  bottomCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1.2,
+    borderColor: T.hair2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sendBtn: {
+    flex: 1,
+    height: 48,
+    backgroundColor: T.accent,
+    borderRadius: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: T.accent,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  sendBtnText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#fff',
   },
 });
