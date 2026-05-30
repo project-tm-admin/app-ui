@@ -16,6 +16,7 @@ const GREEN_S = '#DCEFE2';
 const SALMON_S= '#FDF0EB';
 const GOLD    = '#C8920A';
 const GOLD_S  = '#FEF3D4';
+const INFO_BG = '#FAEAE8';
 
 const WAVEFORM = [12,22,38,18,44,26,34,48,20,14,40,30,16,42,22,36,18,44,28,20];
 const TABS = ['About', 'Career', 'Family', 'Jaathakam', 'Trust'];
@@ -121,6 +122,74 @@ function BottomBar({ onPass, onInterest }) {
       <TouchableOpacity style={s.sendBtn} onPress={onInterest} activeOpacity={0.85}>
         <Text style={s.sendBtnText}>Send interest  ›</Text>
       </TouchableOpacity>
+    </View>
+  );
+}
+
+// ─── Info grid ───────────────────────────────────────────────────────────────
+function InfoIcon({ type }) {
+  const c = T.accent;
+  const w = 1.8;
+  switch (type) {
+    case 'height': return (
+      <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+        <Path d="M12 3v18M7 8l5-5 5 5M7 16l5 5 5-5" stroke={c} strokeWidth={w} strokeLinecap="round" strokeLinejoin="round" />
+      </Svg>
+    );
+    case 'religion': return (
+      <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+        <Circle cx="12" cy="12" r="3.5" stroke={c} strokeWidth={w} />
+        <Path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12" stroke={c} strokeWidth={w} strokeLinecap="round" />
+      </Svg>
+    );
+    case 'group': return (
+      <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+        <Path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke={c} strokeWidth={w} strokeLinecap="round" />
+        <Circle cx="9" cy="7" r="4" stroke={c} strokeWidth={w} />
+        <Path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke={c} strokeWidth={w} strokeLinecap="round" />
+      </Svg>
+    );
+    case 'globe': return (
+      <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+        <Circle cx="12" cy="12" r="10" stroke={c} strokeWidth={w} />
+        <Path d="M2 12h20M12 2c-3 4-4.5 7-4.5 10s1.5 6 4.5 10M12 2c3 4 4.5 7 4.5 10s-1.5 6-4.5 10" stroke={c} strokeWidth={w} strokeLinecap="round" />
+      </Svg>
+    );
+    case 'edu': return (
+      <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+        <Path d="M22 10v6M2 10l10-5 10 5-10 5z" stroke={c} strokeWidth={w} strokeLinecap="round" strokeLinejoin="round" />
+        <Path d="M6 12v4c0 2 3 3 6 3s6-1 6-3v-4" stroke={c} strokeWidth={w} strokeLinecap="round" />
+      </Svg>
+    );
+    case 'leaf': return (
+      <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+        <Path d="M12 22V12M12 12C12 7 8 3 4 3c0 4 2 8 8 9M12 12c0-5 4-9 8-9 0 4-2 8-8 9" stroke={c} strokeWidth={w} strokeLinecap="round" strokeLinejoin="round" />
+      </Svg>
+    );
+    default: return null;
+  }
+}
+
+function InfoGrid() {
+  const rows = [
+    [{ icon: 'height',   text: "5'6\""             }, { icon: 'religion', text: 'Hindu'           }],
+    [{ icon: 'group',    text: 'Reddy'              }, { icon: 'globe',    text: 'USA · H-1B'      }],
+    [{ icon: 'edu',      text: 'MS · Computer Sci.' }, { icon: 'leaf',     text: 'Vegetarian'      }],
+  ];
+  return (
+    <View style={s.infoGrid}>
+      {rows.map((row, ri) => (
+        <View key={ri} style={s.infoRow}>
+          {row.map((item, ci) => (
+            <View key={ci} style={s.infoCell}>
+              <View style={s.infoIconBox}>
+                <InfoIcon type={item.icon} />
+              </View>
+              <Text style={s.infoText}>{item.text}</Text>
+            </View>
+          ))}
+        </View>
+      ))}
     </View>
   );
 }
@@ -424,7 +493,7 @@ export default function MatchDetailScreen() {
     <View style={{ flex: 1, backgroundColor: T.bg }}>
       <ScrollView
         ref={scrollRef}
-        stickyHeaderIndices={[2]}
+        stickyHeaderIndices={[3]}
         onScroll={handleScroll}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
@@ -471,7 +540,10 @@ export default function MatchDetailScreen() {
           </View>
         </View>
 
-        {/* ── 2: Tab bar — STICKY ───────────────────────────────────── */}
+        {/* ── 2: Quick-info grid ────────────────────────────────────── */}
+        <InfoGrid />
+
+        {/* ── 3: Tab bar — STICKY ───────────────────────────────────── */}
         <View
           style={s.tabBar}
           onLayout={e => { tabBarH.current = e.nativeEvent.layout.height; }}
@@ -638,6 +710,39 @@ const s = StyleSheet.create({
     color: '#fff', fontWeight: '600',
   },
 
+  // ── Info grid ─────────────────────────────────────────────────────────────
+  infoGrid: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 14,
+    backgroundColor: T.bg,
+    gap: 10,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  infoCell: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  infoIconBox: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: INFO_BG,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  infoText: {
+    fontSize: 14,
+    color: T.ink,
+    fontWeight: '500',
+    flex: 1,
+  },
+
   // ── Section divider ───────────────────────────────────────────────────────
   sectionDivider: {
     height: 8,
@@ -662,8 +767,10 @@ const s = StyleSheet.create({
   // ── Prompts ───────────────────────────────────────────────────────────────
   promptBlock: {
     marginBottom: 14,
-    backgroundColor: T.field,
+    backgroundColor: '#fff',
     borderRadius: 12, padding: 14,
+    borderWidth: 1,
+    borderColor: T.hair,
   },
   promptQ: {
     fontFamily: FONTS.mono,
@@ -671,9 +778,8 @@ const s = StyleSheet.create({
     textTransform: 'uppercase', marginBottom: 6,
   },
   promptA: {
-    fontFamily: FONTS.display,
-    fontSize: 16, fontStyle: 'italic',
-    color: T.ink2, lineHeight: 25,
+    fontSize: 15,
+    color: T.ink2, lineHeight: 24,
   },
 
   // ── Voice intro ───────────────────────────────────────────────────────────
