@@ -125,7 +125,7 @@ export default function EditCareerScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
 
   // TopBar
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 14,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
   topBarLeft: {
     minWidth: 60,
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 12,
     paddingTop: 10,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
   saveButton: {
     backgroundColor: T.accent,

@@ -208,7 +208,7 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
 
   // ── Top bar ────────────────────────────────────────────────────────────────

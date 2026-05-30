@@ -257,14 +257,14 @@ export default function EditPhotosScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: H_PAD,
     paddingVertical: 12,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
   topBarLeft: {
     width: 70,
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: H_PAD,
     paddingBottom: 28,
     paddingTop: 12,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
   saveButton: {
     backgroundColor: T.accent,

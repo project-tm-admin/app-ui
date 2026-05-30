@@ -149,7 +149,7 @@ export default function EditFamilyScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
   topBar: {
     flexDirection: 'row',
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 14,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
   topBarBack: {
     minWidth: 60,
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 32,
     paddingTop: 12,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
   saveButton: {
     backgroundColor: T.accent,

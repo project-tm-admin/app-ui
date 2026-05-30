@@ -235,7 +235,7 @@ export default function PrivacyScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
 
   // ── Top bar ──────────────────────────────────────────────────────────────────
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: T.hair,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
   backBtn: {
     flexDirection: 'row',

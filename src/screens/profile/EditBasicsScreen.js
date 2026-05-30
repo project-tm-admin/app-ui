@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import Svg, { Path } from 'react-native-svg';
 import { T, FONTS } from '../../theme';
 
-const BG = '#F7F3EE';
+const BG = '#FFFFFF';
 
 function BackIcon() {
   return (

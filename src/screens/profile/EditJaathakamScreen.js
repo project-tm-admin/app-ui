@@ -189,7 +189,7 @@ export default function EditJaathakamScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
 
   /* Top Bar */
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 14,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
   topBarLeft: {
     minWidth: 60,
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 28,
     paddingTop: 12,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
   saveButton: {
     backgroundColor: T.accent,

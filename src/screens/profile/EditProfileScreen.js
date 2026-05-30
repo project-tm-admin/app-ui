@@ -352,7 +352,7 @@ export default function EditProfileScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
   topBar: {
     flexDirection: 'row',
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: T.hair,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
   topBarSide: {
     width: 72,

@@ -196,7 +196,7 @@ export default function EditAboutScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
 
   /* TopBar */
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
   topBarBack: {
     flexDirection: 'row',
@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingBottom: 32,
     paddingTop: 12,
-    backgroundColor: '#F7F3EE',
+    backgroundColor: '#FFFFFF',
   },
   saveButton: {
     backgroundColor: T.accent,
